@@ -14,6 +14,8 @@
             margin: 20px; 
             background-color: #f0f2f5; 
             color: #333;
+            font-size: 14px;
+            line-height: 1.4;
         }
         .header { 
             background: #2c3e50; 
@@ -47,6 +49,7 @@
             color: #5a6c7d; 
             margin-top: 5px; 
             line-height: 1.3;
+            font-weight: normal;
         }
         
         .table-container {
@@ -69,12 +72,15 @@
             padding: 12px 8px; 
             text-align: left; 
             font-size: 14px;
+            font-weight: bold;
             white-space: nowrap;
         }
         td { 
             padding: 8px; 
             border-bottom: 1px solid #e1e8ed; 
             vertical-align: middle;
+            font-size: 14px;
+            color: #333;
         }
         
         /* Checkbox column specific styling */
@@ -146,30 +152,34 @@
             width: 100%; 
             padding: 6px 4px; 
             border: 1px solid #d1d9e0; 
-            font-size: 13px; 
+            font-size: 14px; 
             border-radius: 4px;
             background: #fafbfc;
+            color: #333;
+            font-family: Arial, sans-serif;
         }
         
         textarea { 
             width: 100%; 
             padding: 6px 4px; 
             border: 1px solid #d1d9e0; 
-            font-size: 13px; 
+            font-size: 14px; 
             border-radius: 4px;
             min-height: 50px; 
             resize: vertical; 
             background: #fafbfc;
             line-height: 1.4;
+            color: #333;
+            font-family: Arial, sans-serif;
         }
         
-        /* Specific input sizing for narrow columns */
+        /* Specific input sizing for narrow columns - slightly smaller but still readable */
         td:nth-child(3) input,
         td:nth-child(4) input,
         td:nth-child(5) input,
         td:nth-child(6) input {
-            font-size: 12px;
-            padding: 4px 3px;
+            font-size: 13px;
+            padding: 5px 4px;
         }
         
         .btn { 
@@ -187,13 +197,15 @@
             background: #34495e; 
         }
         .auto-save-indicator { 
-            color: #2c3e50; 
+            color: #5a6c7d; 
             font-size: 12px; 
-            margin-left: 10px; 
+            margin-left: 10px;
+            font-style: italic;
         }
         .sub-task { 
-            font-size: 0.9em; 
+            font-size: 13px; 
             opacity: 0.9;
+            font-style: italic;
         }
         .sub-task td { 
             padding-left: 20px;
@@ -205,11 +217,12 @@
         }
         
         .folder-path {
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             background-color: #e9ecef;
             padding: 2px 4px;
             border-radius: 3px;
-            font-size: 11px;
+            font-size: 12px;
+            color: #333;
         }
         .filter-controls { 
             background: #fafbfc; 
@@ -229,14 +242,17 @@
             margin-right: 5px; 
             display: inline-block;
             min-width: 50px;
-            color: #5a6c7d;
+            color: #333;
+            font-size: 14px;
         }
         .filter-group select {
-            padding: 5px;
+            padding: 6px 8px;
             border: 1px solid #d1d9e0;
             border-radius: 4px;
             font-size: 14px;
             background: #fafbfc;
+            color: #333;
+            font-family: Arial, sans-serif;
         }
         .alerts { 
             background: #fafbfc; 
@@ -249,7 +265,10 @@
         .alert { 
             padding: 10px; 
             margin: 5px 0; 
-            border-radius: 5px; 
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
         }
         .alert-danger { 
             background: #f8d7da; 
@@ -265,13 +284,6 @@
         .controls { 
             text-align: center; 
             margin: 20px 0; 
-        }
-        .folder-path {
-            font-family: monospace;
-            background-color: #e9ecef;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 11px;
         }
         
         /* Mobile responsiveness */
@@ -321,13 +333,18 @@
             }
             
             table {
-                font-size: 11px;
+                font-size: 12px;
             }
             
             input, textarea {
                 border: none;
                 background: transparent;
-                font-size: 10px;
+                font-size: 11px;
+                color: #333;
+            }
+            
+            body {
+                font-size: 12px;
             }
         }
     </style>
@@ -336,9 +353,12 @@
     <div class="header">
         <h1>AV Installation Project Tracker</h1>
         <div style="display: flex; gap: 20px; justify-content: center; align-items: center; margin-top: 15px; flex-wrap: wrap;">
-            <input type="text" id="projectName" placeholder="Enter project name" style="padding: 8px; font-size: 16px; min-width: 200px;">
-            <input type="text" id="projectManager" placeholder="Enter project manager" style="padding: 8px; font-size: 16px; min-width: 200px;">
+            <input type="text" id="projectName" placeholder="Enter project name" style="padding: 8px; font-size: 16px; min-width: 200px; border: 1px solid #d1d9e0; border-radius: 4px; background: #fafbfc; color: #333; font-family: Arial, sans-serif;">
+            <input type="text" id="projectManager" placeholder="Enter project manager" style="padding: 8px; font-size: 16px; min-width: 200px; border: 1px solid #d1d9e0; border-radius: 4px; background: #fafbfc; color: #333; font-family: Arial, sans-serif;">
             <span class="auto-save-indicator" id="autoSaveIndicator">Auto-saved</span>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #ecf0f1; font-style: italic;">
+            💡 <strong>Setup Tip:</strong> Set your browser's download folder to this file's location for easy project file management
         </div>
     </div>
 
@@ -400,7 +420,9 @@
     <div class="controls">
         <button class="btn" onclick="exportToExcel()">Export to Excel</button>
         <button class="btn" onclick="saveProject()">Save Project</button>
+        <button class="btn" onclick="loadProject()">Load Project</button>
         <button class="btn" onclick="addCustomTask()">Add Custom Task</button>
+        <input type="file" id="projectFileInput" accept=".json" style="display: none;" onchange="handleFileLoad(event)">
     </div>
 
     <div class="table-container">
@@ -1017,7 +1039,8 @@
         // Auto-save functionality
         function autoSave() {
             const indicator = document.getElementById('autoSaveIndicator');
-            indicator.textContent = 'Saving...';
+            indicator.textContent = 'Auto-saving...';
+            indicator.style.color = '#5a6c7d';
             
             // Simulate save delay
             setTimeout(() => {
@@ -1252,12 +1275,8 @@
             // Add worksheet to workbook
             XLSX.utils.book_append_sheet(workbook, worksheet, 'AV Project Tracker');
             
-            // Generate filename with date
-            const now = new Date();
-            const dateStr = now.getFullYear() + '-' + 
-                          String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-                          String(now.getDate()).padStart(2, '0');
-            const filename = `AV_Project_Tracker_${dateStr}.xlsx`;
+            // Generate filename with project name and date/time
+            const filename = generateFilename('xlsx');
             
             // Save file
             XLSX.writeFile(workbook, filename);
@@ -1268,6 +1287,7 @@
             const data = {
                 projectName: document.getElementById('projectName').value,
                 projectManager: document.getElementById('projectManager').value,
+                lastSaved: new Date().toISOString(),
                 tasks: []
             };
 
@@ -1308,7 +1328,7 @@
         function loadProjectData() {
             if (projectData && projectData.projectName) {
                 document.getElementById('projectName').value = projectData.projectName;
-                document.getElementById('projectManager').value = projectData.projectManager;
+                document.getElementById('projectManager').value = projectData.projectManager || '';
 
                 // Load task data
                 const rows = document.querySelectorAll('#mainTable tbody tr');
@@ -1324,24 +1344,47 @@
                         const taskData = projectData.tasks[taskIndex];
                         
                         const checkbox = cells[0].querySelector('input[type="checkbox"]');
-                        if (checkbox) checkbox.checked = taskData.completed;
-                        
-                        cells[2].querySelector('input').value = taskData.assignedTo || '';
-                        cells[3].querySelector('input').value = taskData.startDate || '';
-                        cells[4].querySelector('input').value = taskData.dueDate || '';
-                        cells[5].querySelector('input').value = taskData.completeDate || '';
-                        cells[6].querySelector('textarea').value = taskData.notes || '';
-
-                        if (taskData.completed) {
-                            row.classList.add('completed');
+                        if (checkbox) {
+                            checkbox.checked = taskData.completed || false;
+                            updateTaskRow(checkbox); // Apply styling based on completion
                         }
+                        
+                        const assignedInput = cells[2].querySelector('input');
+                        const startDateInput = cells[3].querySelector('input');
+                        const dueDateInput = cells[4].querySelector('input');
+                        const completeDateInput = cells[5].querySelector('input');
+                        const notesTextarea = cells[6].querySelector('textarea');
+                        
+                        if (assignedInput) assignedInput.value = taskData.assignedTo || '';
+                        if (startDateInput) startDateInput.value = taskData.startDate || '';
+                        if (dueDateInput) dueDateInput.value = taskData.dueDate || '';
+                        if (completeDateInput) completeDateInput.value = taskData.completeDate || '';
+                        if (notesTextarea) notesTextarea.value = taskData.notes || '';
 
                         taskIndex++;
                     }
                 });
 
                 updateProgress();
+                updateAlerts();
             }
+        }
+
+        // Generate filename based on project name and timestamp
+        function generateFilename(extension = 'json') {
+            const projectName = document.getElementById('projectName').value || 'AV_Project';
+            const now = new Date();
+            
+            // Format: ProjectName_MM.DD_HHMM.extension
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            // Clean project name for filename (remove invalid characters)
+            const cleanProjectName = projectName.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, '_');
+            
+            return `${cleanProjectName}_${month}.${day}_${hours}${minutes}.${extension}`;
         }
 
         // Save project
@@ -1353,10 +1396,60 @@
             const a = document.createElement('a');
             a.setAttribute('hidden', '');
             a.setAttribute('href', url);
-            a.setAttribute('download', 'av_project.json');
+            a.setAttribute('download', generateFilename('json'));
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            
+            // Update auto-save indicator
+            const indicator = document.getElementById('autoSaveIndicator');
+            indicator.textContent = 'Project Saved!';
+            setTimeout(() => {
+                indicator.textContent = '';
+            }, 3000);
+        }
+
+        // Load project
+        function loadProject() {
+            const fileInput = document.getElementById('projectFileInput');
+            fileInput.click();
+        }
+
+        // Handle file load
+        function handleFileLoad(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const loadedData = JSON.parse(e.target.result);
+                    
+                    // Validate the loaded data structure
+                    if (loadedData && typeof loadedData === 'object') {
+                        projectData = loadedData;
+                        loadProjectData();
+                        
+                        // Show success message
+                        const indicator = document.getElementById('autoSaveIndicator');
+                        indicator.textContent = 'Project Loaded Successfully!';
+                        indicator.style.color = '#2c3e50';
+                        setTimeout(() => {
+                            indicator.textContent = '';
+                        }, 3000);
+                    } else {
+                        throw new Error('Invalid file format');
+                    }
+                } catch (error) {
+                    alert('Error loading project file. Please ensure it\'s a valid AV Project file.');
+                    console.error('Error loading project:', error);
+                }
+            };
+            
+            reader.readAsText(file);
+            
+            // Clear the input so the same file can be loaded again if needed
+            event.target.value = '';
         }
 
         // Add custom task
