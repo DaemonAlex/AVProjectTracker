@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Installation Project Tracker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f9f9f9; 
+        }
+        .header { 
+            background: #0D417E; 
+            color: white; 
+            padding: 15px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border-radius: 8px;
+        }
+        .status-dashboard { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        .status-card { 
+            background: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .status-number { 
+            font-size: 32px; 
+            font-weight: bold; 
+            color: #0D417E; 
+        }
+        .status-label { 
+            font-size: 14px; 
+            color: #313131; 
+            margin-top: 5px; 
+            line-height: 1.3;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed;
+            min-width: 1000px;
+        }
+        th { 
+            background: #313131; 
+            color: white; 
+            padding: 12px 8px; 
+            text-align: left; 
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        td { 
+            padding: 8px; 
+            border-bottom: 1px solid #ddd; 
+            vertical-align: middle;
+        }
+        
+        /* Checkbox column specific styling */
+        th:nth-child(1), td:nth-child(1) { 
+            width: 60px; 
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        /* Other column widths */
+        th:nth-child(2), td:nth-child(2) { width: 300px; }
+        th:nth-child(3), td:nth-child(3) { width: 130px; }
+        th:nth-child(4), td:nth-child(4) { width: 110px; }
+        th:nth-child(5), td:nth-child(5) { width: 110px; }
+        th:nth-child(6), td:nth-child(6) { width: 120px; }
+        th:nth-child(7), td:nth-child(7) { width: auto; min-width: 200px; }
+        
+        /* Force white background for ALL task rows */
+        tbody tr {
+            background-color: white !important;
+        }
+        
+        /* Override any conflicting styles */
+        .snow-request,
+        .sub-task,
+        .snow-request.sub-task {
+            background-color: white !important;
+        }
+        
+        /* Phase headers should remain blue */
+        .phase-row { 
+            background: #0D417E !important; 
+            color: white; 
+            font-weight: bold; 
+        }
+        .phase-row td {
+            text-align: left;
+            vertical-align: middle;
+        }
+        .section-row { 
+            background: #f0f0f0 !important; 
+            font-weight: bold; 
+        }
+        
+        /* Status colors should override white background when needed */
+        .completed { 
+            background-color: #d4edda !important; 
+        }
+        .overdue { 
+            background-color: #f8d7da !important; 
+        }
+        .due-soon { 
+            background-color: #fff3cd !important; 
+        }
+        
+        input[type="checkbox"] { 
+            transform: scale(1.3); 
+            margin: 0;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        input[type="text"], 
+        input[type="date"] { 
+            width: 100%; 
+            padding: 6px 4px; 
+            border: 1px solid #ddd; 
+            font-size: 13px; 
+            border-radius: 4px;
+            background: white;
+        }
+        
+        textarea { 
+            width: 100%; 
+            padding: 6px 4px; 
+            border: 1px solid #ddd; 
+            font-size: 13px; 
+            border-radius: 4px;
+            min-height: 50px; 
+            resize: vertical; 
+            background: white;
+            line-height: 1.4;
+        }
+        
+        /* Specific input sizing for narrow columns */
+        td:nth-child(3) input,
+        td:nth-child(4) input,
+        td:nth-child(5) input,
+        td:nth-child(6) input {
+            font-size: 12px;
+            padding: 4px 3px;
+        }
+        
+        .btn { 
+            background: #0D417E; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+        .btn:hover { 
+            background: #083464; 
+        }
+        .auto-save-indicator { 
+            color: #0D417E; 
+            font-size: 12px; 
+            margin-left: 10px; 
+        }
+        .sub-task { 
+            background-color: #f8f9fa; 
+            font-size: 0.9em; 
+        }
+        .sub-task td { 
+            padding-left: 20px;
+        }
+        /* Ensure sub-task checkboxes remain centered */
+        .sub-task td:first-child {
+            padding-left: 8px;
+            text-align: center;
+        }
+        
+        .folder-path {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .filter-controls { 
+            background: white; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .filter-group { 
+            display: inline-block; 
+            margin-right: 20px; 
+            vertical-align: top;
+        }
+        .filter-group label { 
+            font-weight: bold; 
+            margin-right: 5px; 
+            display: inline-block;
+            min-width: 50px;
+            color: #313131;
+        }
+        .filter-group select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .alerts { 
+            background: #fff; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .alert { 
+            padding: 10px; 
+            margin: 5px 0; 
+            border-radius: 5px; 
+        }
+        .alert-danger { 
+            background: #f8d7da; 
+            border-left: 4px solid #dc3545; 
+        }
+        .alert-warning { 
+            background: #fff3cd; 
+            border-left: 4px solid #ffc107; 
+        }
+        .hide { 
+            display: none; 
+        }
+        .controls { 
+            text-align: center; 
+            margin: 20px 0; 
+        }
+        .folder-path {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .status-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filter-group {
+                display: block;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .controls {
+                text-align: left;
+            }
+            
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            /* Mobile column widths - maintain checkbox alignment */
+            th:nth-child(1), td:nth-child(1) { 
+                width: 50px; 
+                text-align: center;
+                vertical-align: middle;
+            }
+            th:nth-child(2), td:nth-child(2) { width: 250px; }
+            th:nth-child(3), td:nth-child(3) { width: 100px; }
+            th:nth-child(4), td:nth-child(4) { width: 90px; }
+            th:nth-child(5), td:nth-child(5) { width: 90px; }
+            th:nth-child(6), td:nth-child(6) { width: 100px; }
+        }
+        
+        /* Print styles */
+        @media print {
+            .controls, .filter-controls, .alerts {
+                display: none;
+            }
+            
+            .header {
+                background: #0D417E !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            input, textarea {
+                border: none;
+                background: transparent;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AV Installation Project Tracker</h1>
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center; margin-top: 15px; flex-wrap: wrap;">
+            <input type="text" id="projectName" placeholder="Enter project name" style="padding: 8px; font-size: 16px; min-width: 200px;">
+            <input type="text" id="projectManager" placeholder="Enter project manager" style="padding: 8px; font-size: 16px; min-width: 200px;">
+            <span class="auto-save-indicator" id="autoSaveIndicator">Auto-saved</span>
+        </div>
+    </div>
+
+    <div class="alerts" id="alertsContainer">
+        <!-- Dynamic alerts will appear here -->
+    </div>
+
+    <div class="status-dashboard">
+        <div class="status-card">
+            <div class="status-number" id="overallPercent">0%</div>
+            <div class="status-label">Overall Progress</div>
+        </div>
+        <div class="status-card">
+            <div class="status-number" id="phase1Percent">0%</div>
+            <div class="status-label">Pre-Installation Logistics</div>
+        </div>
+        <div class="status-card">
+            <div class="status-number" id="phase2Percent">0%</div>
+            <div class="status-label">Pre-Installation AV Setup</div>
+        </div>
+        <div class="status-card">
+            <div class="status-number" id="phase3Percent">0%</div>
+            <div class="status-label">Installation & Commissioning</div>
+        </div>
+        <div class="status-card">
+            <div class="status-number" id="phase4Percent">0%</div>
+            <div class="status-label">Post-Installation Commissioning</div>
+        </div>
+        <div class="status-card">
+            <div class="status-number" id="phase5Percent">0%</div>
+            <div class="status-label">Post-Installation Logistics</div>
+        </div>
+    </div>
+
+    <div class="filter-controls">
+        <div class="filter-group">
+            <label>View:</label>
+            <select id="viewFilter">
+                <option value="all">All Tasks</option>
+                <option value="incomplete">Incomplete Only</option>
+                <option value="complete">Complete Only</option>
+                <option value="overdue">Overdue</option>
+                <option value="due-soon">Due This Week</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Phase:</label>
+            <select id="phaseFilter">
+                <option value="all">All Phases</option>
+                <option value="1">Phase 1</option>
+                <option value="2">Phase 2</option>
+                <option value="3">Phase 3</option>
+                <option value="4">Phase 4</option>
+                <option value="5">Phase 5</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="exportToExcel()">Export to Excel</button>
+        <button class="btn" onclick="saveProject()">Save Project</button>
+        <button class="btn" onclick="addCustomTask()">Add Custom Task</button>
+    </div>
+
+    <div class="table-container">
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>Done</th>
+                    <th>Task</th>
+                    <th>Assigned To</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Complete Date</th>
+                    <th>Notes/Artifacts</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Phase 1: Pre-Installation – Logistics -->
+                <tr class="phase-row">
+                    <td colspan="7"><strong>PHASE 1: PRE-INSTALLATION – LOGISTICS</strong></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Create Project Folder in Egnyte</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Z:\Shared\It Unified Communications\AV\! Current Buildouts - create default project tracker and place/save any/all working docs into this folder"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Create SNOW Ticket for Project</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW ticket number (if not already created)"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Initial Project Information Gathered</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="What info needs to be gathered, where to get it, how to determine contacts - reference doc for requirements"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>RACI Gathered to Determine Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="RACI matrix with stakeholder roles and responsibilities"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Kick-off Meeting</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Meeting scheduled with list of deliverables and actions taken during meeting"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Review Project Requirements and Submit Write-up to Stakeholder</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Requirements document prepared and submitted to stakeholders"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Create Business Case and Submit to Stakeholders for Business Line Approval</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Business case document with contacts based on RACI"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Request Vendor Quote</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Initial vendor quote requested"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Review/Revise Quote with Vendor</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Quote reviewed and revised with vendor"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Review/Revise Quote with Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Quote reviewed and revised with stakeholders"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Submit Finalized Quote to Stakeholders for Business Line Approval</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Final quote submitted for approval"></textarea></td>
+                </tr>
+                
+                <tr class="snow-request">
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Create SNOW Request for PO</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW request created - attach exec summary, quote, and email approval"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Verify PO Receipt by Vendor</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="PO receipt confirmed and saved in project folder: Z:\Shared\It Unified Communications\AV\! Current Buildouts\projectname"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Verify All Hardware Has Shipped to AV Vendor</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Hardware shipment confirmed"></textarea></td>
+                </tr>
+                
+                <tr class="sub-task">
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Provide Projected Arrival Date in Tracker</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Projected arrival date updated in project tracker"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Request Hardware MAC and Serial Numbers from AV Vendor</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="MAC and serial numbers requested from vendor"></textarea></td>
+                </tr>
+                
+                <tr class="sub-task">
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Record in MAC and Serial Numbers Doc in Project Folder</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="MAC/Serial numbers recorded in: Z:\Shared\It Unified Communications\AV\! Current Buildouts\projectname"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Verify Furniture Installation Date with CRE/Facilities</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Furniture installation date confirmed with CRE/Facilities"></textarea></td>
+                </tr>
+                
+                <tr class="sub-task">
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Provide Relevant Dates in Project Plan - Ensure Low Voltage Install Happens Before Furniture Install</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Project plan updated with sequenced dates - low voltage before furniture"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Ensure with CRE that Furniture is Customized for AV - Cubbies</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="CRE confirmation that furniture includes AV cubbies and customizations"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="1"></td>
+                    <td>Verify Installation Dates with Site Contact, AV Vendor and RACI Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Installation dates confirmed with all parties - site contact, vendor, stakeholders"></textarea></td>
+                </tr>
+                
+                <!-- Phase 2: Pre-Installation - AV Setup -->
+                <tr class="phase-row">
+                    <td colspan="7"><strong>PHASE 2: PRE-INSTALLATION - AV SETUP</strong></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>Verify Space Name with Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Space name confirmed with stakeholders"></textarea></td>
+                </tr>
+                
+                <tr class="snow-request">
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>SNOW Request to Create/Edit Room in AD/Entra with Calendar</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW request for AD/Entra room creation with calendar functionality"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>Verify Calendar Ownership with Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Calendar ownership confirmed with stakeholders"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>Verify Site Has AV VLAN Setup/Connected</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="AV VLAN setup confirmed at site"></textarea></td>
+                </tr>
+                
+                <tr class="snow-request sub-task">
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>SNOW Request: Assign IP to Hardware MACs and Put on AV VLAN (ISE)</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW request completed - IPs assigned to hardware MACs on AV VLAN via ISE by networking team"></textarea></td>
+                </tr>
+                
+                <tr class="snow-request sub-task">
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>Once IP Received - SNOW Request: Assign IP to Firewall Policy Group</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW request completed - IP assigned to firewall policy group"></textarea></td>
+                </tr>
+                
+                <tr class="snow-request sub-task">
+                    <td><input type="checkbox" data-phase="2"></td>
+                    <td>If a Teams Room - SNOW Request: Assign to PAM for MTR Account and Correct OU</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SNOW request completed - assigned to PAM for Microsoft Teams Room account and correct OU"></textarea></td>
+                </tr>
+                
+                <!-- Phase 3: Installation and Commissioning -->
+                <tr class="phase-row">
+                    <td colspan="7"><strong>PHASE 3: INSTALLATION AND COMMISSIONING</strong></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>AV Vendor Delivery and Installation of Hardware</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Hardware delivery and installation - requested, scheduled, complete"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>AV Vendor Room Configuration and Commissioning</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Room configuration and commissioning - requested, scheduled, complete"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Testing and Verification of AV Systems Prior to Vendor Departure</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="AV system testing and verification - requested, scheduled, complete"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Ensure AV Vendor Labels Cables and Leaves Documentation</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Cable labeling and documentation - verified or requested"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Signoff on Installation</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Installation signed off by tech onsite during the install"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Testing and Verification of System Integration and Device Login</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="System integration testing - verification steps based on type of systems installed"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Installation of Necessary Monitoring Software</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Monitoring software installed - Crowdstrike, Splunk, etc."></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>Update NOC with New Devices to be Monitored in Solarwinds</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="NOC updated with new devices for Solarwinds monitoring"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="3"></td>
+                    <td>AV Signoff on Commissioning</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="AV team signoff on commissioning complete"></textarea></td>
+                </tr>
+                
+                <!-- Phase 4: Post-Installation Commissioning -->
+                <tr class="phase-row">
+                    <td colspan="7"><strong>PHASE 4: POST-INSTALLATION COMMISSIONING</strong></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Create Room System Instructions</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Room system instructions created for end users"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Label Room Systems, Cabling, and Furniture</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="All room systems, cables, and furniture properly labeled"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Schedule Training with Stakeholders</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Training session scheduled with stakeholders"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Provide Training (On-site or Remote)</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Training provided to stakeholders - specify on-site or remote"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Share Instructions with Stakeholders and Leave in Conference Room</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Instructions shared with stakeholders and physical copy left in room"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="4"></td>
+                    <td>Sign Off on Room Installation</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Final sign off on room installation completed"></textarea></td>
+                </tr>
+                
+                <!-- Phase 5: Post-Installation Logistics -->
+                <tr class="phase-row">
+                    <td colspan="7"><strong>PHASE 5: POST-INSTALLATION LOGISTICS</strong></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="5"></td>
+                    <td>Review and Approve Invoices for Payment</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Vendor invoices reviewed and approved for payment"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="5"></td>
+                    <td>Enter AV Equipment into Inventory</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="All AV equipment entered into company inventory system"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="5"></td>
+                    <td>Ensure All Documentation is Saved in AV Project Folder in Egnyte</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="All project documentation saved in Egnyte AV project folder"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="5"></td>
+                    <td>Update Conference Room Documentation on SharePoint</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="SharePoint conference room documentation updated"></textarea></td>
+                </tr>
+                
+                <tr>
+                    <td><input type="checkbox" data-phase="5"></td>
+                    <td>Add Space to Room Health Website (if in Rosemont)</td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Space added to Room Health Website (Rosemont locations only)"></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Global project data
+        let projectData = {
+            name: '',
+            manager: '',
+            tasks: []
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            setupEventListeners();
+            loadProjectData();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Auto-save on input changes
+            document.getElementById('projectName').addEventListener('input', autoSave);
+            document.getElementById('projectManager').addEventListener('input', autoSave);
+            
+            // Filter controls
+            document.getElementById('viewFilter').addEventListener('change', applyFilters);
+            document.getElementById('phaseFilter').addEventListener('change', applyFilters);
+            
+            // Checkbox changes
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateProgress();
+                    updateTaskRow(this);
+                    autoSave();
+                });
+            });
+
+            // Auto-save on all inputs
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                if (input.type !== 'checkbox') {
+                    input.addEventListener('input', autoSave);
+                }
+            });
+        }
+
+        // Update progress calculations
+        function updateProgress() {
+            const phases = [1, 2, 3, 4, 5];
+            let overallTotal = 0;
+            let overallCompleted = 0;
+
+            phases.forEach(phase => {
+                const phaseCheckboxes = document.querySelectorAll(`input[type="checkbox"][data-phase="${phase}"]`);
+                const completed = Array.from(phaseCheckboxes).filter(cb => cb.checked).length;
+                const total = phaseCheckboxes.length;
+                
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                document.getElementById(`phase${phase}Percent`).textContent = `${percentage}%`;
+                
+                overallTotal += total;
+                overallCompleted += completed;
+            });
+
+            const overallPercentage = overallTotal > 0 ? Math.round((overallCompleted / overallTotal) * 100) : 0;
+            document.getElementById('overallPercent').textContent = `${overallPercentage}%`;
+
+            // Update alerts
+            updateAlerts();
+        }
+
+        // Update task row styling based on completion
+        function updateTaskRow(checkbox) {
+            const row = checkbox.closest('tr');
+            if (checkbox.checked) {
+                row.classList.add('completed');
+                // Auto-fill completion date if not already filled
+                const completeDateInput = row.querySelector('td:nth-child(6) input[type="date"]');
+                if (completeDateInput && !completeDateInput.value) {
+                    completeDateInput.value = new Date().toISOString().split('T')[0];
+                }
+            } else {
+                row.classList.remove('completed');
+                // Clear completion date
+                const completeDateInput = row.querySelector('td:nth-child(6) input[type="date"]');
+                if (completeDateInput) {
+                    completeDateInput.value = '';
+                }
+            }
+        }
+
+        // Auto-save functionality
+        function autoSave() {
+            const indicator = document.getElementById('autoSaveIndicator');
+            indicator.textContent = 'Saving...';
+            
+            // Simulate save delay
+            setTimeout(() => {
+                saveProjectData();
+                indicator.textContent = 'Auto-saved';
+                setTimeout(() => {
+                    indicator.textContent = '';
+                }, 2000);
+            }, 500);
+        }
+
+        // Apply filters to the table
+        function applyFilters() {
+            const viewFilter = document.getElementById('viewFilter').value;
+            const phaseFilter = document.getElementById('phaseFilter').value;
+            const rows = document.querySelectorAll('#mainTable tbody tr');
+
+            rows.forEach(row => {
+                let showRow = true;
+
+                // Skip phase and section headers
+                if (row.classList.contains('phase-row') || row.classList.contains('section-row')) {
+                    return;
+                }
+
+                const checkbox = row.querySelector('input[type="checkbox"]');
+                if (!checkbox) return;
+
+                // View filter
+                if (viewFilter === 'incomplete' && checkbox.checked) {
+                    showRow = false;
+                } else if (viewFilter === 'complete' && !checkbox.checked) {
+                    showRow = false;
+                } else if (viewFilter === 'overdue') {
+                    const dueDate = row.querySelector('td:nth-child(5) input[type="date"]').value;
+                    const today = new Date().toISOString().split('T')[0];
+                    if (!dueDate || dueDate >= today || checkbox.checked) {
+                        showRow = false;
+                    }
+                } else if (viewFilter === 'due-soon') {
+                    const dueDate = row.querySelector('td:nth-child(5) input[type="date"]').value;
+                    const weekFromNow = new Date();
+                    weekFromNow.setDate(weekFromNow.getDate() + 7);
+                    const weekFromNowStr = weekFromNow.toISOString().split('T')[0];
+                    if (!dueDate || dueDate > weekFromNowStr || checkbox.checked) {
+                        showRow = false;
+                    }
+                }
+
+                // Phase filter
+                if (phaseFilter !== 'all') {
+                    const taskPhase = checkbox.getAttribute('data-phase');
+                    if (taskPhase !== phaseFilter) {
+                        showRow = false;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        // Update alerts based on current status
+        function updateAlerts() {
+            const alertsContainer = document.getElementById('alertsContainer');
+            const alerts = [];
+
+            // Check for overdue tasks
+            const rows = document.querySelectorAll('#mainTable tbody tr');
+            let overdueCount = 0;
+            let dueSoonCount = 0;
+            const today = new Date().toISOString().split('T')[0];
+            const weekFromNow = new Date();
+            weekFromNow.setDate(weekFromNow.getDate() + 7);
+            const weekFromNowStr = weekFromNow.toISOString().split('T')[0];
+
+            rows.forEach(row => {
+                const checkbox = row.querySelector('input[type="checkbox"]');
+                if (!checkbox || checkbox.checked) return;
+
+                const dueDate = row.querySelector('td:nth-child(5) input[type="date"]');
+                if (!dueDate || !dueDate.value) return;
+
+                if (dueDate.value < today) {
+                    overdueCount++;
+                    row.classList.add('overdue');
+                } else if (dueDate.value <= weekFromNowStr) {
+                    dueSoonCount++;
+                    row.classList.add('due-soon');
+                } else {
+                    row.classList.remove('overdue', 'due-soon');
+                }
+            });
+
+            if (overdueCount > 0) {
+                alerts.push(`<div class="alert alert-danger">⚠️ ${overdueCount} task(s) are overdue</div>`);
+            }
+            if (dueSoonCount > 0) {
+                alerts.push(`<div class="alert alert-warning">📅 ${dueSoonCount} task(s) due within a week</div>`);
+            }
+
+            alertsContainer.innerHTML = alerts.join('');
+        }
+
+        // Export to Excel with formatting
+        function exportToExcel() {
+            // Import SheetJS library dynamically
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            script.onload = function() {
+                createExcelExport();
+            };
+            document.head.appendChild(script);
+        }
+
+        function createExcelExport() {
+            const workbook = XLSX.utils.book_new();
+            const worksheetData = [];
+            
+            // Add project information
+            const projectName = document.getElementById('projectName').value || 'AV Installation Project';
+            const projectManager = document.getElementById('projectManager').value || '';
+            
+            worksheetData.push(['AV Installation Project Tracker']);
+            worksheetData.push(['Project Name:', projectName]);
+            worksheetData.push(['Project Manager:', projectManager]);
+            worksheetData.push(['Export Date:', new Date().toLocaleDateString()]);
+            worksheetData.push([]); // Empty row
+            
+            // Add column headers
+            worksheetData.push(['Done', 'Task', 'Assigned To', 'Start Date', 'Due Date', 'Complete Date', 'Notes/Artifacts']);
+            
+            // Process table rows
+            const rows = document.querySelectorAll('#mainTable tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                
+                // Handle phase headers
+                if (row.classList.contains('phase-row')) {
+                    const phaseText = cells[0].textContent.trim();
+                    worksheetData.push([phaseText, '', '', '', '', '', '']);
+                    return;
+                }
+                
+                // Handle regular task rows
+                if (cells.length >= 7) {
+                    const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                    const task = cells[1].textContent.trim();
+                    const assignedTo = cells[2].querySelector('input') ? cells[2].querySelector('input').value : '';
+                    const startDate = cells[3].querySelector('input') ? cells[3].querySelector('input').value : '';
+                    const dueDate = cells[4].querySelector('input') ? cells[4].querySelector('input').value : '';
+                    const completeDate = cells[5].querySelector('input') ? cells[5].querySelector('input').value : '';
+                    const notes = cells[6].querySelector('textarea') ? cells[6].querySelector('textarea').value : '';
+                    
+                    // Add indentation for sub-tasks
+                    let taskName = task;
+                    if (row.classList.contains('sub-task')) {
+                        taskName = '    ' + task; // Add indentation
+                    }
+                    
+                    worksheetData.push([
+                        checkbox ? (checkbox.checked ? 'Yes' : 'No') : 'No',
+                        taskName,
+                        assignedTo,
+                        startDate,
+                        dueDate,
+                        completeDate,
+                        notes
+                    ]);
+                }
+            });
+            
+            // Create worksheet
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            
+            // Set column widths
+            worksheet['!cols'] = [
+                { width: 8 },  // Done
+                { width: 50 }, // Task
+                { width: 15 }, // Assigned To
+                { width: 12 }, // Start Date
+                { width: 12 }, // Due Date
+                { width: 12 }, // Complete Date
+                { width: 40 }  // Notes
+            ];
+            
+            // Apply formatting
+            const range = XLSX.utils.decode_range(worksheet['!ref']);
+            
+            // Style header rows and phase rows
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                    const cell = worksheet[cellAddress];
+                    
+                    if (!cell) continue;
+                    
+                    // Initialize cell style
+                    if (!cell.s) cell.s = {};
+                    
+                    // Title row
+                    if (R === 0) {
+                        cell.s.font = { bold: true, size: 16 };
+                        cell.s.alignment = { horizontal: 'center' };
+                    }
+                    
+                    // Project info rows
+                    if (R >= 1 && R <= 3) {
+                        if (C === 0) cell.s.font = { bold: true };
+                    }
+                    
+                    // Column headers
+                    if (R === 5) {
+                        cell.s.font = { bold: true, color: { rgb: 'FFFFFF' } };
+                        cell.s.fill = { fgColor: { rgb: '313131' } };
+                        cell.s.alignment = { horizontal: 'center' };
+                    }
+                    
+                    // Phase headers (detect by content starting with "PHASE")
+                    if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('PHASE')) {
+                        cell.s.font = { bold: true, color: { rgb: 'FFFFFF' } };
+                        cell.s.fill = { fgColor: { rgb: '0D417E' } };
+                        cell.s.alignment = { horizontal: 'left' };
+                    }
+                    
+                    // Sub-tasks (detect by leading spaces)
+                    if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('    ') && C === 1) {
+                        cell.s.font = { italic: true };
+                    }
+                }
+            }
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'AV Project Tracker');
+            
+            // Generate filename with date
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + 
+                          String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                          String(now.getDate()).padStart(2, '0');
+            const filename = `AV_Project_Tracker_${dateStr}.xlsx`;
+            
+            // Save file
+            XLSX.writeFile(workbook, filename);
+        }
+
+        // Save project data to memory
+        function saveProjectData() {
+            const data = {
+                projectName: document.getElementById('projectName').value,
+                projectManager: document.getElementById('projectManager').value,
+                tasks: []
+            };
+
+            const rows = document.querySelectorAll('#mainTable tbody tr');
+            rows.forEach((row, index) => {
+                if (row.classList.contains('phase-row') || row.classList.contains('section-row')) {
+                    return;
+                }
+
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 7) {
+                    const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                    const task = cells[1].textContent.trim();
+                    const assignedTo = cells[2].querySelector('input').value;
+                    const startDate = cells[3].querySelector('input').value;
+                    const dueDate = cells[4].querySelector('input').value;
+                    const completeDate = cells[5].querySelector('input').value;
+                    const notes = cells[6].querySelector('textarea').value;
+
+                    data.tasks.push({
+                        id: index,
+                        completed: checkbox ? checkbox.checked : false,
+                        task: task,
+                        assignedTo: assignedTo,
+                        startDate: startDate,
+                        dueDate: dueDate,
+                        completeDate: completeDate,
+                        notes: notes
+                    });
+                }
+            });
+
+            // Store in memory instead of localStorage
+            projectData = data;
+        }
+
+        // Load project data from memory
+        function loadProjectData() {
+            if (projectData && projectData.projectName) {
+                document.getElementById('projectName').value = projectData.projectName;
+                document.getElementById('projectManager').value = projectData.projectManager;
+
+                // Load task data
+                const rows = document.querySelectorAll('#mainTable tbody tr');
+                let taskIndex = 0;
+
+                rows.forEach(row => {
+                    if (row.classList.contains('phase-row') || row.classList.contains('section-row')) {
+                        return;
+                    }
+
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 7 && projectData.tasks[taskIndex]) {
+                        const taskData = projectData.tasks[taskIndex];
+                        
+                        const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                        if (checkbox) checkbox.checked = taskData.completed;
+                        
+                        cells[2].querySelector('input').value = taskData.assignedTo || '';
+                        cells[3].querySelector('input').value = taskData.startDate || '';
+                        cells[4].querySelector('input').value = taskData.dueDate || '';
+                        cells[5].querySelector('input').value = taskData.completeDate || '';
+                        cells[6].querySelector('textarea').value = taskData.notes || '';
+
+                        if (taskData.completed) {
+                            row.classList.add('completed');
+                        }
+
+                        taskIndex++;
+                    }
+                });
+
+                updateProgress();
+            }
+        }
+
+        // Save project
+        function saveProject() {
+            saveProjectData();
+            const dataStr = JSON.stringify(projectData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'av_project.json');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Add custom task
+        function addCustomTask() {
+            const phase = prompt('Which phase should this task belong to? (1-5)');
+            if (phase && phase >= 1 && phase <= 5) {
+                const taskName = prompt('Enter task name:');
+                if (taskName) {
+                    const tbody = document.querySelector('#mainTable tbody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td><input type="checkbox" data-phase="${phase}"></td>
+                        <td>${taskName}</td>
+                        <td><input type="text" placeholder="Assigned to"></td>
+                        <td><input type="date"></td>
+                        <td><input type="date"></td>
+                        <td><input type="date"></td>
+                        <td><textarea placeholder="Notes"></textarea></td>
+                    `;
+                    tbody.appendChild(newRow);
+                    
+                    // Setup event listeners for new row
+                    const checkbox = newRow.querySelector('input[type="checkbox"]');
+                    checkbox.addEventListener('change', function() {
+                        updateProgress();
+                        updateTaskRow(this);
+                        autoSave();
+                    });
+
+                    const inputs = newRow.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        if (input.type !== 'checkbox') {
+                            input.addEventListener('input', autoSave);
+                        }
+                    });
+
+                    updateProgress();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
