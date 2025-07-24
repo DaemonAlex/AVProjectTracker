@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Installation Project Tracker - Enhanced</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+            margin: 0; padding: 10px; background-color: #f0f2f5; color: #333; font-size: 14px;
+        }
+        .header { 
+            background: #2c3e50; color: #ecf0f1; padding: 15px; text-align: center; 
+            margin-bottom: 20px; border-radius: 8px;
+        }
+        .status-dashboard { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 15px; margin: 20px 0; 
+        }
+        .status-card { 
+            background: #fafbfc; padding: 20px; text-align: center; border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;
+        }
+        .status-number { font-size: 32px; font-weight: bold; color: #2c3e50; }
+        .status-label { font-size: 14px; color: #5a6c7d; margin-top: 5px; }
+
+```
+    .table-container {
+        overflow-x: auto; background: #fafbfc; border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+    th { 
+        background: #34495e; color: #ecf0f1; padding: 12px 8px; text-align: left; 
+        font-size: 14px; font-weight: bold;
+    }
+    td { padding: 8px; border-bottom: 1px solid #e1e8ed; vertical-align: middle; font-size: 14px; }
+    
+    /* Column widths */
+    th:nth-child(1), td:nth-child(1) { width: 60px; text-align: center; }
+    th:nth-child(2), td:nth-child(2) { width: 80px; text-align: center; }
+    th:nth-child(3), td:nth-child(3) { width: 300px; }
+    th:nth-child(4), td:nth-child(4) { width: 120px; }
+    th:nth-child(5), td:nth-child(5) { width: 100px; }
+    th:nth-child(6), td:nth-child(6) { width: 100px; }
+    th:nth-child(7), td:nth-child(7) { width: 100px; }
+    th:nth-child(8), td:nth-child(8) { width: auto; min-width: 200px; }
+    
+    /* Alternating rows */
+    tbody tr:nth-child(even) { background-color: #fafbfc; }
+    tbody tr:nth-child(odd) { background-color: #f0f2f5; }
+    
+    /* Phase headers */
+    .phase-row, .phase-row td { 
+        background: #2c3e50 !important; color: #ecf0f1 !important; font-weight: bold; 
+    }
+    
+    /* Task status colors */
+    tbody tr.completed { background-color: #d1f2d1 !important; }
+    tbody tr.overdue { background-color: #f8d7da !important; }
+    tbody tr.due-soon { background-color: #fff3cd !important; }
+    
+    /* Hierarchical styling */
+    .task-level-1 { font-weight: normal; }
+    .task-level-2 { font-size: 13px; opacity: 0.9; }
+    .task-level-2 td:nth-child(3) { padding-left: 30px; }
+    .task-level-3 td:nth-child(3) { padding-left: 50px; font-size: 12px; }
+    
+    /* Parent task indicators */
+    .parent-completion {
+        font-size: 11px; color: #5a6c7d; margin-left: 8px; font-weight: normal;
+    }
+    .expand-indicator {
+        cursor: pointer; margin-right: 8px; font-family: monospace; 
+        font-weight: bold; color: #5a6c7d; user-select: none;
+    }
+    .expand-indicator:hover { color: #2c3e50; }
+    .sub-task-hidden { display: none !important; }
+    
+    /* Form elements */
+    input[type="checkbox"] { 
+        transform: scale(1.4); margin: 0 auto; display: block; 
+        width: 18px; height: 18px; cursor: pointer;
+    }
+    input[type="text"], input[type="date"] { 
+        width: 100%; padding: 6px 4px; border: 1px solid #d1d9e0; 
+        font-size: 14px; border-radius: 4px; background: #fafbfc;
+    }
+    textarea { 
+        width: 100%; padding: 6px 4px; border: 1px solid #d1d9e0; 
+        font-size: 14px; border-radius: 4px; min-height: 50px; 
+        resize: vertical; background: #fafbfc;
+    }
+    
+    /* Buttons */
+    .btn { 
+        background: #2c3e50; color: #ecf0f1; border: none; padding: 12px 20px; 
+        margin: 5px; cursor: pointer; border-radius: 8px; font-size: 14px;
+    }
+    .btn:hover { background: #34495e; }
+    .btn-small { padding: 4px 8px; font-size: 11px; margin: 1px; border-radius: 4px; }
+    .btn-add { background: #27ae60; }
+    .btn-add:hover { background: #2ecc71; }
+    .btn-remove { background: #e74c3c; }
+    .btn-remove:hover { background: #c0392b; }
+    
+    /* Controls */
+    .filter-controls { 
+        background: #fafbfc; padding: 15px; margin-bottom: 20px; border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;
+    }
+    .filter-group { display: inline-block; margin-right: 20px; }
+    .filter-group label { font-weight: bold; margin-right: 5px; }
+    .filter-group select { 
+        padding: 6px 8px; border: 1px solid #d1d9e0; border-radius: 4px; 
+        font-size: 14px; background: #fafbfc;
+    }
+    .controls { text-align: center; margin: 20px 0; }
+    .auto-save-indicator { 
+        color: #5a6c7d; font-size: 12px; margin-left: 10px; font-style: italic;
+    }
+    .alerts { 
+        background: #fafbfc; padding: 15px; margin-bottom: 20px; border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;
+    }
+    .alert { padding: 10px; margin: 5px 0; border-radius: 5px; font-size: 14px; line-height: 1.4; }
+    .alert-danger { background: #f8d7da; border-left: 4px solid #dc3545; }
+    .alert-warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+</style>
+```
+
+</head>
+<body>
+    <div class="header">
+        <h1>AV Installation Project Tracker - Enhanced</h1>
+        <div style="display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 15px; flex-wrap: wrap;">
+            <input type="text" id="projectName" placeholder="Enter project name" style="padding: 8px; font-size: 16px; min-width: 200px;">
+            <input type="text" id="projectManager" placeholder="Enter project manager" style="padding: 8px; font-size: 16px; min-width: 200px;">
+            <span class="auto-save-indicator" id="autoSaveIndicator">Ready</span>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #ecf0f1;">
+            ✨ <strong>Enhanced:</strong> Click "+" to add sub-tasks with automatic progress roll-up
+        </div>
+    </div>
+
+```
+<div class="alerts" id="alertsContainer"></div>
+
+<div class="status-dashboard">
+    <div class="status-card">
+        <div class="status-number" id="overallPercent">0%</div>
+        <div class="status-label">Overall Progress</div>
+    </div>
+    <div class="status-card">
+        <div class="status-number" id="phase1Percent">0%</div>
+        <div class="status-label">Phase 1: Logistics</div>
+    </div>
+    <div class="status-card">
+        <div class="status-number" id="phase2Percent">0%</div>
+        <div class="status-label">Phase 2: AV Setup</div>
+    </div>
+    <div class="status-card">
+        <div class="status-number" id="phase3Percent">0%</div>
+        <div class="status-label">Phase 3: Installation</div>
+    </div>
+    <div class="status-card">
+        <div class="status-number" id="phase4Percent">0%</div>
+        <div class="status-label">Phase 4: Commissioning</div>
+    </div>
+    <div class="status-card">
+        <div class="status-number" id="phase5Percent">0%</div>
+        <div class="status-label">Phase 5: Closeout</div>
+    </div>
+</div>
+
+<div class="filter-controls">
+    <div class="filter-group">
+        <label>View:</label>
+        <select id="viewFilter">
+            <option value="all">All Tasks</option>
+            <option value="incomplete">Incomplete Only</option>
+            <option value="complete">Complete Only</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Phase:</label>
+        <select id="phaseFilter">
+            <option value="all">All Phases</option>
+            <option value="1">Phase 1</option>
+            <option value="2">Phase 2</option>
+            <option value="3">Phase 3</option>
+            <option value="4">Phase 4</option>
+            <option value="5">Phase 5</option>
+        </select>
+    </div>
+</div>
+
+<div class="controls">
+    <button class="btn" onclick="saveProject()">Save Project</button>
+    <button class="btn" onclick="loadProject()">Load Project</button>
+    <button class="btn" onclick="addCustomTask()">Add Custom Task</button>
+    <button class="btn" onclick="updateProgress()" style="background: #27ae60;">Refresh Progress</button>
+    <input type="file" id="projectFileInput" accept=".json" style="display: none;" onchange="handleFileLoad(event)">
+</div>
+
+<div class="table-container">
+    <table id="mainTable">
+        <thead>
+            <tr>
+                <th>Done</th>
+                <th>Actions</th>
+                <th>Task</th>
+                <th>Assigned To</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Complete Date</th>
+                <th>Notes/Artifacts</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Phase 1: Pre-Installation Logistics -->
+            <tr class="phase-row">
+                <td colspan="8"><strong>PHASE 1: PRE-INSTALLATION – LOGISTICS</strong></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1001" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1001"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1001')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1001')">▶</span>
+                    Create Project Folder in Egnyte
+                    <span class="parent-completion" id="completion-1001"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Z:\Shared\It Unified Communications\AV\! Current Buildouts"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1002" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1002"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1002')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1002')">▶</span>
+                    Create SNOW Ticket for Project
+                    <span class="parent-completion" id="completion-1002"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW ticket number"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1003" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1003"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1003')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1003')">▶</span>
+                    Initial Project Information Gathered
+                    <span class="parent-completion" id="completion-1003"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Requirements gathering documentation"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1004" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1004"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1004')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1004')">▶</span>
+                    RACI Gathered to Determine Stakeholders
+                    <span class="parent-completion" id="completion-1004"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="RACI matrix documentation"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1005" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1005"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1005')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1005')">▶</span>
+                    Kick-off Meeting
+                    <span class="parent-completion" id="completion-1005"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Meeting notes and action items"></textarea></td>
+            </tr>
+
+            <!-- Example with existing sub-task -->
+            <tr class="task-level-1" data-task-id="1014" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1014"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1014')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1014')" style="color: #2c3e50;">▼</span>
+                    Verify All Hardware Has Shipped to AV Vendor
+                    <span class="parent-completion" id="completion-1014"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Hardware shipment confirmation"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="1014" data-task-id="1014-1" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1014-1" data-parent-id="1014"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('1014-1')">×</button></td>
+                <td>Provide Projected Arrival Date in Tracker</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Arrival date projection"></textarea></td>
+            </tr>
+            
+            <!-- Add remaining Phase 1 tasks -->
+            <tr class="task-level-1" data-task-id="1006" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1006"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1006')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1006')">▶</span>
+                    Review Project Requirements and Submit Write-up to Stakeholder
+                    <span class="parent-completion" id="completion-1006"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Requirements document prepared and submitted to stakeholders"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1007" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1007"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1007')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1007')">▶</span>
+                    Create Business Case and Submit to Stakeholders for Business Line Approval
+                    <span class="parent-completion" id="completion-1007"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Business case document with contacts based on RACI"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1008" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1008"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1008')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1008')">▶</span>
+                    Request Vendor Quote
+                    <span class="parent-completion" id="completion-1008"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Initial vendor quote requested"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1009" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1009"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1009')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1009')">▶</span>
+                    Review/Revise Quote with Vendor
+                    <span class="parent-completion" id="completion-1009"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Quote reviewed and revised with vendor"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1010" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1010"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1010')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1010')">▶</span>
+                    Review/Revise Quote with Stakeholders
+                    <span class="parent-completion" id="completion-1010"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Quote reviewed and revised with stakeholders"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1011" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1011"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1011')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1011')">▶</span>
+                    Submit Finalized Quote to Stakeholders for Business Line Approval
+                    <span class="parent-completion" id="completion-1011"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Final quote submitted for approval"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1012" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1012"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1012')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1012')">▶</span>
+                    Create SNOW Request for PO
+                    <span class="parent-completion" id="completion-1012"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW request created - attach exec summary, quote, and email approval"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1013" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1013"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1013')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1013')">▶</span>
+                    Verify PO Receipt by Vendor
+                    <span class="parent-completion" id="completion-1013"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="PO receipt confirmed and saved in project folder"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1015" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1015"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1015')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1015')">▶</span>
+                    Request Hardware MAC and Serial Numbers from AV Vendor
+                    <span class="parent-completion" id="completion-1015"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="MAC and serial numbers requested from vendor"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="1015" data-task-id="1015-1" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1015-1" data-parent-id="1015"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('1015-1')">×</button></td>
+                <td>Record in MAC and Serial Numbers Doc in Project Folder</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="MAC/Serial numbers recorded in project folder"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1016" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1016"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1016')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1016')">▶</span>
+                    Verify Furniture Installation Date with CRE/Facilities
+                    <span class="parent-completion" id="completion-1016"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Furniture installation date confirmed with CRE/Facilities"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="1016" data-task-id="1016-1" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1016-1" data-parent-id="1016"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('1016-1')">×</button></td>
+                <td>Provide Relevant Dates in Project Plan - Ensure Low Voltage Install Happens Before Furniture Install</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Project plan updated with sequenced dates"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1017" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1017"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1017')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1017')">▶</span>
+                    Ensure with CRE that Furniture is Customized for AV - Cubbies
+                    <span class="parent-completion" id="completion-1017"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="CRE confirmation that furniture includes AV cubbies and customizations"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="1018" data-phase="1">
+                <td><input type="checkbox" data-phase="1" data-task-id="1018"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('1018')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('1018')">▶</span>
+                    Verify Installation Dates with Site Contact, AV Vendor and RACI Stakeholders
+                    <span class="parent-completion" id="completion-1018"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Installation dates confirmed with all parties"></textarea></td>
+            </tr>
+
+            <!-- Phase 2: Pre-Installation - AV Setup -->
+            <tr class="phase-row">
+                <td colspan="8"><strong>PHASE 2: PRE-INSTALLATION - AV SETUP</strong></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="2001" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2001"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('2001')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('2001')">▶</span>
+                    Verify Space Name with Stakeholders
+                    <span class="parent-completion" id="completion-2001"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Space name confirmed with stakeholders"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="2002" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2002"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('2002')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('2002')">▶</span>
+                    SNOW Request to Create/Edit Room in AD/Entra with Calendar
+                    <span class="parent-completion" id="completion-2002"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW request for AD/Entra room creation with calendar functionality"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="2003" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2003"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('2003')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('2003')">▶</span>
+                    Verify Calendar Ownership with Stakeholders
+                    <span class="parent-completion" id="completion-2003"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Calendar ownership confirmed with stakeholders"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="2004" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2004"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('2004')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('2004')">▶</span>
+                    Verify Site Has AV VLAN Setup/Connected
+                    <span class="parent-completion" id="completion-2004"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="AV VLAN setup confirmed at site"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="2004" data-task-id="2004-1" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2004-1" data-parent-id="2004"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('2004-1')">×</button></td>
+                <td>SNOW Request: Assign IP to Hardware MACs and Put on AV VLAN (ISE)</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW request completed - IPs assigned to hardware MACs on AV VLAN via ISE"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="2004" data-task-id="2004-2" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2004-2" data-parent-id="2004"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('2004-2')">×</button></td>
+                <td>Once IP Received - SNOW Request: Assign IP to Firewall Policy Group</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW request completed - IP assigned to firewall policy group"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-2" data-parent-id="2004" data-task-id="2004-3" data-phase="2">
+                <td><input type="checkbox" data-phase="2" data-task-id="2004-3" data-parent-id="2004"></td>
+                <td><button class="btn btn-small btn-remove" onclick="removeTask('2004-3')">×</button></td>
+                <td>If a Teams Room - SNOW Request: Assign to PAM for MTR Account and Correct OU</td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SNOW request completed - assigned to PAM for Microsoft Teams Room account"></textarea></td>
+            </tr>
+            
+            <!-- Phase 3: Installation and Commissioning -->
+            <tr class="phase-row">
+                <td colspan="8"><strong>PHASE 3: INSTALLATION AND COMMISSIONING</strong></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3001" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3001"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3001')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3001')">▶</span>
+                    AV Vendor Delivery and Installation of Hardware
+                    <span class="parent-completion" id="completion-3001"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Hardware delivery and installation - requested, scheduled, complete"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3002" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3002"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3002')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3002')">▶</span>
+                    AV Vendor Room Configuration and Commissioning
+                    <span class="parent-completion" id="completion-3002"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Room configuration and commissioning - requested, scheduled, complete"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3003" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3003"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3003')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3003')">▶</span>
+                    Testing and Verification of AV Systems Prior to Vendor Departure
+                    <span class="parent-completion" id="completion-3003"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="AV system testing and verification - requested, scheduled, complete"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3004" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3004"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3004')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3004')">▶</span>
+                    Ensure AV Vendor Labels Cables and Leaves Documentation
+                    <span class="parent-completion" id="completion-3004"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Cable labeling and documentation - verified or requested"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3005" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3005"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3005')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3005')">▶</span>
+                    Signoff on Installation
+                    <span class="parent-completion" id="completion-3005"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Installation signed off by tech onsite during the install"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3006" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3006"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3006')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3006')">▶</span>
+                    Testing and Verification of System Integration and Device Login
+                    <span class="parent-completion" id="completion-3006"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="System integration testing - verification steps based on type of systems installed"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3007" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3007"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3007')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3007')">▶</span>
+                    Installation of Necessary Monitoring Software
+                    <span class="parent-completion" id="completion-3007"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Monitoring software installed - Crowdstrike, Splunk, etc."></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3008" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3008"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3008')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3008')">▶</span>
+                    Update NOC with New Devices to be Monitored in Solarwinds
+                    <span class="parent-completion" id="completion-3008"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="NOC updated with new devices for Solarwinds monitoring"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="3009" data-phase="3">
+                <td><input type="checkbox" data-phase="3" data-task-id="3009"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('3009')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('3009')">▶</span>
+                    AV Signoff on Commissioning
+                    <span class="parent-completion" id="completion-3009"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="AV team signoff on commissioning complete"></textarea></td>
+            </tr>
+            
+            <!-- Phase 4: Post-Installation Commissioning -->
+            <tr class="phase-row">
+                <td colspan="8"><strong>PHASE 4: POST-INSTALLATION COMMISSIONING</strong></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4001" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4001"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4001')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4001')">▶</span>
+                    Create Room System Instructions
+                    <span class="parent-completion" id="completion-4001"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Room system instructions created for end users"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4002" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4002"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4002')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4002')">▶</span>
+                    Label Room Systems, Cabling, and Furniture
+                    <span class="parent-completion" id="completion-4002"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="All room systems, cables, and furniture properly labeled"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4003" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4003"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4003')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4003')">▶</span>
+                    Schedule Training with Stakeholders
+                    <span class="parent-completion" id="completion-4003"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Training session scheduled with stakeholders"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4004" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4004"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4004')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4004')">▶</span>
+                    Provide Training (On-site or Remote)
+                    <span class="parent-completion" id="completion-4004"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Training provided to stakeholders - specify on-site or remote"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4005" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4005"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4005')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4005')">▶</span>
+                    Share Instructions with Stakeholders and Leave in Conference Room
+                    <span class="parent-completion" id="completion-4005"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Instructions shared with stakeholders and physical copy left in room"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="4006" data-phase="4">
+                <td><input type="checkbox" data-phase="4" data-task-id="4006"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('4006')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('4006')">▶</span>
+                    Sign Off on Room Installation
+                    <span class="parent-completion" id="completion-4006"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Final sign off on room installation completed"></textarea></td>
+            </tr>
+            
+            <!-- Phase 5: Post-Installation Logistics -->
+            <tr class="phase-row">
+                <td colspan="8"><strong>PHASE 5: POST-INSTALLATION LOGISTICS</strong></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="5001" data-phase="5">
+                <td><input type="checkbox" data-phase="5" data-task-id="5001"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('5001')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('5001')">▶</span>
+                    Review and Approve Invoices for Payment
+                    <span class="parent-completion" id="completion-5001"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Vendor invoices reviewed and approved for payment"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="5002" data-phase="5">
+                <td><input type="checkbox" data-phase="5" data-task-id="5002"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('5002')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('5002')">▶</span>
+                    Enter AV Equipment into Inventory
+                    <span class="parent-completion" id="completion-5002"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="All AV equipment entered into company inventory system"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="5003" data-phase="5">
+                <td><input type="checkbox" data-phase="5" data-task-id="5003"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('5003')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('5003')">▶</span>
+                    Ensure All Documentation is Saved in AV Project Folder in Egnyte
+                    <span class="parent-completion" id="completion-5003"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="All project documentation saved in Egnyte AV project folder"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="5004" data-phase="5">
+                <td><input type="checkbox" data-phase="5" data-task-id="5004"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('5004')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('5004')">▶</span>
+                    Update Conference Room Documentation on SharePoint
+                    <span class="parent-completion" id="completion-5004"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="SharePoint conference room documentation updated"></textarea></td>
+            </tr>
+            
+            <tr class="task-level-1" data-task-id="5005" data-phase="5">
+                <td><input type="checkbox" data-phase="5" data-task-id="5005"></td>
+                <td><button class="btn btn-small btn-add" onclick="addSubTask('5005')">+</button></td>
+                <td>
+                    <span class="expand-indicator" onclick="toggleSubTasks('5005')">▶</span>
+                    Add Space to Room Health Website (if in Rosemont)
+                    <span class="parent-completion" id="completion-5005"></span>
+                </td>
+                <td><input type="text" placeholder="Assigned to"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><input type="date"></td>
+                <td><textarea placeholder="Space added to Room Health Website (Rosemont locations only)"></textarea></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Global variables
+    let projectData = { name: '', manager: '', tasks: [] };
+    let taskHierarchy = {};
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Initializing Enhanced AV Tracker...');
+        setupEventListeners();
+        initializeTaskHierarchy();
+        updateProgress();
+        showWelcomeMessage();
+    });
+
+    // Show welcome message
+    function showWelcomeMessage() {
+        const alertsContainer = document.getElementById('alertsContainer');
+        alertsContainer.innerHTML = `
+            <div class="alert" style="background: #e7f3ff; border-left: 4px solid #007AFF;">
+                <strong>🎉 Enhanced AV Tracker Ready!</strong><br>
+                • Click "+" next to any task to add sub-tasks<br>
+                • Sub-task completion automatically rolls up to parent tasks and phases<br>
+                • Use ▶/▼ arrows to expand/collapse task groups
+            </div>
+        `;
+        setTimeout(() => { alertsContainer.innerHTML = ''; }, 8000);
+    }
+
+    // Initialize task hierarchy
+    function initializeTaskHierarchy() {
+        const rows = document.querySelectorAll('#mainTable tbody tr[data-task-id]');
+        
+        rows.forEach(row => {
+            const taskId = row.getAttribute('data-task-id');
+            const parentId = row.getAttribute('data-parent-id');
+            const phase = row.getAttribute('data-phase');
+            
+            taskHierarchy[taskId] = {
+                id: taskId,
+                parentId: parentId || null,
+                phase: phase,
+                children: [],
+                isExpanded: true
+            };
+            
+            // Build parent-child relationships
+            if (parentId) {
+                if (!taskHierarchy[parentId]) {
+                    taskHierarchy[parentId] = { children: [] };
+                }
+                if (!taskHierarchy[parentId].children.includes(taskId)) {
+                    taskHierarchy[parentId].children.push(taskId);
+                }
+            }
+        });
+        
+        // Update existing parent indicators
+        Object.keys(taskHierarchy).forEach(taskId => {
+            if (taskHierarchy[taskId].children && taskHierarchy[taskId].children.length > 0) {
+                const row = document.querySelector(`tr[data-task-id="${taskId}"]`);
+                if (row) {
+                    const indicator = row.querySelector('.expand-indicator');
+                    if (indicator) {
+                        indicator.style.color = '#2c3e50';
+                        indicator.textContent = '▼';
+                    }
+                }
+            }
+        });
+        
+        console.log('Task hierarchy initialized:', taskHierarchy);
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        document.getElementById('projectName').addEventListener('input', autoSave);
+        document.getElementById('projectManager').addEventListener('input', autoSave);
+        document.getElementById('viewFilter').addEventListener('change', applyFilters);
+        document.getElementById('phaseFilter').addEventListener('change', applyFilters);
+        
+        setupCheckboxListeners();
+        
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]), textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', autoSave);
+        });
+    }
+
+    // Setup checkbox listeners with hierarchical support
+    function setupCheckboxListeners() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function(e) {
+                const taskId = this.getAttribute('data-task-id');
+                const parentId = this.getAttribute('data-parent-id');
+                const isChecked = this.checked;
+                
+                // Update child tasks if this is a parent
+                if (taskHierarchy[taskId] && taskHierarchy[taskId].children && taskHierarchy[taskId].children.length > 0) {
+                    updateChildTasks(taskId, isChecked);
+                }
+                
+                // Update parent task if this is a child
+                if (parentId) {
+                    updateParentTask(parentId);
+                }
+                
+                updateProgress();
+                updateTaskRow(this);
+                autoSave();
+            });
+        });
+    }
+
+    // Update child tasks when parent is checked/unchecked
+    function updateChildTasks(parentId, isChecked) {
+        if (!taskHierarchy[parentId] || !taskHierarchy[parentId].children) return;
+        
+        const children = taskHierarchy[parentId].children;
+        children.forEach(childId => {
+            const childCheckbox = document.querySelector(`input[data-task-id="${childId}"]`);
+            if (childCheckbox) {
+                childCheckbox.checked = isChecked;
+                updateTaskRow(childCheckbox);
+                
+                // Recursively update grandchildren
+                if (taskHierarchy[childId] && taskHierarchy[childId].children && taskHierarchy[childId].children.length > 0) {
+                    updateChildTasks(childId, isChecked);
+                }
+            }
+        });
+    }
+
+    // Update parent task completion based on children
+    function updateParentTask(parentId) {
+        if (!taskHierarchy[parentId] || !taskHierarchy[parentId].children) return;
+        
+        const children = taskHierarchy[parentId].children;
+        if (children.length === 0) return;
+        
+        let completedChildren = 0;
+        
+        children.forEach(childId => {
+            const childCheckbox = document.querySelector(`input[data-task-id="${childId}"]`);
+            if (childCheckbox && childCheckbox.checked) {
+                completedChildren++;
+            }
+        });
+        
+        const parentCheckbox = document.querySelector(`input[data-task-id="${parentId}"]`);
+        const completionPercentage = Math.round((completedChildren / children.length) * 100);
+        
+        // Update parent checkbox state
+        if (parentCheckbox) {
+            if (completedChildren === children.length) {
+                parentCheckbox.checked = true;
+                parentCheckbox.indeterminate = false;
+            } else if (completedChildren > 0) {
+                parentCheckbox.checked = false;
+                parentCheckbox.indeterminate = true;
+            } else {
+                parentCheckbox.checked = false;
+                parentCheckbox.indeterminate = false;
+            }
+            updateTaskRow(parentCheckbox);
+        }
+        
+        // Update completion indicator
+        const completionIndicator = document.getElementById(`completion-${parentId}`);
+        if (completionIndicator) {
+            if (children.length > 0) {
+                completionIndicator.textContent = `(${completedChildren}/${children.length} - ${completionPercentage}%)`;
+                completionIndicator.style.display = 'inline';
+            } else {
+                completionIndicator.style.display = 'none';
+            }
+        }
+        
+        // Recursively update grandparent
+        if (taskHierarchy[parentId] && taskHierarchy[parentId].parentId) {
+            updateParentTask(taskHierarchy[parentId].parentId);
+        }
+    }
+
+    // Add sub-task to a parent task
+    function addSubTask(parentId) {
+        const taskName = prompt('Enter sub-task name:');
+        if (!taskName || !taskName.trim()) return;
+        
+        const parentRow = document.querySelector(`tr[data-task-id="${parentId}"]`);
+        if (!parentRow) return;
+        
+        const phase = parentRow.getAttribute('data-phase');
+        const newTaskId = `${parentId}-${Date.now()}`;
+        
+        // Create new sub-task row
+        const newRow = document.createElement('tr');
+        newRow.className = 'task-level-2';
+        newRow.setAttribute('data-parent-id', parentId);
+        newRow.setAttribute('data-task-id', newTaskId);
+        newRow.setAttribute('data-phase', phase);
+        
+        newRow.innerHTML = `
+            <td><input type="checkbox" data-phase="${phase}" data-task-id="${newTaskId}" data-parent-id="${parentId}"></td>
+            <td>
+                <button class="btn btn-small btn-add" onclick="addSubTask('${newTaskId}')">+</button>
+                <button class="btn btn-small btn-remove" onclick="removeTask('${newTaskId}')">×</button>
+            </td>
+            <td>${taskName.trim()}</td>
+            <td><input type="text" placeholder="Assigned to"></td>
+            <td><input type="date"></td>
+            <td><input type="date"></td>
+            <td><input type="date"></td>
+            <td><textarea placeholder="Sub-task notes"></textarea></td>
+        `;
+        
+        // Find insertion point
+        let insertAfter = parentRow;
+        if (taskHierarchy[parentId] && taskHierarchy[parentId].children && taskHierarchy[parentId].children.length > 0) {
+            const children = taskHierarchy[parentId].children;
+            const lastChildId = children[children.length - 1];
+            const lastChildRow = document.querySelector(`tr[data-task-id="${lastChildId}"]`);
+            if (lastChildRow) {
+                insertAfter = lastChildRow;
+            }
+        }
+        
+        // Insert the new row
+        insertAfter.parentNode.insertBefore(newRow, insertAfter.nextSibling);
+        
+        // Update hierarchy data
+        if (!taskHierarchy[parentId]) {
+            taskHierarchy[parentId] = { children: [], phase: phase, isExpanded: true };
+        }
+        if (!taskHierarchy[parentId].children) {
+            taskHierarchy[parentId].children = [];
+        }
+        taskHierarchy[parentId].children.push(newTaskId);
+        
+        taskHierarchy[newTaskId] = {
+            id: newTaskId,
+            parentId: parentId,
+            phase: phase,
+            children: [],
+            isExpanded: true
+        };
+        
+        // Make parent expandable
+        const parentExpandIndicator = parentRow.querySelector('.expand-indicator');
+        if (parentExpandIndicator) {
+            parentExpandIndicator.style.color = '#2c3e50';
+            parentExpandIndicator.textContent = '▼';
+        }
+        
+        // Setup event listeners for new elements
+        const newCheckbox = newRow.querySelector('input[type="checkbox"]');
+        newCheckbox.addEventListener('change', function(e) {
+            const taskId = this.getAttribute('data-task-id');
+            const parentId = this.getAttribute('data-parent-id');
+            
+            if (parentId) {
+                updateParentTask(parentId);
+            }
+            
+            updateProgress();
+            updateTaskRow(this);
+            autoSave();
+        });
+        
+        // Setup input listeners
+        const newInputs = newRow.querySelectorAll('input:not([type="checkbox"]), textarea');
+        newInputs.forEach(input => {
+            input.addEventListener('input', autoSave);
+        });
+        
+        // Update parent task completion
+        updateParentTask(parentId);
+        updateProgress();
+        autoSave();
+        
+        console.log(`Added sub-task ${newTaskId} to parent ${parentId}`);
+    }
+
+    // Remove a task and its children
+    function removeTask(taskId) {
+        if (!confirm('Remove this task and all its sub-tasks?')) return;
+        
+        const taskRow = document.querySelector(`tr[data-task-id="${taskId}"]`);
+        if (!taskRow) return;
+        
+        const parentId = taskRow.getAttribute('data-parent-id');
+        
+        // Remove all children recursively
+        if (taskHierarchy[taskId] && taskHierarchy[taskId].children) {
+            const children = [...taskHierarchy[taskId].children];
+            children.forEach(childId => {
+                removeTask(childId);
+            });
+        }
+        
+        // Remove from parent's children list
+        if (parentId && taskHierarchy[parentId] && taskHierarchy[parentId].children) {
+            const childIndex = taskHierarchy[parentId].children.indexOf(taskId);
+            if (childIndex > -1) {
+                taskHierarchy[parentId].children.splice(childIndex, 1);
+            }
+            
+            updateParentTask(parentId);
+            
+            // Hide expand indicator if no more children
+            if (taskHierarchy[parentId].children.length === 0) {
+                const parentRow = document.querySelector(`tr[data-task-id="${parentId}"]`);
+                const expandIndicator = parentRow?.querySelector('.expand-indicator');
+                if (expandIndicator) {
+                    expandIndicator.style.color = '#5a6c7d';
+                    expandIndicator.textContent = '▶';
+                }
+            }
+        }
+        
+        // Remove from hierarchy
+        delete taskHierarchy[taskId];
+        
+        // Remove DOM element
+        taskRow.remove();
+        
+        updateProgress();
+        autoSave();
+    }
+
+    // Toggle sub-task visibility
+    function toggleSubTasks(parentId) {
+        if (!taskHierarchy[parentId] || !taskHierarchy[parentId].children) return;
+        
+        const children = taskHierarchy[parentId].children;
+        const isExpanded = taskHierarchy[parentId].isExpanded;
+        const expandIndicator = document.querySelector(`tr[data-task-id="${parentId}"] .expand-indicator`);
+        
+        children.forEach(childId => {
+            const childRow = document.querySelector(`tr[data-task-id="${childId}"]`);
+            if (childRow) {
+                if (isExpanded) {
+                    childRow.classList.add('sub-task-hidden');
+                } else {
+                    childRow.classList.remove('sub-task-hidden');
+                }
+            }
+        });
+        
+        // Update expansion state
+        taskHierarchy[parentId].isExpanded = !isExpanded;
+        
+        // Update indicator
+        if (expandIndicator) {
+            if (taskHierarchy[parentId].isExpanded) {
+                expandIndicator.textContent = '▼';
+            } else {
+                expandIndicator.textContent = '▶';
+            }
+        }
+    }
+
+    // Enhanced progress calculation with hierarchy
+    function updateProgress() {
+        const phases = [1, 2, 3, 4, 5];
+        let overallTotal = 0;
+        let overallCompleted = 0;
+        
+        phases.forEach(phase => {
+            let phaseTotal = 0;
+            let phaseCompleted = 0;
+            
+            const phaseTasks = document.querySelectorAll(`input[type="checkbox"][data-phase="${phase}"]`);
+            
+            phaseTasks.forEach(checkbox => {
+                const taskId = checkbox.getAttribute('data-task-id');
+                const parentId = checkbox.getAttribute('data-parent-id');
+                
+                // Only count parent tasks or tasks without parents for phase totals
+                if (!parentId) {
+                    const taskWeight = calculateTaskWeight(taskId);
+                    phaseTotal += taskWeight;
+                    
+                    if (checkbox.checked || checkbox.indeterminate) {
+                        phaseCompleted += calculateTaskCompletion(taskId) * taskWeight;
+                    }
+                }
+            });
+            
+            const percentage = phaseTotal > 0 ? Math.round((phaseCompleted / phaseTotal) * 100) : 0;
+            const phaseElement = document.getElementById(`phase${phase}Percent`);
+            
+            if (phaseElement) {
+                phaseElement.textContent = `${percentage}%`;
+            }
+            
+            overallTotal += phaseTotal;
+            overallCompleted += phaseCompleted;
+        });
+
+        const overallPercentage = overallTotal > 0 ? Math.round((overallCompleted / overallTotal) * 100) : 0;
+        const overallElement = document.getElementById('overallPercent');
+        
+        if (overallElement) {
+            overallElement.textContent = `${overallPercentage}%`;
+        }
+    }
+
+    // Calculate the weight of a task (1 + number of children recursively)
+    function calculateTaskWeight(taskId) {
+        if (!taskHierarchy[taskId]) return 1;
+        
+        let weight = 1; // Base weight for the task itself
+        const children = taskHierarchy[taskId].children || [];
+        
+        children.forEach(childId => {
+            weight += calculateTaskWeight(childId);
+        });
+        
+        return weight;
+    }
+
+    // Calculate completion ratio for a task (considering its children)
+    function calculateTaskCompletion(taskId) {
+        const checkbox = document.querySelector(`input[data-task-id="${taskId}"]`);
+        if (!checkbox) return 0;
+        
+        if (!taskHierarchy[taskId] || !taskHierarchy[taskId].children || taskHierarchy[taskId].children.length === 0) {
+            return checkbox.checked ? 1 : 0;
+        }
+        
+        const children = taskHierarchy[taskId].children;
+        let childrenCompleted = 0;
+        
+        children.forEach(childId => {
+            childrenCompleted += calculateTaskCompletion(childId);
+        });
+        
+        return children.length > 0 ? childrenCompleted / children.length : 0;
+    }
+
+    // Update task row styling
+    function updateTaskRow(checkbox) {
+        const row = checkbox.closest('tr');
+        
+        if (checkbox.checked) {
+            row.classList.add('completed');
+            const completeDateInput = row.querySelector('td:nth-child(7) input[type="date"]');
+            if (completeDateInput && !completeDateInput.value) {
+                completeDateInput.value = new Date().toISOString().split('T')[0];
+            }
+        } else {
+            row.classList.remove('completed');
+            if (!checkbox.indeterminate) {
+                const completeDateInput = row.querySelector('td:nth-child(7) input[type="date"]');
+                if (completeDateInput) {
+                    completeDateInput.value = '';
+                }
+            }
+        }
+    }
+
+    // Auto-save functionality
+    function autoSave() {
+        const indicator = document.getElementById('autoSaveIndicator');
+        indicator.textContent = 'Saving...';
+        
+        setTimeout(() => {
+            saveProjectData();
+            indicator.textContent = 'Saved';
+            setTimeout(() => {
+                indicator.textContent = 'Ready';
+            }, 2000);
+        }, 300);
+    }
+
+    // Apply filters to the table
+    function applyFilters() {
+        const viewFilter = document.getElementById('viewFilter').value;
+        const phaseFilter = document.getElementById('phaseFilter').value;
+        const rows = document.querySelectorAll('#mainTable tbody tr');
+
+        rows.forEach(row => {
+            let showRow = true;
+
+            if (row.classList.contains('phase-row')) {
+                return;
+            }
+
+            const checkbox = row.querySelector('input[type="checkbox"]');
+            if (!checkbox) return;
+
+            // View filter
+            if (viewFilter === 'incomplete' && (checkbox.checked || checkbox.indeterminate)) {
+                showRow = false;
+            } else if (viewFilter === 'complete' && !checkbox.checked) {
+                showRow = false;
+            }
+
+            // Phase filter
+            if (phaseFilter !== 'all') {
+                const taskPhase = checkbox.getAttribute('data-phase');
+                if (taskPhase !== phaseFilter) {
+                    showRow = false;
+                }
+            }
+
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
+
+    // Save project
+    function saveProject() {
+        saveProjectData();
+        const dataStr = JSON.stringify(projectData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = generateFilename('json');
+        a.click();
+        
+        const indicator = document.getElementById('autoSaveIndicator');
+        indicator.textContent = 'Project Saved!';
+        setTimeout(() => { indicator.textContent = 'Ready'; }, 3000);
+    }
+
+    // Load project
+    function loadProject() {
+        document.getElementById('projectFileInput').click();
+    }
+
+    // Handle file load
+    function handleFileLoad(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const loadedData = JSON.parse(e.target.result);
+                projectData = loadedData;
+                
+                if (loadedData.taskHierarchy) {
+                    taskHierarchy = loadedData.taskHierarchy;
+                }
+                
+                loadProjectData();
+                
+                const indicator = document.getElementById('autoSaveIndicator');
+                indicator.textContent = '✅ Project Loaded!';
+                setTimeout(() => { indicator.textContent = 'Ready'; }, 3000);
+            } catch (error) {
+                alert('Error loading project file.');
+            }
+        };
+        
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    // Generate filename
+    function generateFilename(extension = 'json') {
+        const projectName = document.getElementById('projectName').value || 'AV_Project';
+        const now = new Date();
+        const cleanName = projectName.replace(/[^a-zA-Z0-9]/g, '_');
+        return `${cleanName}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}${now.getMinutes()}.${extension}`;
+    }
+
+    // Save project data to memory
+    function saveProjectData() {
+        const data = {
+            projectName: document.getElementById('projectName').value,
+            projectManager: document.getElementById('projectManager').value,
+            lastSaved: new Date().toISOString(),
+            version: '2.0-hierarchical',
+            taskHierarchy: taskHierarchy,
+            tasks: []
+        };
+
+        const rows = document.querySelectorAll('#mainTable tbody tr[data-task-id]');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 8) {
+                const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                const taskId = row.getAttribute('data-task-id');
+                const parentId = row.getAttribute('data-parent-id');
+                const phase = row.getAttribute('data-phase');
+                const task = cells[2].textContent.replace(/▶|▼/g, '').trim();
+                const assignedTo = cells[3].querySelector('input').value;
+                const startDate = cells[4].querySelector('input').value;
+                const dueDate = cells[5].querySelector('input').value;
+                const completeDate = cells[6].querySelector('input').value;
+                const notes = cells[7].querySelector('textarea').value;
+
+                data.tasks.push({
+                    id: taskId,
+                    parentId: parentId,
+                    phase: phase,
+                    completed: checkbox ? checkbox.checked : false,
+                    indeterminate: checkbox ? checkbox.indeterminate : false,
+                    task: task,
+                    assignedTo: assignedTo,
+                    startDate: startDate,
+                    dueDate: dueDate,
+                    completeDate: completeDate,
+                    notes: notes
+                });
+            }
+        });
+
+        projectData = data;
+    }
+
+    // Load project data
+    function loadProjectData() {
+        if (projectData && projectData.projectName) {
+            document.getElementById('projectName').value = projectData.projectName;
+            document.getElementById('projectManager').value = projectData.projectManager || '';
+
+            if (projectData.tasks) {
+                projectData.tasks.forEach(taskData => {
+                    const row = document.querySelector(`tr[data-task-id="${taskData.id}"]`);
+                    if (row) {
+                        const cells = row.querySelectorAll('td');
+                        
+                        const checkbox = cells[0].querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            checkbox.checked = taskData.completed || false;
+                            checkbox.indeterminate = taskData.indeterminate || false;
+                            updateTaskRow(checkbox);
+                        }
+                        
+                        if (cells[3].querySelector('input')) cells[3].querySelector('input').value = taskData.assignedTo || '';
+                        if (cells[4].querySelector('input')) cells[4].querySelector('input').value = taskData.startDate || '';
+                        if (cells[5].querySelector('input')) cells[5].querySelector('input').value = taskData.dueDate || '';
+                        if (cells[6].querySelector('input')) cells[6].querySelector('input').value = taskData.completeDate || '';
+                        if (cells[7].querySelector('textarea')) cells[7].querySelector('textarea').value = taskData.notes || '';
+                    }
+                });
+            }
+
+            // Update all parent task completions
+            Object.keys(taskHierarchy).forEach(taskId => {
+                if (taskHierarchy[taskId].children && taskHierarchy[taskId].children.length > 0) {
+                    updateParentTask(taskId);
+                }
+            });
+
+            updateProgress();
+        }
+    }
+
+    // Add custom task
+    function addCustomTask() {
+        const phase = prompt('Which phase should this task belong to? (1-5)');
+        if (phase && phase >= 1 && phase <= 5) {
+            const taskName = prompt('Enter task name:');
+            if (taskName) {
+                const tbody = document.querySelector('#mainTable tbody');
+                const newTaskId = `custom-${Date.now()}`;
+                
+                const newRow = document.createElement('tr');
+                newRow.className = 'task-level-1';
+                newRow.setAttribute('data-task-id', newTaskId);
+                newRow.setAttribute('data-phase', phase);
+                
+                newRow.innerHTML = `
+                    <td><input type="checkbox" data-phase="${phase}" data-task-id="${newTaskId}"></td>
+                    <td>
+                        <button class="btn btn-small btn-add" onclick="addSubTask('${newTaskId}')">+</button>
+                        <button class="btn btn-small btn-remove" onclick="removeTask('${newTaskId}')">×</button>
+                    </td>
+                    <td>
+                        <span class="expand-indicator" onclick="toggleSubTasks('${newTaskId}')">▶</span>
+                        ${taskName}
+                        <span class="parent-completion" id="completion-${newTaskId}"></span>
+                    </td>
+                    <td><input type="text" placeholder="Assigned to"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><input type="date"></td>
+                    <td><textarea placeholder="Notes"></textarea></td>
+                `;
+                tbody.appendChild(newRow);
+                
+                // Add to hierarchy
+                taskHierarchy[newTaskId] = {
+                    id: newTaskId,
+                    parentId: null,
+                    phase: phase,
+                    children: [],
+                    isExpanded: true
+                };
+                
+                // Setup event listeners
+                setupCheckboxListeners();
+                
+                const inputs = newRow.querySelectorAll('input:not([type="checkbox"]), textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('input', autoSave);
+                });
+
+                updateProgress();
+                autoSave();
+            }
+        }
+    }
+</script>
+```
+
+</body>
+</html>
