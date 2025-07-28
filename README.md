@@ -242,6 +242,7 @@ index.html
 1. **Data Not Saving**: Ensure browser allows local storage
 2. **Layout Issues**: Update to a modern browser version
 3. **Performance Problems**: Clear browser cache and reload
+4. **UI bugs** viewing subtasks is under redesign to better visualy show subtasks nested under thier parent task 
 
 ### **Browser Requirements**
 - JavaScript enabled
