@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AV Installation Project Tracker v5.2 - Enhanced Edition</title>
+    <title>AV Installation Project Tracker v5.3 - Enhanced Edition</title>
 
     <style>
         :root {
@@ -438,6 +438,10 @@
             min-height: 32px;
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-500), #dc2626);
+        }
+
         /* Enhanced Table */
         .table-section {
             background: white;
@@ -639,44 +643,134 @@
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2316a34a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
         }
 
-        /* Styled Health Select */
-        .health-select {
-            border: none;
-            border-radius: 1rem;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.688rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            background-position: right 0.25rem center;
-            background-repeat: no-repeat;
-            background-size: 0.75rem;
-            padding-right: 1.25rem;
-            appearance: none;
-            display: inline-flex;
+        /* NEW: Health Status Light Icons */
+        .health-light-container {
+            display: flex;
             align-items: center;
-            gap: 0.25rem;
+            justify-content: center;
+            position: relative;
             width: 100%;
         }
 
-        .health-select.health-green {
-            background-color: #f0fdf4;
-            color: #16a34a;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2316a34a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        .health-light {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .health-select.health-yellow {
-            background-color: #fffbeb;
-            color: #d97706;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d97706' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        .health-light::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
         }
 
-        .health-select.health-red {
-            background-color: #fef2f2;
-            color: #dc2626;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23dc2626' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        .health-light.green {
+            background: radial-gradient(circle, #22c55e 0%, #16a34a 70%);
+            box-shadow: 
+                0 0 10px rgba(34, 197, 94, 0.5),
+                inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
+        .health-light.yellow {
+            background: radial-gradient(circle, #f59e0b 0%, #d97706 70%);
+            box-shadow: 
+                0 0 10px rgba(245, 158, 11, 0.5),
+                inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            animation: pulseYellow 2s infinite;
+        }
+
+        .health-light.red {
+            background: radial-gradient(circle, #ef4444 0%, #dc2626 70%);
+            box-shadow: 
+                0 0 15px rgba(239, 68, 68, 0.7),
+                inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            animation: pulseRed 0.8s infinite;
+        }
+
+        @keyframes pulseYellow {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(0.95);
+                box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+            }
+        }
+
+        @keyframes pulseRed {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(0.9);
+                box-shadow: 0 0 25px rgba(239, 68, 68, 1);
+            }
+        }
+
+        .health-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            min-width: 120px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .health-dropdown.active {
+            display: block;
+        }
+
+        .health-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 150ms;
+        }
+
+        .health-option:hover {
+            background: var(--gray-50);
+        }
+
+        .health-option-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .health-option-light.green { background: #22c55e; }
+        .health-option-light.yellow { background: #f59e0b; }
+        .health-option-light.red { background: #ef4444; }
 
         .task-checkbox {
             width: 18px;
@@ -687,61 +781,35 @@
             accent-color: var(--primary-500);
         }
 
-        /* Enhanced task hierarchy and nesting */
+        /* Enhanced task hierarchy and nesting - FIXED VERSION */
         .task-row {
             position: relative;
             transition: all 150ms;
         }
 
-        /* Enhanced visual hierarchy */
+        /* Clean hierarchy with proper indentation */
         .task-row.subtask-level-1 {
-            background: linear-gradient(90deg, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.02) 100%);
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.04) 0%, rgba(14, 165, 233, 0.01) 100%);
         }
 
         .task-row.subtask-level-1 .task-name-cell {
             padding-left: 3rem;
-            position: relative;
-        }
-
-        .task-row.subtask-level-1 .task-name-cell::before {
-            content: "";
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            width: 1rem;
-            height: 1px;
-            background: var(--primary-500);
-            transform: translateY(-50%);
-        }
-
-        .task-row.subtask-level-1 .task-name-cell::after {
-            content: "";
-            position: absolute;
-            left: 1.5rem;
-            top: -1rem;
-            bottom: 50%;
-            width: 1px;
-            background: var(--primary-500);
         }
 
         .task-row.subtask-level-2 {
-            background: linear-gradient(90deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.04) 100%);
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.02) 100%);
         }
 
         .task-row.subtask-level-2 .task-name-cell {
-            padding-left: 4.5rem;
-            position: relative;
+            padding-left: 5rem;
         }
 
-        .task-row.subtask-level-2 .task-name-cell::before {
-            content: "";
-            position: absolute;
-            left: 3rem;
-            top: 50%;
-            width: 1rem;
-            height: 1px;
-            background: var(--primary-400);
-            transform: translateY(-50%);
+        .task-row.subtask-level-3 {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%);
+        }
+
+        .task-row.subtask-level-3 .task-name-cell {
+            padding-left: 7rem;
         }
 
         /* Parent task indicator with expand/collapse */
@@ -774,21 +842,73 @@
             border-color: var(--primary-400);
         }
 
-        .task-row.has-subtasks.collapsed + .subtask-level-1,
-        .task-row.has-subtasks.collapsed ~ .subtask-level-1 {
+        /* Hide subtasks when parent is collapsed */
+        .task-row.collapsed ~ .task-row[data-parent-id] {
             display: none;
         }
 
-        .task-row.has-subtasks.collapsed + .subtask-level-2,
-        .task-row.has-subtasks.collapsed ~ .subtask-level-2 {
-            display: none;
+        /* NEW: Delete button on hover */
+        .task-actions {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
+
+        .delete-task-btn {
+            opacity: 0;
+            transition: opacity 150ms;
+            background: var(--danger-500);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+
+        .task-row:hover .delete-task-btn {
+            opacity: 1;
+        }
+
+        .delete-task-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* Editable task name */
+        .editable-task-name {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: inherit;
+            font-weight: inherit;
+            width: 100%;
+            transition: all 150ms;
+        }
+
+        .editable-task-name:hover {
+            background: rgba(14, 165, 233, 0.05);
+            border-color: rgba(14, 165, 233, 0.2);
+        }
+
+        .editable-task-name:focus {
+            outline: none;
+            background: white;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
         }
 
         /* Optimized column widths */
         .enhanced-table th:nth-child(1),
         .enhanced-table td:nth-child(1) { width: 50px; } /* Done */
         .enhanced-table th:nth-child(2),
-        .enhanced-table td:nth-child(2) { width: 60px; } /* Actions */
+        .enhanced-table td:nth-child(2) { width: 80px; } /* Actions */
         .enhanced-table th:nth-child(3),
         .enhanced-table td:nth-child(3) { width: 280px; min-width: 280px; } /* Task */
         .enhanced-table th:nth-child(4),
@@ -798,7 +918,7 @@
         .enhanced-table th:nth-child(6),
         .enhanced-table td:nth-child(6) { width: 90px; } /* Status */
         .enhanced-table th:nth-child(7),
-        .enhanced-table td:nth-child(7) { width: 70px; } /* Health */
+        .enhanced-table td:nth-child(7) { width: 50px; } /* Health */
         .enhanced-table th:nth-child(8),
         .enhanced-table td:nth-child(8) { width: 90px; } /* Start */
         .enhanced-table th:nth-child(9),
@@ -874,7 +994,7 @@
                     <div>
                         <h1 class="app-title">
                             AV Installation Project Tracker
-                            <span class="version-badge">v5.2 Enhanced</span>
+                            <span class="version-badge">v5.3 Enhanced</span>
                         </h1>
                     </div>
                 </div>
@@ -1080,10 +1200,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Create Project Folder in Egnyte</span>
+                                <input type="text" class="editable-task-name" value="Create Project Folder in Egnyte">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1104,11 +1227,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1126,10 +1261,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Create SNOW Ticket for Project</span>
+                                <input type="text" class="editable-task-name" value="Create SNOW Ticket for Project">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1150,11 +1288,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1172,10 +1322,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Initial Project Information Gathered</span>
+                                <input type="text" class="editable-task-name" value="Initial Project Information Gathered">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1196,11 +1349,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1218,10 +1383,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>RACI Gathered to Determine Stakeholders</span>
+                                <input type="text" class="editable-task-name" value="RACI Gathered to Determine Stakeholders">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1242,11 +1410,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1264,10 +1444,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Kick-off Meeting</span>
+                                <input type="text" class="editable-task-name" value="Kick-off Meeting">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1288,11 +1471,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1310,10 +1505,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Review Project Requirements and Submit Write-up to Stakeholder</span>
+                                <input type="text" class="editable-task-name" value="Review Project Requirements and Submit Write-up to Stakeholder">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1334,11 +1532,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1356,10 +1566,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Create Business Case and Submit to Stakeholders for Business Line Approval</span>
+                                <input type="text" class="editable-task-name" value="Create Business Case and Submit to Stakeholders for Business Line Approval">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1380,11 +1593,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1402,10 +1627,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Request Vendor Quote</span>
+                                <input type="text" class="editable-task-name" value="Request Vendor Quote">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1426,11 +1654,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1448,10 +1688,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Review/Revise Quote with Vendor</span>
+                                <input type="text" class="editable-task-name" value="Review/Revise Quote with Vendor">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1472,11 +1715,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1494,10 +1749,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Review/Revise Quote with Stakeholders</span>
+                                <input type="text" class="editable-task-name" value="Review/Revise Quote with Stakeholders">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1518,11 +1776,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1540,10 +1810,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Submit Finalized Quote to Stakeholders for Business Line Approval</span>
+                                <input type="text" class="editable-task-name" value="Submit Finalized Quote to Stakeholders for Business Line Approval">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1564,11 +1837,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1586,10 +1871,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Create SNOW Request for PO</span>
+                                <input type="text" class="editable-task-name" value="Create SNOW Request for PO">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1610,11 +1898,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1632,10 +1932,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Verify PO Receipt by Vendor</span>
+                                <input type="text" class="editable-task-name" value="Verify PO Receipt by Vendor">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1656,11 +1959,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1678,11 +1993,14 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
                                 <button class="expand-collapse-btn" onclick="toggleTaskExpand(this)">▼</button>
-                                <span>Verify All Hardware Has Shipped to AV Vendor</span>
+                                <input type="text" class="editable-task-name" value="Verify All Hardware Has Shipped to AV Vendor">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1703,11 +2021,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1725,10 +2055,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="1">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Provide Projected Arrival Date in Tracker</span>
+                                <input type="text" class="editable-task-name" value="Provide Projected Arrival Date in Tracker">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -1749,11 +2082,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -1763,284 +2108,6 @@
                             </td>
                             <td>
                                 <textarea class="task-textarea" rows="3" placeholder="Projected arrival date updated in project tracker"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row has-subtasks" data-task-id="16">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <button class="expand-collapse-btn" onclick="toggleTaskExpand(this)">▼</button>
-                                <span>Request Hardware MAC and Serial Numbers from AV Vendor</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="MAC and serial numbers requested from vendor"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row subtask-level-1" data-task-id="17" data-parent-id="16">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Record in MAC and Serial Numbers Doc in Project Folder</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-medium" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="MAC/Serial numbers recorded in: Z:\Shared\It Unified Communications\AV\! Current Buildouts\projectname"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row has-subtasks" data-task-id="18">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <button class="expand-collapse-btn" onclick="toggleTaskExpand(this)">▼</button>
-                                <span>Verify Furniture Installation Date with CRE/Facilities</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Furniture installation date confirmed with CRE/Facilities"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row subtask-level-1" data-task-id="19" data-parent-id="18">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Provide Relevant Dates in Project Plan - Ensure Low Voltage Install Happens Before Furniture Install</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Project plan updated with sequenced dates - low voltage before furniture"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="20">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Ensure with CRE that Furniture is Customized for AV - Cubbies</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="CRE confirmation that furniture includes AV cubbies and customizations"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="21">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="1">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Verify Installation Dates with Site Contact, AV Vendor and RACI Stakeholders</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Installation dates confirmed with all parties - site contact, vendor, stakeholders"></textarea>
                             </td>
                         </tr>
 
@@ -2056,15 +2123,19 @@
                             </td>
                         </tr>
 
-                        <tr class="task-row" data-task-id="22">
+                        <tr class="task-row has-subtasks" data-task-id="16">
                             <td>
                                 <input type="checkbox" class="task-checkbox" data-phase="2">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Verify Space Name with Stakeholders</span>
+                                <button class="expand-collapse-btn" onclick="toggleTaskExpand(this)">▼</button>
+                                <input type="text" class="editable-task-name" value="Request Hardware MAC and Serial Numbers from AV Vendor">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2085,11 +2156,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2098,65 +2181,22 @@
                                 <input type="date" class="task-input" data-required="true">
                             </td>
                             <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Space name confirmed with stakeholders"></textarea>
+                                <textarea class="task-textarea" rows="3" placeholder="MAC and serial numbers requested from vendor"></textarea>
                             </td>
                         </tr>
 
-                        <tr class="task-row" data-task-id="23">
+                        <tr class="task-row subtask-level-1" data-task-id="17" data-parent-id="16">
                             <td>
                                 <input type="checkbox" class="task-checkbox" data-phase="2">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>SNOW Request to Create/Edit Room in AD/Entra with Calendar</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="SNOW request for AD/Entra room creation with calendar functionality"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="24">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="2">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Verify Calendar Ownership with Stakeholders</span>
+                                <input type="text" class="editable-task-name" value="Record in MAC and Serial Numbers Doc in Project Folder">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2177,11 +2217,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2190,112 +2242,23 @@
                                 <input type="date" class="task-input" data-required="true">
                             </td>
                             <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Calendar ownership confirmed with stakeholders"></textarea>
+                                <textarea class="task-textarea" rows="3" placeholder="MAC/Serial numbers recorded in: Z:\Shared\It Unified Communications\AV\! Current Buildouts\projectname"></textarea>
                             </td>
                         </tr>
 
-                        <tr class="task-row has-subtasks" data-task-id="25">
+                        <tr class="task-row has-subtasks" data-task-id="18">
                             <td>
                                 <input type="checkbox" class="task-checkbox" data-phase="2">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
                                 <button class="expand-collapse-btn" onclick="toggleTaskExpand(this)">▼</button>
-                                <span>Verify Site Has AV VLAN Setup/Connected</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="AV VLAN setup confirmed at site"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row subtask-level-1" data-task-id="26" data-parent-id="25">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="2">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>SNOW Request: Assign IP to Hardware MACs and Put on AV VLAN (ISE)</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="SNOW request completed - IPs assigned to hardware MACs on AV VLAN via ISE by networking team"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row subtask-level-1" data-task-id="27" data-parent-id="25">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="2">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Once IP Received - SNOW Request: Assign IP to Firewall Policy Group</span>
+                                <input type="text" class="editable-task-name" value="Verify Furniture Installation Date with CRE/Facilities">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2316,11 +2279,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2329,19 +2304,22 @@
                                 <input type="date" class="task-input" data-required="true">
                             </td>
                             <td>
-                                <textarea class="task-textarea" rows="3" placeholder="SNOW request completed - IP assigned to firewall policy group"></textarea>
+                                <textarea class="task-textarea" rows="3" placeholder="Furniture installation date confirmed with CRE/Facilities"></textarea>
                             </td>
                         </tr>
 
-                        <tr class="task-row subtask-level-1" data-task-id="28" data-parent-id="25">
+                        <tr class="task-row subtask-level-1" data-task-id="19" data-parent-id="18">
                             <td>
                                 <input type="checkbox" class="task-checkbox" data-phase="2">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>If a Teams Room - SNOW Request: Assign to PAM for MTR Account and Correct OU</span>
+                                <input type="text" class="editable-task-name" value="Provide Relevant Dates in Project Plan - Ensure Low Voltage Install Happens Before Furniture Install">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2362,20 +2340,215 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <textarea class="task-textarea" rows="3" placeholder="Project plan updated with sequenced dates - low voltage before furniture"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="task-row" data-task-id="20">
+                            <td>
+                                <input type="checkbox" class="task-checkbox" data-phase="2">
+                            </td>
+                            <td>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
+                            </td>
+                            <td class="task-name-cell">
+                                <input type="text" class="editable-task-name" value="Ensure with CRE that Furniture is Customized for AV - Cubbies">
+                            </td>
+                            <td>
+                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
+                            </td>
+                            <td>
+                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Med</option>
+                                    <option value="high" selected>High</option>
+                                    <option value="critical">Crit</option>
                                 </select>
                             </td>
                             <td>
-                                <input type="date" class="task-input" data-required="true">
+                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
+                                    <option value="not-started" selected>Not Started</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Complete</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
                             </td>
                             <td>
-                                <textarea class="task-textarea" rows="3" placeholder="SNOW request completed - assigned to PAM for Microsoft Teams Room account and correct OU"></textarea>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <textarea class="task-textarea" rows="3" placeholder="CRE confirmation that furniture includes AV cubbies and customizations"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="task-row" data-task-id="21">
+                            <td>
+                                <input type="checkbox" class="task-checkbox" data-phase="2">
+                            </td>
+                            <td>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
+                            </td>
+                            <td class="task-name-cell">
+                                <input type="text" class="editable-task-name" value="Verify Installation Dates with Site Contact, AV Vendor and RACI Stakeholders">
+                            </td>
+                            <td>
+                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
+                            </td>
+                            <td>
+                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Med</option>
+                                    <option value="high">High</option>
+                                    <option value="critical" selected>Crit</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
+                                    <option value="not-started" selected>Not Started</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Complete</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <textarea class="task-textarea" rows="3" placeholder="Installation dates confirmed with all parties - site contact, vendor, stakeholders"></textarea>
+                            </td>
+                        </tr>
+
+                        <tr class="task-row" data-task-id="22">
+                            <td>
+                                <input type="checkbox" class="task-checkbox" data-phase="2">
+                            </td>
+                            <td>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
+                            </td>
+                            <td class="task-name-cell">
+                                <input type="text" class="editable-task-name" value="Verify Space Name with Stakeholders">
+                            </td>
+                            <td>
+                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
+                            </td>
+                            <td>
+                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Med</option>
+                                    <option value="high" selected>High</option>
+                                    <option value="critical">Crit</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
+                                    <option value="not-started" selected>Not Started</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Complete</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <input type="date" class="task-input" data-required="true">
+                            </td>
+                            <td>
+                                <textarea class="task-textarea" rows="3" placeholder="Space name confirmed with stakeholders"></textarea>
                             </td>
                         </tr>
 
@@ -2396,10 +2569,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="3">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>AV Vendor Delivery and Installation of Hardware</span>
+                                <input type="text" class="editable-task-name" value="AV Vendor Delivery and Installation of Hardware">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2420,11 +2596,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2434,144 +2622,6 @@
                             </td>
                             <td>
                                 <textarea class="task-textarea" rows="3" placeholder="Hardware delivery and installation - requested, scheduled, complete"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="30">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="3">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>AV Vendor Room Configuration and Commissioning</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Room configuration and commissioning - requested, scheduled, complete"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="31">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="3">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Testing and Verification of AV Systems Prior to Vendor Departure</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="AV system testing and verification - requested, scheduled, complete"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="32">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="3">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Ensure AV Vendor Labels Cables and Leaves Documentation</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Cable labeling and documentation completed - stored in project folder"></textarea>
                             </td>
                         </tr>
 
@@ -2592,10 +2642,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="4">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Comprehensive System Testing</span>
+                                <input type="text" class="editable-task-name" value="Comprehensive System Testing">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2616,11 +2669,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2630,98 +2695,6 @@
                             </td>
                             <td>
                                 <textarea class="task-textarea" rows="3" placeholder="Full system functionality test - audio, video, controls, network connectivity"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="34">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="4">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>User Acceptance Testing (UAT)</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="End-user testing and acceptance sign-off with stakeholders"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="35">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="4">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Performance Optimization</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Fine-tuning of audio levels, video quality, and system response times"></textarea>
                             </td>
                         </tr>
 
@@ -2742,10 +2715,13 @@
                                 <input type="checkbox" class="task-checkbox" data-phase="5">
                             </td>
                             <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                <div class="task-actions">
+                                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                                    <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                                </div>
                             </td>
                             <td class="task-name-cell">
-                                <span>Documentation Handover</span>
+                                <input type="text" class="editable-task-name" value="Documentation Handover">
                             </td>
                             <td>
                                 <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -2766,11 +2742,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
+                                <div class="health-light-container">
+                                    <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                                    <div class="health-dropdown">
+                                        <div class="health-option" onclick="setHealth(this, 'green')">
+                                            <div class="health-option-light green"></div>
+                                            <span>Green</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                            <div class="health-option-light yellow"></div>
+                                            <span>Yellow</span>
+                                        </div>
+                                        <div class="health-option" onclick="setHealth(this, 'red')">
+                                            <div class="health-option-light red"></div>
+                                            <span>Red</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <input type="date" class="task-input" data-required="true">
@@ -2782,192 +2770,6 @@
                                 <textarea class="task-textarea" rows="3" placeholder="Complete documentation package delivered to stakeholders and filed in project folder"></textarea>
                             </td>
                         </tr>
-
-                        <tr class="task-row" data-task-id="37">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="5">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Training Delivery</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="End-user training sessions completed and recorded"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="38">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="5">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Asset Management Update</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-high" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high" selected>High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="All equipment registered in asset management system with serial numbers and locations"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="39">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="5">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Post-Implementation Review</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-medium" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical">Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Lessons learned documentation and project retrospective completed"></textarea>
-                            </td>
-                        </tr>
-
-                        <tr class="task-row" data-task-id="40">
-                            <td>
-                                <input type="checkbox" class="task-checkbox" data-phase="5">
-                            </td>
-                            <td>
-                                <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
-                            </td>
-                            <td class="task-name-cell">
-                                <span>Project Closure</span>
-                            </td>
-                            <td>
-                                <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
-                            </td>
-                            <td>
-                                <select class="priority-select priority-critical" onchange="updatePriorityClass(this)">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Med</option>
-                                    <option value="high">High</option>
-                                    <option value="critical" selected>Crit</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="status-select status-not-started" onchange="updateStatusClass(this)">
-                                    <option value="not-started" selected>Not Started</option>
-                                    <option value="in-progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class="health-select health-green" onchange="updateHealthClass(this)">
-                                    <option value="green" selected>Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <input type="date" class="task-input" data-required="true">
-                            </td>
-                            <td>
-                                <textarea class="task-textarea" rows="3" placeholder="Formal project closure with stakeholder sign-off and SNOW ticket closure"></textarea>
-                            </td>
-                        </tr>
-                        
-                    </tbody>
                         
                     </tbody>
                 </table>
@@ -2998,7 +2800,7 @@
         });
 
         function initializeApp() {
-            console.log('AV Project Tracker v5.2 Enhanced initialized');
+            console.log('AV Project Tracker v5.3 Enhanced initialized');
             
             // Load saved data if exists
             loadProjectData();
@@ -3008,6 +2810,15 @@
             
             // Initialize command palette
             initializeCommandPalette();
+
+            // Close health dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.health-light-container')) {
+                    document.querySelectorAll('.health-dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
         }
 
         function setDefaultDates() {
@@ -3083,8 +2894,86 @@
             calculateTeamVelocity();
         }
 
-        function updateHealthClass(select) {
-            select.className = `health-select health-${select.value}`;
+        // NEW: Health light functions
+        function toggleHealthDropdown(light) {
+            // Close all other dropdowns
+            document.querySelectorAll('.health-dropdown').forEach(dropdown => {
+                if (dropdown !== light.nextElementSibling) {
+                    dropdown.classList.remove('active');
+                }
+            });
+            
+            // Toggle this dropdown
+            const dropdown = light.nextElementSibling;
+            dropdown.classList.toggle('active');
+        }
+
+        function setHealth(option, health) {
+            const container = option.closest('.health-light-container');
+            const light = container.querySelector('.health-light');
+            const dropdown = container.querySelector('.health-dropdown');
+            
+            // Update light appearance
+            light.className = `health-light ${health}`;
+            light.setAttribute('data-health', health);
+            
+            // Close dropdown
+            dropdown.classList.remove('active');
+            
+            // Trigger save if enabled
+            if (silentSaveEnabled) {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    saveProject(true);
+                }, 1000);
+            }
+        }
+
+        // FIXED: Delete task function with child task checking
+        function deleteTask(button) {
+            const row = button.closest('tr');
+            const taskId = row.getAttribute('data-task-id');
+            
+            // Check if task has children
+            const hasChildren = document.querySelector(`tr[data-parent-id="${taskId}"]`) !== null;
+            
+            if (hasChildren) {
+                alert('Cannot delete this task because it has child tasks. Please delete all child tasks first.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this task?')) {
+                // Remove the task row
+                row.remove();
+                
+                // Update parent task if this was the last child
+                const parentId = row.getAttribute('data-parent-id');
+                if (parentId) {
+                    const remainingChildren = document.querySelectorAll(`tr[data-parent-id="${parentId}"]`);
+                    if (remainingChildren.length === 0) {
+                        // Remove parent's expand/collapse button and has-subtasks class
+                        const parentRow = document.querySelector(`tr[data-task-id="${parentId}"]`);
+                        if (parentRow) {
+                            parentRow.classList.remove('has-subtasks');
+                            const expandBtn = parentRow.querySelector('.expand-collapse-btn');
+                            if (expandBtn) expandBtn.remove();
+                        }
+                    }
+                }
+                
+                // Update progress and counts
+                updateAllProgress();
+                calculateTeamVelocity();
+                updateTaskCount();
+                
+                // Auto-save if enabled
+                if (silentSaveEnabled) {
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(() => {
+                        saveProject(true);
+                    }, 1000);
+                }
+            }
         }
 
         function updateAllProgress() {
@@ -3200,7 +3089,8 @@
                     const checkbox = row.querySelector('.task-checkbox');
                     const status = row.querySelector('.status-select')?.value;
                     const priority = row.querySelector('.priority-select')?.value;
-                    const health = row.querySelector('.health-select')?.value;
+                    const healthLight = row.querySelector('.health-light');
+                    const health = healthLight?.getAttribute('data-health');
                     const isComplete = checkbox?.checked;
                     
                     switch(viewFilter) {
@@ -3259,13 +3149,73 @@
 
         function toggleTaskExpand(button) {
             const parentRow = button.closest('tr');
-            parentRow.classList.toggle('collapsed');
-            button.textContent = parentRow.classList.contains('collapsed') ? '▶' : '▼';
+            const taskId = parentRow.getAttribute('data-task-id');
+            const isCollapsed = parentRow.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                // Expand
+                parentRow.classList.remove('collapsed');
+                button.textContent = '▼';
+                // Show all children
+                showChildren(taskId);
+            } else {
+                // Collapse
+                parentRow.classList.add('collapsed');
+                button.textContent = '▶';
+                // Hide all children
+                hideChildren(taskId);
+            }
+        }
+
+        function showChildren(parentId) {
+            document.querySelectorAll(`tr[data-parent-id="${parentId}"]`).forEach(child => {
+                child.style.display = '';
+                // Recursively show children of children
+                const childId = child.getAttribute('data-task-id');
+                if (!child.classList.contains('collapsed')) {
+                    showChildren(childId);
+                }
+            });
+        }
+
+        function hideChildren(parentId) {
+            document.querySelectorAll(`tr[data-parent-id="${parentId}"]`).forEach(child => {
+                child.style.display = 'none';
+                // Recursively hide children of children
+                const childId = child.getAttribute('data-task-id');
+                hideChildren(childId);
+            });
         }
 
         function addTask() {
             const tableBody = document.getElementById('taskTableBody');
             const lastRow = tableBody.lastElementChild;
+            
+            // Determine current phase
+            let currentPhase = '1';
+            let insertAfter = null;
+            
+            // Find the last task in the current phase filter
+            const phaseFilter = document.getElementById('phaseFilter').value;
+            if (phaseFilter !== 'all') {
+                currentPhase = phaseFilter;
+            }
+            
+            // Find where to insert
+            const rows = Array.from(tableBody.children);
+            for (let i = rows.length - 1; i >= 0; i--) {
+                const row = rows[i];
+                if (row.classList.contains('task-row')) {
+                    const taskPhase = row.querySelector('.task-checkbox')?.getAttribute('data-phase');
+                    if (taskPhase === currentPhase) {
+                        insertAfter = row;
+                        break;
+                    }
+                } else if (row.classList.contains('phase-header') && row.textContent.includes(`PHASE ${currentPhase}`)) {
+                    insertAfter = row;
+                    break;
+                }
+            }
             
             // Create new task row
             const newRow = document.createElement('tr');
@@ -3273,13 +3223,16 @@
             newRow.setAttribute('data-task-id', ++taskIdCounter);
             newRow.innerHTML = `
                 <td>
-                    <input type="checkbox" class="task-checkbox" data-phase="1">
+                    <input type="checkbox" class="task-checkbox" data-phase="${currentPhase}">
                 </td>
                 <td>
-                    <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                    <div class="task-actions">
+                        <button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>
+                        <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                    </div>
                 </td>
                 <td class="task-name-cell">
-                    <input type="text" class="task-input" placeholder="Enter task name" value="New Task">
+                    <input type="text" class="editable-task-name" value="New Task">
                 </td>
                 <td>
                     <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
@@ -3300,11 +3253,23 @@
                     </select>
                 </td>
                 <td>
-                    <select class="health-select health-green" onchange="updateHealthClass(this)">
-                        <option value="green" selected>Green</option>
-                        <option value="yellow">Yellow</option>
-                        <option value="red">Red</option>
-                    </select>
+                    <div class="health-light-container">
+                        <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                        <div class="health-dropdown">
+                            <div class="health-option" onclick="setHealth(this, 'green')">
+                                <div class="health-option-light green"></div>
+                                <span>Green</span>
+                            </div>
+                            <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                <div class="health-option-light yellow"></div>
+                                <span>Yellow</span>
+                            </div>
+                            <div class="health-option" onclick="setHealth(this, 'red')">
+                                <div class="health-option-light red"></div>
+                                <span>Red</span>
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <input type="date" class="task-input" data-required="true">
@@ -3317,7 +3282,11 @@
                 </td>
             `;
             
-            tableBody.appendChild(newRow);
+            if (insertAfter) {
+                insertAfter.insertAdjacentElement('afterend', newRow);
+            } else {
+                tableBody.appendChild(newRow);
+            }
             
             // Set default dates for new task
             const today = new Date().toISOString().split('T')[0];
@@ -3328,7 +3297,7 @@
             if (dateInputs[1]) dateInputs[1].value = nextWeek;
             
             // Focus on task name
-            const taskNameInput = newRow.querySelector('input[placeholder="Enter task name"]');
+            const taskNameInput = newRow.querySelector('.editable-task-name');
             if (taskNameInput) {
                 taskNameInput.focus();
                 taskNameInput.select();
@@ -3350,11 +3319,7 @@
         function addSubTask(button) {
             const parentRow = button.closest('tr');
             const parentTaskId = parentRow.getAttribute('data-task-id');
-            const newRow = parentRow.cloneNode(true);
-            
-            // Set new task ID
-            newRow.setAttribute('data-task-id', ++taskIdCounter);
-            newRow.setAttribute('data-parent-id', parentTaskId);
+            const parentPhase = parentRow.querySelector('.task-checkbox')?.getAttribute('data-phase') || '1';
             
             // Determine subtask level
             let level = 1;
@@ -3364,34 +3329,115 @@
                 level = 3;
             }
             
-            // Modify for subtask
+            // Create new subtask
+            const newRow = document.createElement('tr');
             newRow.className = `task-row subtask-level-${level}`;
+            newRow.setAttribute('data-task-id', ++taskIdCounter);
+            newRow.setAttribute('data-parent-id', parentTaskId);
             
-            // Clear values
-            newRow.querySelectorAll('input[type="text"], textarea').forEach(input => {
-                if (input.placeholder === "Enter task name" || input.value === "New Task") {
-                    input.value = "Sub-task";
+            newRow.innerHTML = `
+                <td>
+                    <input type="checkbox" class="task-checkbox" data-phase="${parentPhase}">
+                </td>
+                <td>
+                    <div class="task-actions">
+                        ${level < 3 ? '<button class="btn btn-small btn-success" onclick="addSubTask(this)" title="Add Sub-task">+</button>' : ''}
+                        <button class="delete-task-btn" onclick="deleteTask(this)" title="Delete Task">×</button>
+                    </div>
+                </td>
+                <td class="task-name-cell">
+                    <input type="text" class="editable-task-name" value="Sub-task">
+                </td>
+                <td>
+                    <input type="text" class="task-input" placeholder="Assigned to" data-required="true">
+                </td>
+                <td>
+                    <select class="priority-select priority-medium" onchange="updatePriorityClass(this)">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Med</option>
+                        <option value="high">High</option>
+                        <option value="critical">Crit</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="status-select status-not-started" onchange="updateStatusClass(this)">
+                        <option value="not-started" selected>Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Complete</option>
+                    </select>
+                </td>
+                <td>
+                    <div class="health-light-container">
+                        <div class="health-light green" onclick="toggleHealthDropdown(this)" data-health="green"></div>
+                        <div class="health-dropdown">
+                            <div class="health-option" onclick="setHealth(this, 'green')">
+                                <div class="health-option-light green"></div>
+                                <span>Green</span>
+                            </div>
+                            <div class="health-option" onclick="setHealth(this, 'yellow')">
+                                <div class="health-option-light yellow"></div>
+                                <span>Yellow</span>
+                            </div>
+                            <div class="health-option" onclick="setHealth(this, 'red')">
+                                <div class="health-option-light red"></div>
+                                <span>Red</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <input type="date" class="task-input" data-required="true">
+                </td>
+                <td>
+                    <input type="date" class="task-input" data-required="true">
+                </td>
+                <td>
+                    <textarea class="task-textarea" rows="3" placeholder="Task notes and details"></textarea>
+                </td>
+            `;
+            
+            // Find insertion point - after all existing children of this parent
+            let insertAfter = parentRow;
+            let nextRow = parentRow.nextElementSibling;
+            while (nextRow && nextRow.classList.contains('task-row')) {
+                const nextParentId = nextRow.getAttribute('data-parent-id');
+                if (nextParentId === parentTaskId || isChildOf(nextRow, parentTaskId)) {
+                    insertAfter = nextRow;
+                    nextRow = nextRow.nextElementSibling;
                 } else {
-                    input.value = '';
+                    break;
                 }
-            });
+            }
             
-            newRow.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
-            // Insert after parent
-            parentRow.parentNode.insertBefore(newRow, parentRow.nextSibling);
+            insertAfter.insertAdjacentElement('afterend', newRow);
             
             // Mark parent as having subtasks and add expand/collapse button
             if (!parentRow.classList.contains('has-subtasks')) {
                 parentRow.classList.add('has-subtasks');
                 const nameCell = parentRow.querySelector('.task-name-cell');
+                const taskNameInput = nameCell.querySelector('.editable-task-name');
                 if (nameCell && !nameCell.querySelector('.expand-collapse-btn')) {
                     const expandBtn = document.createElement('button');
                     expandBtn.className = 'expand-collapse-btn';
                     expandBtn.textContent = '▼';
                     expandBtn.onclick = function() { toggleTaskExpand(this); };
-                    nameCell.insertBefore(expandBtn, nameCell.firstChild);
+                    nameCell.insertBefore(expandBtn, taskNameInput);
                 }
+            }
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            const dateInputs = newRow.querySelectorAll('input[type="date"]');
+            if (dateInputs[0]) dateInputs[0].value = today;
+            if (dateInputs[1]) dateInputs[1].value = nextWeek;
+            
+            // Focus on task name
+            const taskNameInput = newRow.querySelector('.editable-task-name');
+            if (taskNameInput) {
+                taskNameInput.focus();
+                taskNameInput.select();
             }
             
             // Bind event listener for new checkbox
@@ -3405,6 +3451,18 @@
             
             updateAllProgress();
             updateTaskCount();
+        }
+
+        function isChildOf(row, parentId) {
+            let currentRow = row;
+            while (currentRow) {
+                const currentParentId = currentRow.getAttribute('data-parent-id');
+                if (currentParentId === parentId) {
+                    return true;
+                }
+                currentRow = document.querySelector(`tr[data-task-id="${currentParentId}"]`);
+            }
+            return false;
         }
 
         function saveProject(silent = false) {
@@ -3451,20 +3509,23 @@
         function collectTaskData() {
             const tasks = [];
             document.querySelectorAll('#taskTableBody tr:not(.phase-header)').forEach(row => {
+                const taskNameInput = row.querySelector('.editable-task-name');
+                const healthLight = row.querySelector('.health-light');
+                
                 const taskData = {
                     id: row.getAttribute('data-task-id'),
                     parentId: row.getAttribute('data-parent-id'),
                     completed: row.querySelector('.task-checkbox')?.checked || false,
-                    name: row.querySelector('.task-name-cell span')?.textContent || row.querySelector('.task-name-cell input')?.value || '',
+                    name: taskNameInput?.value || '',
                     assignedTo: row.querySelector('td:nth-child(4) input')?.value || '',
                     priority: row.querySelector('.priority-select')?.value || 'medium',
                     status: row.querySelector('.status-select')?.value || 'not-started',
-                    health: row.querySelector('.health-select')?.value || 'green',
+                    health: healthLight?.getAttribute('data-health') || 'green',
                     startDate: row.querySelector('td:nth-child(8) input')?.value || '',
                     dueDate: row.querySelector('td:nth-child(9) input')?.value || '',
                     notes: row.querySelector('.task-textarea')?.value || '',
                     phase: row.querySelector('.task-checkbox')?.getAttribute('data-phase') || '1',
-                    level: row.classList.contains('subtask-level-2') ? 2 : row.classList.contains('subtask-level-1') ? 1 : 0
+                    level: row.classList.contains('subtask-level-3') ? 3 : row.classList.contains('subtask-level-2') ? 2 : row.classList.contains('subtask-level-1') ? 1 : 0
                 };
                 tasks.push(taskData);
             });
@@ -3506,6 +3567,10 @@
                     const checkbox = row.querySelector('.task-checkbox');
                     if (checkbox) checkbox.checked = taskData.completed;
                     
+                    // Restore task name
+                    const taskNameInput = row.querySelector('.editable-task-name');
+                    if (taskNameInput) taskNameInput.value = taskData.name;
+                    
                     // Restore assignee
                     const assigneeInput = row.querySelector('td:nth-child(4) input');
                     if (assigneeInput) assigneeInput.value = taskData.assignedTo;
@@ -3524,11 +3589,11 @@
                         updateStatusClass(statusSelect);
                     }
                     
-                    // Restore health
-                    const healthSelect = row.querySelector('.health-select');
-                    if (healthSelect) {
-                        healthSelect.value = taskData.health;
-                        updateHealthClass(healthSelect);
+                    // Restore health light
+                    const healthLight = row.querySelector('.health-light');
+                    if (healthLight && taskData.health) {
+                        healthLight.className = `health-light ${taskData.health}`;
+                        healthLight.setAttribute('data-health', taskData.health);
                     }
                     
                     // Restore dates
