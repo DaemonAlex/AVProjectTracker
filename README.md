@@ -200,6 +200,8 @@ The tracker is fully responsive with optimized layouts for:
 - **Advanced Reporting**: Custom report generation
 - **Integration APIs**: Connect with external project management tools
 - **Template System**: Save and reuse project templates
+- **Improved UI**: visual improvments to the UI that shows subtasks
+- **Reporting page**: Page that offers reporting on the current project - Can be run at any level to see individual or all current projects - This will include GHANT options that offer a view of timelines and how delays - and other project change affects dates.
 
 ### **Technical Roadmap**
 - **PWA Support**: Offline functionality and app-like experience
