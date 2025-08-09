@@ -476,21 +476,21 @@ localStorage.setItem('avProjects', JSON.stringify(projects));
 
 ## 🔮 Roadmap & Future Enhancements
 
-### **Version 1.1** *(Q2 2024)*
+### **Version 5.5.2** *(Aug 2025)*
 - [ ] Database backend integration
 - [ ] User authentication & roles
 - [ ] Team collaboration features
 - [ ] File attachment support
 - [ ] Mobile responsive design
 
-### **Version 1.2** *(Q3 2024)*
+### **Version 5.5.3** *(Nov 2025)*
 - [ ] Email notifications
 - [ ] Gantt chart visualization
 - [ ] Resource allocation tracking
 - [ ] Budget management module
 - [ ] Advanced reporting dashboard
 
-### **Version 2.0** *(Q4 2024)*
+### **Version 5.5.4** *(Dec 2025)*
 - [ ] Dark mode theme
 - [ ] API integrations (SNOW, Teams)
 - [ ] Custom workflow builder
