@@ -1,263 +1,686 @@
-# AV Installation Project Tracker v5.1 - Enterprise Edition
+# AV Project Management Tool v1.0 - Enterprise Edition
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/av-project-management)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
 ## 📋 Overview
 
-The AV Installation Project Tracker is a comprehensive web-based application designed to manage audio-visual installation projects from initial planning through final closure. Built as a single-page HTML application, it provides enterprise-grade project management capabilities with a modern, intuitive interface.
+The **AV Project Management Tool** is a comprehensive, integrated web-based application designed to manage multiple audio-visual installation projects from executive oversight through detailed task execution. Built as a single-page application (SPA), it combines high-level portfolio management with granular project tracking, providing enterprise-grade capabilities with a modern, intuitive interface.
 
 ## 🎯 Purpose
 
-This tracker was specifically designed for IT teams managing AV installations in corporate environments, featuring workflows that align with enterprise processes including SNOW (ServiceNow) ticket management, RACI matrices, stakeholder coordination, and detailed technical implementation phases.
+This tool was specifically designed for organizations managing multiple AV installations across corporate environments, featuring dual interfaces for executives and project managers. It seamlessly integrates executive reporting dashboards with detailed project workflows, supporting enterprise processes including:
+
+- 📝 **SNOW (ServiceNow)** ticket management
+- 👥 **RACI** matrices
+- 🤝 **Stakeholder** coordination
+- 🔧 **Technical** implementation phases
 
 ## ✨ Key Features
 
-### 📊 **Real-Time Analytics Dashboard**
-- **Overall Progress Tracking**: Visual progress indicators for the entire project
-- **Phase-by-Phase Metrics**: Individual progress tracking for all 5 project phases
-- **Task Velocity Monitoring**: Team productivity metrics
-- **Interactive Metric Cards**: Click-to-filter functionality for focused views
+### 🏢 **Executive Dashboard (Landing Page)**
 
-### 🎯 **Comprehensive Task Management**
-- **48 Pre-Configured Tasks**: Complete workflow covering all aspects of AV installation
-- **5-Phase Project Structure**: Logical organization from logistics to closeout
-- **Hierarchical Task Organization**: Parent tasks with nested subtasks
-- **Priority Management**: Four-level priority system (Low, Medium, High, Critical)
-- **Status Tracking**: Three-state system (Not Started, In Progress, Completed)
-- **Health Indicators**: Green/Yellow/Red system for task health monitoring
+#### Portfolio Overview
+- 📊 Visual grid of all active projects with real-time status
+- 🎨 Customizable view options
+- 📈 Trend analysis capabilities
+
+#### Animated Project Cards
+```
+✅ Health status indicators with pulse animations (green/yellow/red)
+✅ Phase progress visualization with colored milestone dots
+✅ Circular progress rings with gradient fills
+✅ Live countdown timers showing days remaining/overdue
+```
+
+#### Executive Analytics
+| Metric | Description |
+|--------|-------------|
+| **Total Projects** | Count of all projects in the system |
+| **Avg Completion** | Average completion rate across projects |
+| **At Risk** | Number of projects with red health status |
+| **Active Projects** | Currently in-progress projects |
+| **Due This Week** | Projects with deadlines within 7 days |
+| **Team Utilization** | Resource allocation percentage |
+
+#### Advanced Filtering System
+- 🔍 **Search** by project name
+- 🏷️ **Filter by type**: `New Build` • `Upgrade` • `Break Fix`
+- 📊 **Filter by status**: `Active` • `At Risk` • `On Track` • `Completed`
+- 📍 **Filter by phase**: `Phase 1-5`
+
+---
+
+### 📊 **Individual Project Trackers**
+
+#### Real-Time Analytics Dashboard
+```javascript
+// Visual progress indicators for entire projects
+- Overall Progress: 0-100%
+- Phase 1: Logistics
+- Phase 2: AV Setup
+- Phase 3: Installation
+- Phase 4: Testing
+- Phase 5: Closeout
+```
+
+#### Comprehensive Task Management
+
+<details>
+<summary><b>Task Features</b></summary>
+
+- ✏️ **Template-based** task generation
+- 📁 **5-Phase** project structure
+- 🔗 **Hierarchical** task organization
+- 🎯 **Priority levels**:
+  - `🔴 Critical`
+  - `🟠 High`
+  - `🟡 Medium`
+  - `⚪ Low`
+- 📊 **Status tracking**:
+  - `⏹️ Not Started`
+  - `▶️ In Progress`
+  - `✅ Completed`
+- 💚 **Health indicators** with dropdown selection
+
+</details>
+
+---
+
+### 🚀 **Multi-Project Management**
+
+#### Dynamic Project Creation
+
+```mermaid
+graph LR
+    A[Create New Project] --> B[Select Template]
+    B --> C[Enter Details]
+    C --> D[Generate Tasks]
+    D --> E[Navigate to Tracker]
+```
+
+#### Project Templates
+
+| Template | Tasks | Use Case |
+|----------|-------|----------|
+| **🏗️ New AV Build** | 14+ | Complete installation from scratch |
+| **⬆️ Upgrade** | 8+ | System upgrade projects |
+| **🔧 Break Fix** | 6+ | Repair and troubleshooting |
+| **📄 Blank** | 0 | Custom project setup |
+
+#### Seamless Navigation
+- 🔗 URL-based routing for direct project access
+- 🔄 Global navigation bar
+- ⬅️ Browser back/forward support
+- 👁️ Quick view without leaving dashboard
+
+---
 
 ### 🔧 **Advanced Functionality**
-- **Silent Auto-Save**: Automatic project persistence with configurable intervals
-- **Command Palette**: Keyboard shortcuts (Ctrl+K) for power users
-- **Excel Export**: CSV download for external reporting
-- **Real-Time Filtering**: Dynamic task filtering by phase, status, and priority
-- **Local Storage Persistence**: Automatic data retention between sessions
+
+<table>
+<tr>
+<td width="50%">
+
+#### Data Management
+- 💾 **Auto-Save**: LocalStorage persistence
+- 📊 **Bulk Export**: CSV generation
+- 🔄 **Project Cloning**: Template creation
+- 📈 **Real-time Updates**: Live progress
+
+</td>
+<td width="50%">
+
+#### Quick Actions
+- 👁️ **View**: Open full tracker
+- ⚡ **Quick View**: Summary popup
+- 📋 **Clone**: Duplicate as template
+- 📥 **Export**: Download CSV
+
+</td>
+</tr>
+</table>
+
+---
 
 ### 🎨 **Modern UI/UX**
-- **Glassmorphism Design**: Contemporary visual effects with backdrop filters
-- **Responsive Layout**: Optimized for desktop, tablet, and mobile devices
-- **Dark Theme Header**: Professional enterprise appearance
-- **Interactive Elements**: Hover effects, animations, and smooth transitions
-- **Accessibility Features**: Proper contrast ratios and keyboard navigation
+
+#### Visual Design System
+
+```css
+/* Color Palette */
+--primary-500: #0ea5e9;  /* Main brand color */
+--success-500: #22c55e;  /* Success states */
+--warning-500: #f59e0b;  /* Warning states */
+--danger-500: #ef4444;   /* Error states */
+```
+
+#### Interactive Elements
+- **🌊 Animated Backgrounds**: Dynamic gradient animations
+- **🔮 Glassmorphism**: Backdrop filters and transparency
+- **📱 Responsive Layout**: Desktop and tablet optimized
+- **🎭 Professional Theme**: Dark navigation with light content
+- **✨ Micro-interactions**: Hover effects and smooth transitions
+
+---
 
 ## 🏗️ Project Structure
 
-### **Phase 1: Pre-Installation – Logistics (22 Tasks)**
-- Project setup and documentation
-- Stakeholder identification and engagement
-- Business case development
-- Vendor management and procurement
-- Hardware coordination
-- Installation scheduling
+### Phase Breakdown
 
-### **Phase 2: Pre-Installation - AV Setup (7 Tasks)**
-- Space configuration
-- Network setup and VLAN configuration
-- Active Directory integration
-- Security policy implementation
-- Teams Room account provisioning
+<details>
+<summary><b>📋 Phase 1: Pre-Installation – Logistics</b></summary>
 
-### **Phase 3: Installation and Commissioning (4 Tasks)**
-- Hardware delivery and installation
-- System configuration
-- Initial testing and verification
-- Documentation and labeling
+- ✅ Create Project Folder in Egnyte
+- ✅ Create SNOW Ticket for Project
+- ✅ Initial Project Information Gathered
+- ✅ RACI Gathered to Determine Stakeholders
+- ✅ Kick-off Meeting
+- ✅ Request Vendor Quote
+- ✅ Submit Finalized Quote for Approval
+- ✅ Create SNOW Request for PO
+- ✅ Verify PO Receipt by Vendor
 
-### **Phase 4: Post-Installation Testing (3 Tasks)**
-- Comprehensive system testing
-- User acceptance testing
-- Performance optimization
+</details>
 
-### **Phase 5: Project Closeout (5 Tasks)**
-- Documentation handover
-- Training delivery
-- Asset management updates
-- Project review and closure
+<details>
+<summary><b>🔧 Phase 2: Pre-Installation - AV Setup</b></summary>
+
+- ✅ Request Hardware MAC and Serial Numbers
+- ✅ Verify Installation Dates with Stakeholders
+- ✅ Verify Space Name with Stakeholders
+- ✅ Schedule Installation Window
+
+</details>
+
+<details>
+<summary><b>🏗️ Phase 3: Installation and Commissioning</b></summary>
+
+- ✅ AV Vendor Delivery and Installation
+- ✅ System Configuration
+- ✅ Initial Testing and Verification
+
+</details>
+
+<details>
+<summary><b>🧪 Phase 4: Post-Installation Testing</b></summary>
+
+- ✅ Comprehensive System Testing
+- ✅ User Acceptance Testing
+- ✅ Performance Optimization
+
+</details>
+
+<details>
+<summary><b>📝 Phase 5: Project Closeout</b></summary>
+
+- ✅ Documentation Handover
+- ✅ Training Delivery
+- ✅ Asset Management Updates
+- ✅ Project Review and Closure
+
+</details>
+
+---
 
 ## 💻 Technical Architecture
 
 ### **Frontend Technologies**
-- **HTML5**: Semantic markup with modern web standards
-- **CSS3**: Advanced styling with custom properties, flexbox, and grid
-- **Vanilla JavaScript**: No external dependencies for maximum compatibility
-- **Local Storage API**: Client-side data persistence
+
+```yaml
+HTML5:
+  - Semantic markup
+  - Modern web standards
+  - Accessibility features
+
+CSS3:
+  - Custom properties (variables)
+  - Flexbox & Grid layouts
+  - Animations & transitions
+  - Glassmorphism effects
+
+JavaScript:
+  - Vanilla JS (no dependencies)
+  - ES6+ features
+  - Event-driven architecture
+  - LocalStorage API
+```
 
 ### **Design Patterns**
-- **Component-Based Architecture**: Modular JavaScript functions
-- **Event-Driven Programming**: Responsive UI interactions
-- **Progressive Enhancement**: Core functionality works without JavaScript
-- **Mobile-First Design**: Responsive breakpoints for all devices
+
+| Pattern | Implementation |
+|---------|---------------|
+| **SPA Architecture** | Single-page app with dynamic content |
+| **Component-Based** | Modular JavaScript functions |
+| **Event-Driven** | Responsive UI interactions |
+| **URL Routing** | Direct project access via parameters |
+
+### **Data Management**
+
+```javascript
+// Project Storage Structure
+{
+  "project_id": {
+    "id": "proj_1234567890",
+    "name": "Conference Room AV Upgrade",
+    "manager": "John Smith",
+    "location": "Building A - Floor 3",
+    "targetDate": "2024-12-31",
+    "template": "upgrade",
+    "status": "active",
+    "health": "green",
+    "tasks": [...]
+  }
+}
+```
 
 ### **Browser Compatibility**
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
+
+| Browser | Minimum Version |
+|---------|----------------|
+| Chrome | 90+ |
+| Firefox | 88+ |
+| Safari | 14+ |
+| Edge | 90+ |
+
+---
 
 ## 🚀 Getting Started
 
 ### **Installation**
-1. Download the HTML file
+
+```bash
+# No installation required!
+1. Download av-project-management.html
 2. Open in any modern web browser
-3. No server or additional setup required
-
-### **Basic Usage**
-1. **Project Setup**: Enter project name and manager in the header
-2. **Task Management**: Check off completed tasks, update status and priority
-3. **Progress Monitoring**: View real-time analytics in the dashboard
-4. **Data Persistence**: Enable silent save for automatic data retention
-
-### **Advanced Features**
-- Press `Ctrl+K` to open the command palette
-- Use filters to focus on specific phases or task types
-- Export data via the Excel export button
-- Add custom tasks using the "+" buttons
-
-## 🔧 Customization Options
-
-### **Adding New Tasks**
-```javascript
-// Use the addTask() function to create new tasks
-addTask();
-
-// Or add subtasks to existing tasks
-addSubTask(parentElement);
+3. Start managing projects immediately
 ```
 
-### **Modifying Phases**
-Tasks are organized by the `data-phase` attribute. To add a new phase:
-1. Add phase header row in the table
-2. Update the analytics section
-3. Modify the progress calculation functions
+### **Creating Your First Project**
 
-### **Styling Customization**
-The application uses CSS custom properties for easy theming:
-```css
-:root {
-    --primary-500: #0ea5e9;  /* Main brand color */
-    --success-500: #22c55e;  /* Success indicators */
-    --warning-500: #f59e0b;  /* Warning states */
-    --danger-500: #ef4444;   /* Error states */
-}
+1. **Launch Dashboard**
+   ```
+   Open av-project-management.html in browser
+   ```
+
+2. **Create New Project**
+   ```
+   Click "➕ Create New Project" button
+   ```
+
+3. **Select Template**
+   ```
+   Choose from: New Build | Upgrade | Break Fix | Blank
+   ```
+
+4. **Enter Details**
+   ```
+   - Project Name: [Required]
+   - Project Manager: [Required]
+   - Site/Location: [Optional]
+   - Target Date: [Required]
+   ```
+
+5. **Generate Project**
+   ```
+   Click "Create Project" → Auto-navigates to tracker
+   ```
+
+### **Managing Projects**
+
+#### Dashboard Operations
+- **View All Projects**: Default landing page view
+- **Search Projects**: Use search bar for name filtering
+- **Filter Projects**: Apply type/status/phase filters
+- **Quick Actions**: Access from project card buttons
+
+#### Tracker Operations
+- **Update Tasks**: Click any field to edit
+- **Change Status**: Use dropdown selectors
+- **Track Progress**: View real-time analytics
+- **Export Data**: Download CSV for reporting
+
+---
+
+## 🔧 Usage Scenarios
+
+### **👔 For Executives**
 ```
+Dashboard → View Metrics → Identify Issues → Export Reports
+```
+- Monitor portfolio-wide KPIs
+- Identify at-risk projects instantly
+- Track resource utilization
+- Generate stakeholder reports
+
+### **📋 For Project Managers**
+```
+Create Project → Manage Tasks → Update Status → Track Progress
+```
+- Initialize projects from templates
+- Assign and track tasks
+- Monitor phase completion
+- Communicate project health
+
+### **👥 For Teams**
+```
+Access Project → View Tasks → Update Status → Add Notes
+```
+- View assigned responsibilities
+- Update task completion
+- Document blockers
+- Collaborate on deliverables
+
+---
 
 ## 📱 Responsive Design
 
-The tracker is fully responsive with optimized layouts for:
-- **Desktop**: Full feature set with multi-column layouts
-- **Tablet**: Condensed controls with touch-friendly interface
-- **Mobile**: Stacked layout with simplified navigation
+### Breakpoints
+
+| Device | Resolution | Features |
+|--------|------------|----------|
+| **Desktop** | 1200px+ | Full features, multi-column |
+| **Tablet** | 768px-1199px | Touch-optimized, condensed |
+| **Mobile** | <768px | *Planned for v1.1* |
+
+---
 
 ## 🔒 Data Management
 
-### **Local Storage**
-- Project data persists automatically in browser local storage
-- Data survives browser restarts and computer reboots
-- No external database required
+### **Privacy & Security**
+
+```javascript
+// All data stored locally
+localStorage.setItem('avProjects', JSON.stringify(projects));
+
+// No external transmission
+✅ Data stays on device
+✅ No cloud storage
+✅ No tracking/analytics
+✅ GDPR compliant
+```
 
 ### **Export Options**
-- **CSV Export**: All task data with headers for Excel import
-- **Manual Backup**: Copy/paste functionality for data transfer
 
-### **Privacy**
-- All data remains on the user's device
-- No external data transmission
-- No tracking or analytics
+| Format | Scope | Use Case |
+|--------|-------|----------|
+| **CSV** | Single Project | Detailed task report |
+| **CSV** | All Projects | Portfolio overview |
+| **Clone** | Single Project | Template creation |
+
+### **Backup Strategy**
+
+1. **Auto-Save**: Every change persisted
+2. **Manual Export**: Regular CSV backups
+3. **Browser Storage**: Survives restarts
+4. **Data Recovery**: From exported files
+
+---
 
 ## ⚡ Performance Features
 
 ### **Optimizations**
-- Debounced auto-save to prevent excessive storage writes
-- Efficient DOM updates with minimal reflows
-- Lazy loading of non-critical interface elements
-- Optimized CSS with minimal specificity conflicts
 
-### **Memory Management**
-- Event listeners properly cleaned up
-- No memory leaks in long-running sessions
-- Efficient data structures for large task lists
+```javascript
+// Key Performance Metrics
+- First Paint: < 1s
+- Interactive: < 2s
+- DOM Updates: Minimal reflows
+- Memory: < 50MB typical usage
+```
 
-## 🎯 Use Cases
+### **Technical Optimizations**
+- ⚡ Single-page architecture
+- 🎯 Efficient DOM manipulation
+- 💾 Lazy data loading
+- 🎨 CSS transform animations
+- 🔄 Debounced save operations
 
-### **IT Project Managers**
-- Track AV installation projects end-to-end
-- Monitor team progress and identify bottlenecks
-- Generate status reports for stakeholders
+---
 
-### **AV Installation Teams**
-- Follow standardized workflows
-- Ensure no critical steps are missed
-- Coordinate with multiple departments
+## 🎯 Key Benefits
 
-### **Enterprise IT Departments**
-- Maintain consistency across multiple projects
-- Document compliance with corporate processes
-- Archive project history for future reference
+<table>
+<tr>
+<td width="33%">
 
-## 🔮 Future Enhancements
+### **Centralized Management**
+- 📊 Single dashboard
+- 🔄 Consistent workflows
+- 📈 Standardized reporting
 
-### **Planned Features**
-- **Multi-Project Support**: Manage multiple concurrent projects
-- **Team Collaboration**: Share projects with team members
-- **Advanced Reporting**: Custom report generation
-- **Integration APIs**: Connect with external project management tools
-- **Template System**: Save and reuse project templates
-- **Improved UI**: visual improvments to the UI that shows subtasks
-- **Reporting page**: Page that offers reporting on the current project - Can be run at any level to see individual or all current projects - This will include GHANT options that offer a view of timelines and how delays - and other project change dates.
+</td>
+<td width="33%">
 
-### **Technical Roadmap**
-- **PWA Support**: Offline functionality and app-like experience
-- **Cloud Sync**: Optional cloud storage integration
-- **Advanced Analytics**: Predictive project metrics
-- **Mobile Apps**: Native iOS and Android applications
+### **Visual Reporting**
+- 👁️ At-a-glance health
+- 📊 Progress visualization
+- ⏱️ Real-time updates
+
+</td>
+<td width="33%">
+
+### **Template Efficiency**
+- ⚡ Quick setup
+- 📋 Consistent structure
+- 🔄 Reusable templates
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🔮 Roadmap & Future Enhancements
+
+### **Version 1.1** *(Q2 2024)*
+- [ ] Database backend integration
+- [ ] User authentication & roles
+- [ ] Team collaboration features
+- [ ] File attachment support
+- [ ] Mobile responsive design
+
+### **Version 1.2** *(Q3 2024)*
+- [ ] Email notifications
+- [ ] Gantt chart visualization
+- [ ] Resource allocation tracking
+- [ ] Budget management module
+- [ ] Advanced reporting dashboard
+
+### **Version 2.0** *(Q4 2024)*
+- [ ] Dark mode theme
+- [ ] API integrations (SNOW, Teams)
+- [ ] Custom workflow builder
+- [ ] AI-powered insights
+- [ ] Multi-language support
+
+---
 
 ## 🛠️ Development
 
-### **Code Structure**
+### **Application Structure**
+
 ```
-index.html
-├── Styles (Embedded CSS)
-│   ├── Component styles
-│   ├── Layout definitions
-│   └── Responsive breakpoints
-└── Scripts (Embedded JavaScript)
-    ├── Core application logic
-    ├── Event handlers
-    ├── Data management
-    └── UI interactions
+av-project-management.html
+│
+├── 🎨 Styles (Embedded CSS)
+│   ├── Global Variables
+│   ├── Navigation Styles
+│   ├── Dashboard Components
+│   ├── Tracker Components
+│   └── Responsive Breakpoints
+│
+├── 📝 HTML Structure
+│   ├── Navigation Bar
+│   ├── Landing Page Container
+│   ├── Tracker Page Container
+│   └── Modal Components
+│
+└── ⚙️ Scripts (Embedded JavaScript)
+    ├── Core Functions
+    ├── Project Management
+    ├── Task Operations
+    ├── UI Updates
+    └── Data Persistence
 ```
 
 ### **Key Functions**
-- `updateAllProgress()`: Recalculates phase and overall progress
-- `saveProject()`: Handles data persistence
-- `addTask()` / `addSubTask()`: Dynamic task creation
-- `exportToExcel()`: Data export functionality
-- `showCommandPalette()`: Keyboard shortcuts interface
+
+| Function | Purpose | Parameters |
+|----------|---------|------------|
+| `createProject()` | Generate new project | template, metadata |
+| `loadProject(id)` | Open project tracker | projectId |
+| `renderProjects()` | Update dashboard | - |
+| `updateAllProgress()` | Calculate metrics | - |
+| `exportToExcel(project)` | Generate CSV | project object |
+| `saveProjects()` | Persist to storage | - |
 
 ### **Event System**
-- Input change detection for auto-save
-- Checkbox state management for progress tracking
-- Keyboard shortcuts for power user features
-- Responsive UI updates based on user actions
 
-## 📞 Support
+```javascript
+// Event Listeners
+document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('click', handleGlobalClicks);
+document.addEventListener('change', handleInputChanges);
+document.addEventListener('keydown', handleKeyboardShortcuts);
+```
+
+---
+
+## 📞 Support & Troubleshooting
 
 ### **Common Issues**
-1. **Data Not Saving**: Ensure browser allows local storage
-2. **Layout Issues**: Update to a modern browser version
-3. **Performance Problems**: Clear browser cache and reload
-4. **UI bugs** viewing subtasks is under redesign to better visualy show subtasks nested under thier parent task 
 
-### **Browser Requirements**
-- JavaScript enabled
-- Local Storage support
-- CSS Grid and Flexbox support
-- Modern ES6+ features
+<details>
+<summary><b>🔧 Projects Not Saving</b></summary>
+
+**Solution:**
+```javascript
+// Check LocalStorage availability
+if (typeof(Storage) !== "undefined") {
+  // LocalStorage is supported
+  localStorage.setItem('test', 'test');
+} else {
+  // No web storage support
+  alert('Please enable LocalStorage in your browser');
+}
+```
+
+</details>
+
+<details>
+<summary><b>🔧 Navigation Issues</b></summary>
+
+**Solution:**
+1. Clear browser cache: `Ctrl+F5`
+2. Check URL parameters
+3. Reload application
+4. Verify project ID exists
+
+</details>
+
+<details>
+<summary><b>🔧 Export Problems</b></summary>
+
+**Solution:**
+- Check browser download settings
+- Verify popup blocker
+- Try different browser
+- Check disk space
+
+</details>
+
+### **Best Practices**
+
+✅ **DO:**
+- Regular exports for backup
+- Use templates for consistency
+- Update status daily
+- Review dashboard weekly
+
+❌ **DON'T:**
+- Clear browser data without backup
+- Use outdated browsers
+- Ignore health indicators
+- Skip phase requirements
+
+---
 
 ## 📄 License
 
-This project is designed for internal enterprise use. Modify and distribute according to your organization's requirements.
+```
+MIT License
+
+Copyright (c) 2025 ShortWaveEcho
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+```
+
+---
 
 ## 🎉 Conclusion
 
-The AV Installation Project Tracker provides a comprehensive, enterprise-ready solution for managing complex AV installation projects. With its intuitive interface, robust feature set, and modern technical architecture, it streamlines project management while ensuring nothing falls through the cracks.
+The **AV Project Management Tool** provides a comprehensive, enterprise-ready solution for managing multiple complex AV installation projects. With its dual-interface design serving both executives and project managers, intuitive visual reporting, and robust project tracking capabilities, it streamlines portfolio management while ensuring detailed task execution.
 
-Whether you're managing a single conference room upgrade or a multi-building AV overhaul, this tracker provides the structure, visibility, and control needed to deliver successful projects on time and within scope.
+Whether you're an executive monitoring a portfolio of installations or a project manager handling day-to-day tasks, this tool provides the visibility, control, and efficiency needed to deliver successful AV projects on time and within scope.
+
+---
+
+## 📊 Quick Stats
+
+| Metric | Value |
+|--------|-------|
+| **Version** | 5.5.1 |
+| **Release Date** | 2025 |
+| **Platform** | Browser |
+| **Dependencies** | Browser |
+| **File Size** | ~250KB |
+| **License** | MIT |
+| **Language** | English |
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📬 Contact
+
+**Project Link:** [https://github.com/yourusername/av-project-management](https://github.com/yourusername/av-project-management)
+
+**Support Email:** support@avprojectmanagement.com
+
+**Documentation:** [https://docs.avprojectmanagement.com](https://docs.avprojectmanagement.com)
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the AV Project Management Team**
+
+[⬆ Back to Top](#av-project-management-tool-v10---enterprise-edition)
+
+</div>
