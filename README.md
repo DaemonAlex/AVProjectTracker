@@ -1,4 +1,4 @@
-# AV Project Management Tool v5.5.4 - Enterprise Edition
+# AV Project Management Tool v6.1 - Enterprise Edition
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/av-project-management)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
