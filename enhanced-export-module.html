@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Export Module for AV Project Tool</title>
+    
+    <!-- Include required libraries from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        /* Export Module Styles */
+        .export-module {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .export-header {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .export-controls {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .export-btn {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .export-btn:hover {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .export-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .export-label {
+            font-weight: 600;
+            color: #334155;
+        }
+        
+        .export-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+        
+        .preview-area {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 2rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .preview-content {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+        
+        /* HTML Report Styles for Export */
+        .html-report {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+        }
+        
+        .report-header {
+            border-bottom: 3px solid #0ea5e9;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .report-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        .report-meta {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+        
+        .report-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .kpi-card {
+            background: #f0f9ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0ea5e9;
+        }
+        
+        .kpi-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-completed { background: #dcfce7; color: #16a34a; }
+        .status-in-progress { background: #e0f2fe; color: #0369a1; }
+        .status-not-started { background: #f1f5f9; color: #475569; }
+        
+        .priority-high { background: #fee2e2; color: #dc2626; }
+        .priority-medium { background: #fef3c7; color: #d97706; }
+        .priority-low { background: #f1f5f9; color: #475569; }
+        
+        @media print {
+            .export-controls { display: none; }
+            .html-report { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="export-module">
+        <div class="export-header">
+            <h1>📊 Enhanced Export System</h1>
+            <p>Generate professional reports in multiple formats with real file generation</p>
+        </div>
+        
+        <div class="export-controls">
+            <h2>Select Export Format:</h2>
+            <div class="export-grid">
+                <button class="export-btn" onclick="exportToExcel()">
+                    <div class="export-icon">📗</div>
+                    <div class="export-label">Excel (.xlsx)</div>
+                    <div class="export-desc">Multi-sheet workbook</div>
+                </button>
+                
+                <button class="export-btn" onclick="exportToPDF()">
+                    <div class="export-icon">📄</div>
+                    <div class="export-label">PDF Document</div>
+                    <div class="export-desc">Professional report</div>
+                </button>
+                
+                <button class="export-btn" onclick="exportToHTML()">
+                    <div class="export-icon">🌐</div>
+                    <div class="export-label">HTML Report</div>
+                    <div class="export-desc">Web-ready format</div>
+                </button>
+                
+                <button class="export-btn" onclick="exportToCSV()">
+                    <div class="export-icon">📊</div>
+                    <div class="export-label">CSV Data</div>
+                    <div class="export-desc">Spreadsheet compatible</div>
+                </button>
+                
+                <button class="export-btn" onclick="exportToJSON()">
+                    <div class="export-icon">{ }</div>
+                    <div class="export-label">JSON</div>
+                    <div class="export-desc">For integrations</div>
+                </button>
+                
+                <button class="export-btn" onclick="exportToMarkdown()">
+                    <div class="export-icon">📝</div>
+                    <div class="export-label">Markdown</div>
+                    <div class="export-desc">Documentation format</div>
+                </button>
+            </div>
+            
+            <div class="preview-area" id="previewArea" style="display:none;">
+                <h3>Preview:</h3>
+                <div class="preview-content" id="previewContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample project data structure (replace with your actual data)
+        const sampleProject = {
+            name: "Conference Room AV Upgrade",
+            manager: "John Smith",
+            location: "Building A, Floor 3",
+            targetDate: "2024-03-15",
+            template: "upgrade",
+            createdDate: "2024-01-15",
+            tasks: [
+                {
+                    id: "task1",
+                    phase: 1,
+                    name: "Initial Site Assessment",
+                    assignedTo: "Mike Johnson",
+                    priority: "high",
+                    status: "completed",
+                    health: "green",
+                    startDate: "2024-01-16",
+                    dueDate: "2024-01-20",
+                    notes: "Completed assessment of existing equipment",
+                    completed: true
+                },
+                {
+                    id: "task2",
+                    phase: 1,
+                    name: "Requirements Gathering",
+                    assignedTo: "Sarah Davis",
+                    priority: "high",
+                    status: "completed",
+                    health: "green",
+                    startDate: "2024-01-21",
+                    dueDate: "2024-01-25",
+                    notes: "Stakeholder requirements documented",
+                    completed: true
+                },
+                {
+                    id: "task3",
+                    phase: 2,
+                    name: "Equipment Procurement",
+                    assignedTo: "Mike Johnson",
+                    priority: "critical",
+                    status: "in-progress",
+                    health: "yellow",
+                    startDate: "2024-01-26",
+                    dueDate: "2024-02-10",
+                    notes: "Waiting for vendor quotes",
+                    completed: false
+                },
+                {
+                    id: "task4",
+                    phase: 3,
+                    name: "Installation Planning",
+                    assignedTo: "Team Lead",
+                    priority: "medium",
+                    status: "not-started",
+                    health: "green",
+                    startDate: "2024-02-11",
+                    dueDate: "2024-02-15",
+                    notes: "",
+                    completed: false
+                }
+            ]
+        };
+
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+
+        // ==================== EXCEL EXPORT ====================
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Sheet 1: Executive Summary
+            const summaryData = [
+                ["AV PROJECT MANAGEMENT REPORT"],
+                ["Generated:", new Date().toLocaleString()],
+                [""],
+                ["PROJECT OVERVIEW"],
+                ["Project Name:", sampleProject.name],
+                ["Project Manager:", sampleProject.manager],
+                ["Location:", sampleProject.location],
+                ["Target Date:", sampleProject.targetDate],
+                ["Project Type:", sampleProject.template],
+                [""],
+                ["KEY METRICS"],
+                ["Total Tasks:", sampleProject.tasks.length],
+                ["Completed Tasks:", sampleProject.tasks.filter(t => t.completed).length],
+                ["In Progress:", sampleProject.tasks.filter(t => t.status === "in-progress").length],
+                ["Not Started:", sampleProject.tasks.filter(t => t.status === "not-started").length],
+                ["Overall Progress:", Math.round((sampleProject.tasks.filter(t => t.completed).length / sampleProject.tasks.length) * 100) + "%"],
+                [""],
+                ["HEALTH STATUS"],
+                ["Green Tasks:", sampleProject.tasks.filter(t => t.health === "green").length],
+                ["Yellow Tasks:", sampleProject.tasks.filter(t => t.health === "yellow").length],
+                ["Red Tasks:", sampleProject.tasks.filter(t => t.health === "red").length]
+            ];
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+            
+            // Style the summary sheet
+            ws1['!cols'] = [{ width: 20 }, { width: 40 }];
+            
+            XLSX.utils.book_append_sheet(wb, ws1, "Executive Summary");
+            
+            // Sheet 2: Task Details
+            const taskHeaders = ["Phase", "Task Name", "Owner", "Priority", "Status", "Health", "Start Date", "Due Date", "Notes", "Completed"];
+            const taskData = sampleProject.tasks.map(task => [
+                `Phase ${task.phase}`,
+                task.name,
+                task.assignedTo,
+                task.priority,
+                task.status,
+                task.health,
+                task.startDate,
+                task.dueDate,
+                task.notes,
+                task.completed ? "Yes" : "No"
+            ]);
+            
+            const ws2 = XLSX.utils.aoa_to_sheet([taskHeaders, ...taskData]);
+            
+            // Auto-size columns
+            ws2['!cols'] = [
+                { width: 10 },
+                { width: 30 },
+                { width: 15 },
+                { width: 10 },
+                { width: 12 },
+                { width: 10 },
+                { width: 12 },
+                { width: 12 },
+                { width: 40 },
+                { width: 10 }
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws2, "Task Details");
+            
+            // Sheet 3: Phase Analysis
+            const phaseData = [
+                ["Phase Analysis Report"],
+                [""],
+                ["Phase", "Total Tasks", "Completed", "In Progress", "Not Started", "Progress %"]
+            ];
+            
+            for (let phase = 1; phase <= 5; phase++) {
+                const phaseTasks = sampleProject.tasks.filter(t => t.phase === phase);
+                if (phaseTasks.length > 0) {
+                    const completed = phaseTasks.filter(t => t.completed).length;
+                    const inProgress = phaseTasks.filter(t => t.status === "in-progress").length;
+                    const notStarted = phaseTasks.filter(t => t.status === "not-started").length;
+                    const progress = Math.round((completed / phaseTasks.length) * 100);
+                    
+                    phaseData.push([
+                        `Phase ${phase}`,
+                        phaseTasks.length,
+                        completed,
+                        inProgress,
+                        notStarted,
+                        `${progress}%`
+                    ]);
+                }
+            }
+            
+            const ws3 = XLSX.utils.aoa_to_sheet(phaseData);
+            ws3['!cols'] = [{ width: 15 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }];
+            
+            XLSX.utils.book_append_sheet(wb, ws3, "Phase Analysis");
+            
+            // Generate and download the Excel file
+            XLSX.writeFile(wb, `${sampleProject.name.replace(/\s+/g, '_')}_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+            
+            showPreview("Excel file generated successfully with 3 sheets:\n1. Executive Summary\n2. Task Details\n3. Phase Analysis");
+        }
+
+        // ==================== PDF EXPORT ====================
+        function exportToPDF() {
+            const doc = new jsPDF();
+            
+            // Colors
+            const primaryColor = [14, 165, 233];
+            const grayColor = [100, 116, 139];
+            
+            // Header
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.text('AV PROJECT REPORT', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(sampleProject.name, 105, 30, { align: 'center' });
+            
+            // Reset text color
+            doc.setTextColor(0, 0, 0);
+            
+            // Project Information Section
+            let yPos = 50;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Overview', 20, yPos);
+            
+            yPos += 10;
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            
+            const projectInfo = [
+                ['Project Manager:', sampleProject.manager],
+                ['Location:', sampleProject.location],
+                ['Target Date:', sampleProject.targetDate],
+                ['Project Type:', sampleProject.template.toUpperCase()],
+                ['Created Date:', new Date(sampleProject.createdDate).toLocaleDateString()]
+            ];
+            
+            projectInfo.forEach(([label, value]) => {
+                doc.setFont(undefined, 'bold');
+                doc.text(label, 20, yPos);
+                doc.setFont(undefined, 'normal');
+                doc.text(value, 60, yPos);
+                yPos += 7;
+            });
+            
+            // Key Metrics Section
+            yPos += 10;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Key Metrics', 20, yPos);
+            
+            yPos += 10;
+            
+            // Calculate metrics
+            const totalTasks = sampleProject.tasks.length;
+            const completedTasks = sampleProject.tasks.filter(t => t.completed).length;
+            const inProgressTasks = sampleProject.tasks.filter(t => t.status === 'in-progress').length;
+            const notStartedTasks = sampleProject.tasks.filter(t => t.status === 'not-started').length;
+            const overallProgress = Math.round((completedTasks / totalTasks) * 100);
+            
+            // Draw progress bar
+            doc.setFillColor(...primaryColor);
+            doc.rect(20, yPos, 170, 20, 'S');
+            doc.rect(20, yPos, (170 * overallProgress) / 100, 20, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Overall Progress: ${overallProgress}%`, 105, yPos + 13, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            yPos += 30;
+            
+            // Metrics grid
+            doc.setFontSize(11);
+            const metrics = [
+                [`Total Tasks: ${totalTasks}`, `Completed: ${completedTasks}`],
+                [`In Progress: ${inProgressTasks}`, `Not Started: ${notStartedTasks}`]
+            ];
+            
+            metrics.forEach(row => {
+                row.forEach((metric, index) => {
+                    doc.text(metric, 20 + (index * 85), yPos);
+                });
+                yPos += 7;
+            });
+            
+            // Task Details Table
+            yPos += 10;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Task Details', 20, yPos);
+            
+            yPos += 5;
+            
+            // Create table data
+            const tableData = sampleProject.tasks.map(task => [
+                task.name.substring(0, 30),
+                task.assignedTo,
+                task.priority,
+                task.status.replace('-', ' '),
+                task.dueDate
+            ]);
+            
+            // Use autoTable plugin
+            doc.autoTable({
+                startY: yPos,
+                head: [['Task Name', 'Owner', 'Priority', 'Status', 'Due Date']],
+                body: tableData,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: primaryColor,
+                    fontSize: 10
+                },
+                bodyStyles: {
+                    fontSize: 9
+                },
+                columnStyles: {
+                    0: { cellWidth: 60 },
+                    1: { cellWidth: 30 },
+                    2: { cellWidth: 25 },
+                    3: { cellWidth: 30 },
+                    4: { cellWidth: 25 }
+                }
+            });
+            
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(9);
+                doc.setTextColor(...grayColor);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 285);
+            }
+            
+            // Save the PDF
+            doc.save(`${sampleProject.name.replace(/\s+/g, '_')}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+            
+            showPreview("PDF generated successfully with:\n- Project overview\n- Progress visualization\n- Key metrics\n- Detailed task table\n- Professional formatting");
+        }
+
+        // ==================== HTML EXPORT ====================
+        function exportToHTML() {
+            const totalTasks = sampleProject.tasks.length;
+            const completedTasks = sampleProject.tasks.filter(t => t.completed).length;
+            const inProgressTasks = sampleProject.tasks.filter(t => t.status === 'in-progress').length;
+            const notStartedTasks = sampleProject.tasks.filter(t => t.status === 'not-started').length;
+            const overallProgress = Math.round((completedTasks / totalTasks) * 100);
+            
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${sampleProject.name} - Project Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .header { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; padding: 3rem; border-radius: 1rem; margin-bottom: 2rem; }
+        h1 { margin: 0; font-size: 2.5rem; }
+        .subtitle { opacity: 0.9; margin-top: 0.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .card { background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .metric { text-align: center; padding: 2rem; }
+        .metric-value { font-size: 3rem; font-weight: 700; color: #0ea5e9; }
+        .metric-label { color: #64748b; margin-top: 0.5rem; }
+        .progress-bar { background: #e2e8f0; height: 30px; border-radius: 15px; overflow: hidden; margin: 2rem 0; }
+        .progress-fill { background: linear-gradient(90deg, #22c55e, #16a34a); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 1rem; text-align: left; font-weight: 600; }
+        td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; font-weight: 600; }
+        .status-completed { background: #dcfce7; color: #16a34a; }
+        .status-in-progress { background: #e0f2fe; color: #0369a1; }
+        .status-not-started { background: #f1f5f9; color: #475569; }
+        .priority-critical { background: #fee2e2; color: #dc2626; }
+        .priority-high { background: #fef3c7; color: #d97706; }
+        .priority-medium { background: #e0f2fe; color: #0369a1; }
+        .priority-low { background: #f1f5f9; color: #475569; }
+        @media print { 
+            body { background: white; }
+            .header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>${sampleProject.name}</h1>
+            <div class="subtitle">Project Status Report - Generated ${new Date().toLocaleDateString()}</div>
+        </div>
+        
+        <div class="card">
+            <h2>Project Overview</h2>
+            <p><strong>Project Manager:</strong> ${sampleProject.manager}</p>
+            <p><strong>Location:</strong> ${sampleProject.location}</p>
+            <p><strong>Target Date:</strong> ${sampleProject.targetDate}</p>
+            <p><strong>Type:</strong> ${sampleProject.template.toUpperCase()}</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card metric">
+                <div class="metric-value">${totalTasks}</div>
+                <div class="metric-label">Total Tasks</div>
+            </div>
+            <div class="card metric">
+                <div class="metric-value">${completedTasks}</div>
+                <div class="metric-label">Completed</div>
+            </div>
+            <div class="card metric">
+                <div class="metric-value">${inProgressTasks}</div>
+                <div class="metric-label">In Progress</div>
+            </div>
+            <div class="card metric">
+                <div class="metric-value">${notStartedTasks}</div>
+                <div class="metric-label">Not Started</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Overall Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${overallProgress}%">${overallProgress}%</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Task Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Owner</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sampleProject.tasks.map(task => `
+                    <tr>
+                        <td>${task.name}</td>
+                        <td>${task.assignedTo}</td>
+                        <td><span class="status-badge priority-${task.priority}">${task.priority.toUpperCase()}</span></td>
+                        <td><span class="status-badge status-${task.status}">${task.status.replace('-', ' ').toUpperCase()}</span></td>
+                        <td>${task.dueDate}</td>
+                    </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>`;
+            
+            // Create and download HTML file
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${sampleProject.name.replace(/\s+/g, '_')}_Report_${new Date().toISOString().split('T')[0]}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showPreview("HTML report generated with:\n- Responsive design\n- Print-ready styles\n- Interactive progress bars\n- Styled status badges\n- Professional formatting");
+        }
+
+        // ==================== CSV EXPORT ====================
+        function exportToCSV() {
+            const headers = ['Phase', 'Task Name', 'Owner', 'Priority', 'Status', 'Health', 'Start Date', 'Due Date', 'Notes', 'Completed'];
+            const rows = sampleProject.tasks.map(task => [
+                task.phase,
+                `"${task.name}"`,
+                `"${task.assignedTo}"`,
+                task.priority,
+                task.status,
+                task.health,
+                task.startDate,
+                task.dueDate,
+                `"${task.notes.replace(/"/g, '""')}"`,
+                task.completed ? 'Yes' : 'No'
+            ]);
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            
+            // Create and download CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${sampleProject.name.replace(/\s+/g, '_')}_Tasks_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showPreview(`CSV generated with ${sampleProject.tasks.length} tasks\nColumns: ${headers.join(', ')}`);
+        }
+
+        // ==================== JSON EXPORT ====================
+        function exportToJSON() {
+            const exportData = {
+                metadata: {
+                    exported: new Date().toISOString(),
+                    version: '1.0',
+                    format: 'AV_PROJECT_EXPORT'
+                },
+                project: {
+                    ...sampleProject,
+                    metrics: {
+                        totalTasks: sampleProject.tasks.length,
+                        completedTasks: sampleProject.tasks.filter(t => t.completed).length,
+                        inProgressTasks: sampleProject.tasks.filter(t => t.status === 'in-progress').length,
+                        notStartedTasks: sampleProject.tasks.filter(t => t.status === 'not-started').length,
+                        overallProgress: Math.round((sampleProject.tasks.filter(t => t.completed).length / sampleProject.tasks.length) * 100)
+                    }
+                }
+            };
+            
+            const jsonContent = JSON.stringify(exportData, null, 2);
+            
+            // Create and download JSON file
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${sampleProject.name.replace(/\s+/g, '_')}_Export_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showPreview("JSON export generated with:\n- Complete project data\n- Calculated metrics\n- Metadata information\n- Formatted for easy integration");
+        }
+
+        // ==================== MARKDOWN EXPORT ====================
+        function exportToMarkdown() {
+            const totalTasks = sampleProject.tasks.length;
+            const completedTasks = sampleProject.tasks.filter(t => t.completed).length;
+            const overallProgress = Math.round((completedTasks / totalTasks) * 100);
+            
+            const markdownContent = `# ${sampleProject.name}
+
+## Project Information
+- **Project Manager:** ${sampleProject.manager}
+- **Location:** ${sampleProject.location}
+- **Target Date:** ${sampleProject.targetDate}
+- **Project Type:** ${sampleProject.template.toUpperCase()}
+- **Created:** ${new Date(sampleProject.createdDate).toLocaleDateString()}
+
+## Progress Overview
+![Progress](https://progress-bar.dev/${overallProgress}/)
+
+### Key Metrics
+| Metric | Value |
+|--------|-------|
+| Total Tasks | ${totalTasks} |
+| Completed | ${sampleProject.tasks.filter(t => t.completed).length} |
+| In Progress | ${sampleProject.tasks.filter(t => t.status === 'in-progress').length} |
+| Not Started | ${sampleProject.tasks.filter(t => t.status === 'not-started').length} |
+| Overall Progress | ${overallProgress}% |
+
+## Task Details
+
+| Task Name | Owner | Priority | Status | Due Date |
+|-----------|-------|----------|--------|----------|
+${sampleProject.tasks.map(task => 
+`| ${task.name} | ${task.assignedTo} | ${task.priority} | ${task.status} | ${task.dueDate} |`
+).join('\n')}
+
+## Phase Breakdown
+
+${[1, 2, 3, 4, 5].map(phase => {
+    const phaseTasks = sampleProject.tasks.filter(t => t.phase === phase);
+    if (phaseTasks.length === 0) return '';
+    const phaseCompleted = phaseTasks.filter(t => t.completed).length;
+    const phaseProgress = Math.round((phaseCompleted / phaseTasks.length) * 100);
+    return `### Phase ${phase}
+- Tasks: ${phaseTasks.length}
+- Completed: ${phaseCompleted}
+- Progress: ${phaseProgress}%`;
+}).filter(p => p).join('\n\n')}
+
+---
+*Report generated on ${new Date().toLocaleString()}*
+`;
+            
+            // Create and download Markdown file
+            const blob = new Blob([markdownContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${sampleProject.name.replace(/\s+/g, '_')}_Report_${new Date().toISOString().split('T')[0]}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showPreview("Markdown report generated with:\n- Project overview\n- Progress metrics\n- Task table\n- Phase breakdown\n- GitHub-compatible formatting");
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function showPreview(message) {
+            const previewArea = document.getElementById('previewArea');
+            const previewContent = document.getElementById('previewContent');
+            
+            previewArea.style.display = 'block';
+            previewContent.textContent = message;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                previewArea.style.display = 'none';
+            }, 5000);
+        }
+
+        // Function to integrate with main application
+        function exportProjectData(project) {
+            // Replace sampleProject with actual project data
+            if (project) {
+                Object.assign(sampleProject, project);
+            }
+            
+            // Show export options or directly call export function
+            console.log('Export system ready for project:', project?.name || 'No project');
+        }
+
+        // Initialize
+        console.log('Enhanced Export Module loaded successfully');
+        console.log('Libraries loaded:', {
+            XLSX: typeof XLSX !== 'undefined',
+            jsPDF: typeof jsPDF !== 'undefined'
+        });
+    </script>
+</body>
+</html>
