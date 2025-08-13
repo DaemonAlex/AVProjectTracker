@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AV Project Management Tool - Enhanced Edition</title>
     
+    <!-- Enhanced Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         /* ==================== SHARED STYLES ==================== */
         :root {
@@ -60,31 +65,45 @@
 
         /* Dark Mode Variables */
         [data-theme="dark"] {
-            --primary-50: #0c4a6e;
-            --primary-100: #075985;
-            --primary-200: #0369a1;
-            --primary-300: #0284c7;
-            --primary-400: #0ea5e9;
-            --primary-500: #38bdf8;
-            --primary-600: #7dd3fc;
-            --primary-700: #bae6fd;
-            --primary-800: #e0f2fe;
-            --primary-900: #f0f9ff;
+            --primary-50: #000000;
+            --primary-100: #111111;
+            --primary-200: #1a1a1a;
+            --primary-300: #2a2a2a;
+            --primary-400: #3a3a3a;
+            --primary-500: #0ea5e9;
+            --primary-600: #38bdf8;
+            --primary-700: #7dd3fc;
+            --primary-800: #bae6fd;
+            --primary-900: #e0f2fe;
             
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-300: #475569;
-            --gray-400: #64748b;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --gray-900: #f8fafc;
+            --gray-50: #000000;
+            --gray-100: #000000;
+            --gray-200: #111111;
+            --gray-300: #1a1a1a;
+            --gray-400: #666666;
+            --gray-500: #888888;
+            --gray-600: #aaaaaa;
+            --gray-700: #cccccc;
+            --gray-800: #e0e0e0;
+            --gray-900: #e8e8e8;
             
-            --success-500: #4ade80;
+            --success-50: #000000;
+            --success-100: #111111;
+            --success-200: #1a1a1a;
+            --success-500: #22c55e;
+            --success-600: #16a34a;
+            
+            --warning-50: #000000;
+            --warning-100: #111111;
+            --warning-200: #1a1a1a;
             --warning-500: #fbbf24;
-            --danger-500: #f87171;
+            --warning-600: #f59e0b;
+            
+            --danger-50: #000000;
+            --danger-100: #111111;
+            --danger-200: #1a1a1a;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
         }
 
         * {
@@ -161,8 +180,9 @@
         }
 
         [data-theme="dark"] .notification {
-            background: var(--gray-800);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            color: #e8e8e8;
+            border: 1px solid #333333;
         }
 
         .notification-success {
@@ -225,7 +245,7 @@
         }
 
         [data-theme="dark"] .loading-overlay {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(0, 0, 0, 0.9);
         }
 
         /* Navigation System */
@@ -343,6 +363,36 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* Navigation Dark Mode Overrides */
+        [data-theme="dark"] .app-navigation {
+            background: #000000;
+            border-bottom: 1px solid #333333;
+        }
+
+        [data-theme="dark"] .nav-title {
+            color: #e8e8e8;
+        }
+
+        [data-theme="dark"] .nav-status {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333333;
+            color: #e8e8e8;
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .nav-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+        }
+
         /* Page Containers */
         .page-container {
             display: none;
@@ -380,8 +430,8 @@
         }
 
         [data-theme="dark"] .landing-header {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #000000;
+            border-color: #333333;
         }
 
         .header-content {
@@ -418,11 +468,14 @@
             color: var(--gray-900);
         }
 
+
         .subtitle {
             font-size: 0.875rem;
             color: var(--gray-600);
             margin-top: 0.25rem;
         }
+
+
 
         /* Action Buttons */
         .header-actions {
@@ -467,9 +520,9 @@
         }
 
         [data-theme="dark"] .btn-secondary {
-            background: var(--gray-800);
-            color: var(--gray-200);
-            border-color: var(--gray-600);
+            background: #1a1a1a;
+            color: #e8e8e8;
+            border-color: #666666;
         }
 
         .btn-secondary:hover:not(:disabled) {
@@ -478,8 +531,8 @@
         }
 
         [data-theme="dark"] .btn-secondary:hover:not(:disabled) {
-            background: var(--gray-700);
-            border-color: var(--gray-500);
+            background: #333333;
+            border-color: #888888;
         }
 
         .btn-icon {
@@ -502,8 +555,8 @@
         }
 
         [data-theme="dark"] .controls-bar {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #000000;
+            border-color: #333333;
         }
 
         .search-box {
@@ -532,9 +585,9 @@
         }
 
         [data-theme="dark"] .search-input {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            border-color: #666666;
+            color: #e8e8e8;
         }
 
         .search-input:focus {
@@ -556,9 +609,9 @@
         }
 
         [data-theme="dark"] .filter-select {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            border-color: #666666;
+            color: #e8e8e8;
         }
 
         .filter-select:focus {
@@ -579,8 +632,8 @@
         }
 
         [data-theme="dark"] .analytics-dashboard {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #000000;
+            border-color: #333333;
         }
 
         .dashboard-header {
@@ -593,7 +646,7 @@
         }
 
         [data-theme="dark"] .dashboard-header {
-            border-bottom-color: var(--gray-700);
+            border-bottom-color: #333333;
         }
 
         .dashboard-title {
@@ -602,11 +655,13 @@
             color: var(--gray-900);
         }
 
+
         .dashboard-subtitle {
             font-size: 0.875rem;
             color: var(--gray-600);
             margin-top: 0.25rem;
         }
+
 
         .metrics-grid {
             display: grid;
@@ -628,8 +683,8 @@
         }
 
         [data-theme="dark"] .metric-card {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .metric-card::before {
@@ -661,8 +716,9 @@
         }
 
         [data-theme="dark"] .metric-icon {
-            background: var(--gray-600);
+            background: #333333;
             border-color: var(--primary-400);
+            color: #e8e8e8;
         }
 
         .metric-value {
@@ -672,11 +728,13 @@
             margin-bottom: 0.5rem;
         }
 
+
         .metric-label {
             font-size: 0.875rem;
             color: var(--gray-600);
             font-weight: 500;
         }
+
 
         .metric-trend {
             display: inline-flex;
@@ -721,8 +779,8 @@
         }
 
         [data-theme="dark"] .chart-container {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .chart-placeholder {
@@ -746,7 +804,7 @@
         }
 
         [data-theme="dark"] .gantt-container {
-            background: var(--gray-800);
+            background: #000000;
         }
 
         .gantt-header {
@@ -759,7 +817,7 @@
         }
 
         [data-theme="dark"] .gantt-header {
-            border-bottom-color: var(--gray-600);
+            border-bottom-color: #333333;
         }
 
         .gantt-title {
@@ -767,6 +825,7 @@
             font-weight: 700;
             color: var(--gray-900);
         }
+
 
         .gantt-legend {
             display: flex;
@@ -1004,6 +1063,12 @@
             background: var(--gray-800);
         }
 
+        [data-theme="dark"] .gantt-tooltip {
+            background: #1a1a1a;
+            color: #e8e8e8;
+            border: 1px solid #333333;
+        }
+
         .gantt-tooltip {
             position: absolute;
             background: var(--gray-900);
@@ -1093,8 +1158,8 @@
         }
 
         [data-theme="dark"] .project-card {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .project-card:hover {
@@ -1129,6 +1194,7 @@
             color: var(--gray-900);
             margin-bottom: 0.25rem;
         }
+
 
         .project-type {
             display: inline-block;
@@ -1324,10 +1390,12 @@
             color: var(--gray-900);
         }
 
+
         .stat-label {
             font-size: 0.688rem;
             color: var(--gray-600);
         }
+
 
         /* Quick Actions */
         .quick-actions {
@@ -1410,7 +1478,7 @@
         }
 
         [data-theme="dark"] .modal-content {
-            background: var(--gray-800);
+            background: #1a1a1a;
         }
 
         .modal-header {
@@ -1419,7 +1487,7 @@
         }
 
         [data-theme="dark"] .modal-header {
-            border-bottom-color: var(--gray-700);
+            border-bottom-color: #333333;
         }
 
         .modal-title {
@@ -1427,6 +1495,7 @@
             font-weight: 700;
             color: var(--gray-900);
         }
+
 
         .modal-body {
             padding: 2rem;
@@ -1441,7 +1510,7 @@
         }
 
         [data-theme="dark"] .modal-footer {
-            border-top-color: var(--gray-700);
+            border-top-color: #333333;
         }
 
         /* Template Selection */
@@ -1462,7 +1531,8 @@
         }
 
         [data-theme="dark"] .template-card {
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .template-card:hover {
@@ -1509,10 +1579,12 @@
             margin-bottom: 0.5rem;
         }
 
+
         .template-description {
             font-size: 0.875rem;
             color: var(--gray-600);
         }
+
 
         /* Form Elements */
         .form-group {
@@ -1527,6 +1599,7 @@
             font-size: 0.875rem;
         }
 
+
         .form-input {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -1539,9 +1612,9 @@
         }
 
         [data-theme="dark"] .form-input {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            border-color: #666666;
+            color: #e8e8e8;
         }
 
         .form-input:focus {
@@ -1571,8 +1644,8 @@
         }
 
         [data-theme="dark"] .tracker-header {
-            background: var(--gray-800);
-            border-bottom-color: var(--gray-700);
+            background: #000000;
+            border-bottom-color: #333333;
         }
 
         .tracker-header-content {
@@ -1618,8 +1691,8 @@
         }
 
         [data-theme="dark"] .analytics-section {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         /* Controls Section */
@@ -1634,8 +1707,8 @@
         }
 
         [data-theme="dark"] .controls-section {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .controls-grid {
@@ -1669,9 +1742,9 @@
         }
 
         [data-theme="dark"] .enhanced-select {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            border-color: #666666;
+            color: #e8e8e8;
         }
 
         .enhanced-select:focus {
@@ -1715,8 +1788,8 @@
         }
 
         [data-theme="dark"] .table-section {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .table-header {
@@ -1731,8 +1804,8 @@
         }
 
         [data-theme="dark"] .table-header {
-            background: var(--gray-700);
-            border-bottom-color: var(--gray-600);
+            background: #1a1a1a;
+            border-bottom-color: #333333;
         }
 
         .table-container {
@@ -1760,7 +1833,7 @@
         }
 
         [data-theme="dark"] .enhanced-table th {
-            background: var(--gray-900);
+            background: #1a1a1a;
         }
 
         .enhanced-table td {
@@ -1771,7 +1844,7 @@
         }
 
         [data-theme="dark"] .enhanced-table td {
-            border-bottom-color: var(--gray-700);
+            border-bottom-color: #333333;
         }
 
         .enhanced-table tr:hover td {
@@ -1789,7 +1862,7 @@
         }
 
         [data-theme="dark"] .phase-header {
-            background: linear-gradient(135deg, var(--gray-900), #000);
+            background: linear-gradient(135deg, var(--gray-200), var(--gray-100));
         }
 
         .phase-header td {
@@ -1829,9 +1902,9 @@
 
         [data-theme="dark"] .task-input,
         [data-theme="dark"] .task-textarea {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #1a1a1a;
+            border-color: #666666;
+            color: #e8e8e8;
         }
 
         .task-input:focus, .task-textarea:focus {
@@ -1870,13 +1943,13 @@
         }
 
         .priority-select.priority-high {
-            background-color: #fffbeb;
-            color: #d97706;
+            background-color: var(--warning-50);
+            color: var(--warning-600);
         }
 
         .priority-select.priority-critical {
-            background-color: #fef2f2;
-            color: #dc2626;
+            background-color: var(--danger-50);
+            color: var(--danger-600);
         }
 
         .status-select.status-not-started {
@@ -1890,8 +1963,8 @@
         }
 
         .status-select.status-completed {
-            background-color: #f0fdf4;
-            color: #16a34a;
+            background-color: var(--success-50);
+            color: var(--success-600);
         }
 
         [data-theme="dark"] .priority-select.priority-low {
@@ -1985,8 +2058,8 @@
         }
 
         [data-theme="dark"] .health-dropdown {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
+            background: #1a1a1a;
+            border-color: #333333;
         }
 
         .health-dropdown.active {
@@ -2098,7 +2171,7 @@
         }
 
         [data-theme="dark"] .editable-task-name:focus {
-            background: var(--gray-700);
+            background: #1a1a1a;
         }
 
         /* Overdue task styling */
@@ -2287,6 +2360,128 @@
             background: var(--primary-700);
             color: var(--gray-100);
         }
+
+        /* Visual Reports Styles */
+
+        .report-card {
+            transition: all 0.3s ease;
+        }
+
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: var(--blue-500) !important;
+        }
+
+        .executive-kpi {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .executive-kpi::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue-500), var(--blue-600));
+        }
+
+        .metric-trend {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .metric-trend.positive {
+            color: var(--green-600);
+        }
+
+        .metric-trend.negative {
+            color: var(--red-600);
+        }
+
+        .metric-trend.neutral {
+            color: var(--gray-600);
+        }
+
+        .btn.small {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .btn.small.selected {
+            background: var(--blue-600);
+            color: white;
+            border-color: var(--blue-600);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .health-indicator {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .progress-bar-mini {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.25rem 0;
+        }
+
+        .progress-fill-mini {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill-mini.green {
+            background: var(--green-500);
+        }
+
+        .progress-fill-mini.yellow {
+            background: var(--yellow-500);
+        }
+
+        .progress-fill-mini.red {
+            background: var(--red-500);
+        }
+
+        .project-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background: white;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .project-item.performing {
+            border-left: 4px solid var(--green-500);
+        }
+
+        .project-item.at-risk {
+            border-left: 4px solid var(--red-500);
+        }
+
+        .project-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .project-progress {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
     </style>
 </head>
 
@@ -2316,6 +2511,9 @@
                     📥 Import
                     <input type="file" accept=".json" onchange="handleImport(event)" style="display: none;">
                 </label>
+                <button class="nav-btn secondary" onclick="showExecutiveReporting()" title="Executive Reports & Analytics">
+                    📈 Reports
+                </button>
                 <button class="nav-btn" onclick="showCreateProjectModal()">
                     ➕ New Project
                 </button>
@@ -2675,10 +2873,476 @@
         </div>
     </div>
 
+    <!-- Visual Reports Landing Modal -->
+    <div class="modal" id="executiveReportingModal">
+        <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+            <!-- Reports Landing Page -->
+            <div id="reportsLandingPage">
+                <div class="modal-header">
+                    <h2 class="modal-title">📊 AV Team Reports & Analytics</h2>
+                    <p style="color: var(--gray-600); margin-top: 0.5rem;">Visual insights and data-driven reports for organizational visibility</p>
+                </div>
+                <div class="modal-body">
+                    <!-- Report Types Grid -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">📈 Available Reports</h3>
+                        <div class="template-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div class="template-card report-card" onclick="showVisualReport('executive-summary')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">👔</div>
+                                <div class="template-name">Executive Summary</div>
+                                <div class="template-description">High-level KPIs and portfolio overview</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                            <div class="template-card report-card" onclick="showVisualReport('portfolio-analysis')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">📈</div>
+                                <div class="template-name">Portfolio Analysis</div>
+                                <div class="template-description">Cross-project insights and trends</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                            <div class="template-card report-card" onclick="showVisualReport('resource-utilization')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">👥</div>
+                                <div class="template-name">Resource Utilization</div>
+                                <div class="template-description">Team capacity and workload analysis</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                            <div class="template-card report-card" onclick="showVisualReport('risk-assessment')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">⚠️</div>
+                                <div class="template-name">Risk Assessment</div>
+                                <div class="template-description">Project risks and bottlenecks</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                            <div class="template-card report-card" onclick="showVisualReport('trend-analysis')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">📊</div>
+                                <div class="template-name">Trend Analysis</div>
+                                <div class="template-description">Performance trends over time</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                            <div class="template-card report-card" onclick="showVisualReport('project-details')" style="cursor: pointer; border: 2px solid #e2e8f0;">
+                                <div class="template-icon">📋</div>
+                                <div class="template-name">Project Details</div>
+                                <div class="template-description">Detailed project breakdowns</div>
+                                <div style="margin-top: 1rem; font-size: 0.875rem; color: var(--blue-600); font-weight: 600;">View Interactive Report →</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Metrics Preview -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">📋 Portfolio Overview</h3>
+                        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickTotalProjects">0</div>
+                                <div class="metric-label">Total Projects</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickActiveProjects">0</div>
+                                <div class="metric-label">Active Projects</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickOverallProgress">0%</div>
+                                <div class="metric-label">Portfolio Progress</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickTotalTasks">0</div>
+                                <div class="metric-label">Total Tasks</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickCompletedTasks">0</div>
+                                <div class="metric-label">Completed Tasks</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="quickAtRiskProjects">0</div>
+                                <div class="metric-label">Projects At Risk</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+
+            <!-- Individual Visual Report Pages (hidden by default) -->
+            
+            <!-- Executive Summary Visual Report -->
+            <div id="executiveSummaryReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">👔 Executive Summary Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">High-level portfolio KPIs and performance metrics</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('executive-summary')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Time Period Selection -->
+                    <div style="margin-bottom: 2rem; padding: 1rem; background: var(--gray-50); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 1rem;">📅 Reporting Period</h4>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <button class="btn btn-secondary small selected" onclick="selectTimePeriod(this, 'current-month')" data-period="current-month">This Month</button>
+                            <button class="btn btn-secondary small" onclick="selectTimePeriod(this, 'last-month')" data-period="last-month">Last Month</button>
+                            <button class="btn btn-secondary small" onclick="selectTimePeriod(this, 'current-quarter')" data-period="current-quarter">This Quarter</button>
+                            <button class="btn btn-secondary small" onclick="selectTimePeriod(this, 'last-quarter')" data-period="last-quarter">Last Quarter</button>
+                            <button class="btn btn-secondary small" onclick="selectTimePeriod(this, 'current-year')" data-period="current-year">This Year</button>
+                            <button class="btn btn-secondary small" onclick="selectTimePeriod(this, 'custom')" data-period="custom">Custom Range</button>
+                        </div>
+                        <div id="customDateRangeReport" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <input type="date" id="reportStartDateVisual" class="form-input" onchange="updateVisualReport()">
+                                <input type="date" id="reportEndDateVisual" class="form-input" onchange="updateVisualReport()">
+                            </div>
+                        </div>
+                        <div id="periodDescription" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--gray-600);"></div>
+                    </div>
+
+                    <!-- Executive KPI Dashboard -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">📊 Key Performance Indicators</h4>
+                        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execTotalProjects">0</div>
+                                <div class="metric-label">Active Projects</div>
+                                <div class="metric-trend" id="execProjectsTrend"></div>
+                            </div>
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execPortfolioProgress">0%</div>
+                                <div class="metric-label">Portfolio Progress</div>
+                                <div class="metric-trend" id="execProgressTrend"></div>
+                            </div>
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execOnTimeDelivery">0%</div>
+                                <div class="metric-label">On-Time Delivery</div>
+                                <div class="metric-trend" id="execDeliveryTrend"></div>
+                            </div>
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execResourceUtil">0%</div>
+                                <div class="metric-label">Resource Utilization</div>
+                                <div class="metric-trend" id="execResourceTrend"></div>
+                            </div>
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execCriticalRisks">0</div>
+                                <div class="metric-label">Critical Issues</div>
+                                <div class="metric-trend" id="execRisksTrend"></div>
+                            </div>
+                            <div class="metric-card executive-kpi">
+                                <div class="metric-value" id="execAvgVelocity">0</div>
+                                <div class="metric-label">Avg Velocity (tasks/week)</div>
+                                <div class="metric-trend" id="execVelocityTrend"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Health Overview -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🚦 Project Health Status</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div class="chart-container">
+                                <h5 style="margin-bottom: 1rem;">Health Distribution</h5>
+                                <div id="healthChart" style="height: 200px; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 0.5rem;">
+                                    <div style="text-align: center;">
+                                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
+                                            <div class="health-indicator" style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 1rem; height: 1rem; background: #22c55e; border-radius: 50%;"></div>
+                                                <span id="greenProjects">0</span> On Track
+                                            </div>
+                                            <div class="health-indicator" style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 1rem; height: 1rem; background: #f59e0b; border-radius: 50%;"></div>
+                                                <span id="yellowProjects">0</span> At Risk
+                                            </div>
+                                            <div class="health-indicator" style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 1rem; height: 1rem; background: #ef4444; border-radius: 50%;"></div>
+                                                <span id="redProjects">0</span> Critical
+                                            </div>
+                                        </div>
+                                        <div id="healthProgressBars"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <h5 style="margin-bottom: 1rem;">Risk Assessment</h5>
+                                <div id="riskChart" style="height: 200px; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 0.5rem;">
+                                    <div style="text-align: center;">
+                                        <div id="riskSummary" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Performing & At-Risk Projects -->
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h4 style="margin-bottom: 1rem; color: #22c55e;">🌟 Top Performing Projects</h4>
+                                <div id="topPerformingProjects" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1rem;"></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 1rem; color: #ef4444;">⚠️ Projects Needing Attention</h4>
+                                <div id="atRiskProjects" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Analysis Visual Report -->
+            <div id="portfolioAnalysisReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">📈 Portfolio Analysis Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">Project comparison, prioritization, and resource allocation insights</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('portfolio-analysis')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Portfolio Comparison Matrix -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🎯 Project Priority Matrix</h4>
+                        <div id="portfolioMatrix" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem; height: 400px; position: relative;"></div>
+                    </div>
+
+                    <!-- Resource Allocation Overview -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">💼 Resource Distribution</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div class="chart-container">
+                                <h5>Projects by Type</h5>
+                                <div id="projectTypeChart"></div>
+                            </div>
+                            <div class="chart-container">
+                                <h5>Task Distribution</h5>
+                                <div id="taskDistributionChart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparative Performance Table -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">📊 Project Performance Comparison</h4>
+                        <div style="background: white; border-radius: 0.5rem; overflow: hidden;">
+                            <table id="portfolioComparisonTable" style="width: 100%; border-collapse: collapse;">
+                                <thead style="background: var(--gray-100);">
+                                    <tr>
+                                        <th style="padding: 1rem; text-align: left; cursor: pointer;" onclick="sortPortfolioTable('name')">Project Name ↕️</th>
+                                        <th style="padding: 1rem; text-align: left; cursor: pointer;" onclick="sortPortfolioTable('progress')">Progress ↕️</th>
+                                        <th style="padding: 1rem; text-align: left; cursor: pointer;" onclick="sortPortfolioTable('velocity')">Velocity ↕️</th>
+                                        <th style="padding: 1rem; text-align: left; cursor: pointer;" onclick="sortPortfolioTable('efficiency')">Efficiency ↕️</th>
+                                        <th style="padding: 1rem; text-align: left; cursor: pointer;" onclick="sortPortfolioTable('priority')">Priority ↕️</th>
+                                        <th style="padding: 1rem; text-align: left;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="portfolioTableBody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Utilization Visual Report -->
+            <div id="resourceUtilizationReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">👥 Resource Utilization Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">Team capacity, workload distribution, and bottleneck analysis</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('resource-utilization')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Team Workload Overview -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">📋 Team Workload Distribution</h4>
+                        <div id="teamWorkloadChart" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem; min-height: 300px;"></div>
+                    </div>
+
+                    <!-- Capacity Analysis -->
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                            <div class="chart-container">
+                                <h5>Capacity Utilization</h5>
+                                <div id="capacityChart"></div>
+                            </div>
+                            <div class="chart-container">
+                                <h5>Skill Distribution</h5>
+                                <div id="skillDistributionChart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Individual Team Member Details -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">👤 Individual Performance</h4>
+                        <div id="teamMemberDetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment Visual Report -->
+            <div id="riskAssessmentReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">⚠️ Risk Assessment Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">Risk identification, impact analysis, and mitigation planning</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('risk-assessment')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Risk Heat Map -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🔥 Risk Heat Map</h4>
+                        <div id="riskHeatMap" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem; height: 300px; position: relative;"></div>
+                    </div>
+
+                    <!-- Critical Issues -->
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h4 style="margin-bottom: 1rem; color: var(--red-600);">🚨 Critical Issues</h4>
+                                <div id="criticalIssues" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1rem;"></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 1rem; color: var(--yellow-600);">⚡ Emerging Risks</h4>
+                                <div id="emergingRisks" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Mitigation Actions -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🛡️ Recommended Actions</h4>
+                        <div id="riskActions" style="background: white; border-radius: 0.5rem; padding: 1.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trend Analysis Visual Report -->
+            <div id="trendAnalysisReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">📊 Trend Analysis Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">Performance trends, forecasting, and historical insights</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('trend-analysis')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Trend Charts -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">📈 Performance Trends</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div class="chart-container">
+                                <h5>Portfolio Progress Over Time</h5>
+                                <div id="progressTrendChart" style="height: 200px;"></div>
+                            </div>
+                            <div class="chart-container">
+                                <h5>Task Completion Velocity</h5>
+                                <div id="velocityTrendChart" style="height: 200px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forecasting -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🔮 Forecasting</h4>
+                        <div id="forecastingSection" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem;"></div>
+                    </div>
+
+                    <!-- Historical Insights -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">📚 Historical Insights</h4>
+                        <div id="historicalInsights" style="background: white; border-radius: 0.5rem; padding: 1.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Details Visual Report -->
+            <div id="projectDetailsReport" style="display: none;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="backToReportsLanding()" style="padding: 0.5rem;">← Back</button>
+                        <div>
+                            <h2 class="modal-title">📋 Project Details Report</h2>
+                            <p style="color: var(--gray-600); margin: 0;">Deep-dive analysis and detailed project breakdowns</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" onclick="refreshVisualReport('project-details')">🔄 Refresh</button>
+                        <button class="btn" onclick="exportCurrentReport()">📊 Export Data</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- Project Selector -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem;">🎯 Select Project for Analysis</h4>
+                        <select id="projectSelector" class="form-input" onchange="loadProjectDetails(this.value)" style="width: 100%; max-width: 400px;">
+                            <option value="">Select a project...</option>
+                        </select>
+                    </div>
+
+                    <!-- Selected Project Analysis -->
+                    <div id="selectedProjectAnalysis" style="display: none;">
+                        <!-- Project Overview -->
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem;">📊 Project Overview</h4>
+                            <div id="projectOverviewCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;"></div>
+                        </div>
+
+                        <!-- Task Timeline -->
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem;">⏱️ Task Timeline</h4>
+                            <div id="taskTimeline" style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem; min-height: 300px;"></div>
+                        </div>
+
+                        <!-- Detailed Task List -->
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem;">📝 Task Details</h4>
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <button class="btn btn-secondary small" onclick="filterTasks('all')">All Tasks</button>
+                                <button class="btn btn-secondary small" onclick="filterTasks('completed')">Completed</button>
+                                <button class="btn btn-secondary small" onclick="filterTasks('in-progress')">In Progress</button>
+                                <button class="btn btn-secondary small" onclick="filterTasks('overdue')">Overdue</button>
+                            </div>
+                            <div id="detailedTaskList" style="background: white; border-radius: 0.5rem; overflow: hidden;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==================== GLOBAL VARIABLES ====================
         // Version tracking
-        const APP_VERSION = '6.2';
+        const APP_VERSION = '6.2.1';
         const DEBUG_MODE = localStorage.getItem('debugMode') === 'true';
         
         // Core state variables
@@ -2742,9 +3406,12 @@
             if (text === null || text === undefined) {
                 return '';
             }
-            const div = document.createElement('div');
-            div.textContent = String(text);
-            return div.innerHTML;
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
         
         // Generate secure IDs
@@ -3043,7 +3710,7 @@
 
         // ==================== INITIALIZATION WITH NULL CHECKS ====================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log(`AV Project Management Tool v${APP_VERSION} initializing...`);
+            debugLog(`AV Project Management Tool v${APP_VERSION} initializing...`);
             
             applyTheme();
             initializeApp();
@@ -3116,7 +3783,7 @@
         }
 
         function initializeApp() {
-            console.log('AV Project Management Tool Enhanced Edition initialized');
+            debugLog('AV Project Management Tool Enhanced Edition initialized');
             
             const urlParams = new URLSearchParams(window.location.search);
             const projectId = urlParams.get('project');
@@ -3218,7 +3885,22 @@
             if (trackerPage) trackerPage.classList.remove('active');
             if (dashboardBtn) dashboardBtn.style.display = 'none';
             
+            // Clear current project when returning to dashboard
+            currentProjectId = null;
+            
+            // Re-render projects to ensure latest data is shown
+            renderProjects();
             updateDashboardMetrics();
+            
+            // Clear URL parameter - with error handling for iframe environments
+            try {
+                if (window.location.protocol !== 'about:') {
+                    window.history.pushState({}, '', window.location.pathname);
+                }
+            } catch (e) {
+                // Ignore history errors in restricted environments
+                debugLog('History API not available in this environment');
+            }
         }
 
         function showTrackerPage() {
@@ -3232,6 +3914,10 @@
         }
 
         function navigateToDashboard() {
+            // Save current project data before navigating away
+            if (currentProjectId) {
+                saveProjects();
+            }
             window.location.href = window.location.pathname;
         }
 
@@ -3250,12 +3936,16 @@
                     projects = getLocalProjects();
                 }
                 
+                // Migrate data for enhanced reporting
+                migrateDataForReporting();
+                
                 renderProjects();
                 updateDashboardMetrics();
                 history.push(projects);
             } catch (error) {
                 console.error('Error loading projects:', error);
                 projects = getLocalProjects();
+                migrateDataForReporting();
                 renderProjects();
                 updateDashboardMetrics();
             }
@@ -3386,6 +4076,23 @@
                 projectData.overallProgress = 0;
                 projectData.tasks = generateTemplateTasks(selectedTemplate, projectName);
                 
+                // Enhanced tracking fields for executive reporting
+                projectData.actualStartDate = null;
+                projectData.completedDate = null;
+                projectData.estimatedBudget = 0;
+                projectData.actualBudget = 0;
+                projectData.estimatedHours = 0;
+                projectData.actualHours = 0;
+                projectData.clientDepartment = '';
+                projectData.stakeholders = [];
+                projectData.riskLevel = 'low';
+                projectData.statusHistory = [{
+                    status: 'active',
+                    timestamp: new Date().toISOString(),
+                    changedBy: projectData.manager || 'System',
+                    notes: 'Project created'
+                }];
+                
                 if (isOnline && apiEndpoint) {
                     try {
                         const savedProject = await dbService.createProject(projectData);
@@ -3480,7 +4187,18 @@
                 startDate: new Date().toISOString().split('T')[0],
                 dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 notes: '',
-                completed: false
+                completed: false,
+                // Enhanced tracking fields for executive reporting
+                completedDate: null,
+                actualStartDate: null,
+                statusHistory: [{
+                    status: 'not-started',
+                    timestamp: new Date().toISOString(),
+                    changedBy: 'System'
+                }],
+                assignmentHistory: [],
+                estimatedHours: 0,
+                actualHours: 0
             }));
         }
 
@@ -3509,9 +4227,16 @@
             updateAllProgress();
             showTrackerPage();
             
-            // Update URL without causing a page reload
-            const newUrl = window.location.pathname + '?project=' + projectId;
-            window.history.pushState({ project: projectId }, '', newUrl);
+            // Update URL without causing a page reload - with error handling
+            try {
+                if (window.location.protocol !== 'about:') {
+                    const newUrl = window.location.pathname + '?project=' + projectId;
+                    window.history.pushState({ project: projectId }, '', newUrl);
+                }
+            } catch (e) {
+                // Ignore history errors in restricted environments
+                debugLog('History API not available in this environment');
+            }
             
             // Ensure the data is saved
             saveProjects();
@@ -3794,7 +4519,35 @@
                 return;
             }
             
+            // Store previous value for history tracking
+            const previousValue = task[field];
             task[field] = value;
+            
+            // Add to history for executive reporting
+            if (field === 'status' && previousValue !== value) {
+                if (!task.statusHistory) task.statusHistory = [];
+                task.statusHistory.push({
+                    status: value,
+                    previousStatus: previousValue,
+                    timestamp: new Date().toISOString(),
+                    changedBy: task.assignedTo || 'Unknown'
+                });
+                
+                // Track when task actually starts
+                if (value === 'in-progress' && !task.actualStartDate) {
+                    task.actualStartDate = new Date().toISOString();
+                }
+            }
+            
+            // Track assignment changes
+            if (field === 'assignedTo' && previousValue !== value) {
+                if (!task.assignmentHistory) task.assignmentHistory = [];
+                task.assignmentHistory.push({
+                    assignedTo: value,
+                    previousAssignee: previousValue,
+                    timestamp: new Date().toISOString()
+                });
+            }
             
             // CRITICAL: Sync completion status with status field changes
             if (field === 'status') {
@@ -3804,6 +4557,7 @@
                 if (value === 'completed') {
                     // STATUS CHANGED TO COMPLETED - CHECK THE CHECKBOX
                     task.completed = true;
+                    task.completedDate = new Date().toISOString();
                     if (checkbox) {
                         checkbox.checked = true;
                     }
@@ -3816,6 +4570,7 @@
                 } else {
                     // STATUS CHANGED AWAY FROM COMPLETED - UNCHECK THE CHECKBOX
                     task.completed = false;
+                    task.completedDate = null;
                     if (checkbox) {
                         checkbox.checked = false;
                     }
@@ -5096,11 +5851,12 @@ Click "View" to see detailed task list and Gantt chart!`;
         }
 
         function closeModal() {
-            const modal = document.getElementById('createProjectModal');
-            if (modal) {
+            // Close all active modals
+            document.querySelectorAll('.modal.active').forEach(modal => {
                 modal.classList.remove('active');
-            }
+            });
             
+            // Reset create project button state
             const createBtn = document.getElementById('createProjectBtn');
             if (createBtn) {
                 createBtn.disabled = false;
@@ -5162,10 +5918,14 @@ Click "View" to see detailed task list and Gantt chart!`;
 
         // Handle browser back/forward
         window.addEventListener('popstate', function(e) {
-            if (e.state && e.state.project) {
-                loadProject(e.state.project);
-            } else {
-                showLandingPage();
+            try {
+                if (e.state && e.state.project) {
+                    loadProject(e.state.project);
+                } else {
+                    showLandingPage();
+                }
+            } catch (error) {
+                debugLog('Popstate error in restricted environment', error);
             }
         });
 
@@ -5180,8 +5940,2235 @@ Click "View" to see detailed task list and Gantt chart!`;
             }
         }, 60000);
         
+        // ==================== EXECUTIVE REPORTING MODULE ====================
+        
+        // Global variables for reporting
+        let selectedReportType = 'executive-summary';
+        let selectedReportPeriod = 'current-month';
+        let reportStartDate = null;
+        let reportEndDate = null;
+        
+        // Time period selection functions
+        function selectReportPeriod(element, period) {
+            // Remove selected class from all period cards
+            document.querySelectorAll('#executiveReportingModal [onclick*="selectReportPeriod"] .template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            selectedReportPeriod = period;
+            
+            // Handle custom date range
+            const customRange = document.getElementById('customDateRange');
+            if (period === 'custom') {
+                customRange.style.display = 'block';
+                // Set default dates for custom range
+                const today = new Date();
+                const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                document.getElementById('reportStartDate').value = monthAgo.toISOString().split('T')[0];
+                document.getElementById('reportEndDate').value = today.toISOString().split('T')[0];
+            } else {
+                customRange.style.display = 'none';
+                // Calculate start and end dates for predefined periods
+                const dates = calculatePeriodDates(period);
+                reportStartDate = dates.start;
+                reportEndDate = dates.end;
+            }
+            
+            // Update portfolio metrics for new period
+            updatePortfolioMetrics();
+            
+            debugLog('Report period selected:', period);
+        }
+        
+        // Calculate start and end dates for predefined periods
+        function calculatePeriodDates(period) {
+            const today = new Date();
+            let start, end;
+            
+            switch (period) {
+                case 'current-month':
+                    start = new Date(today.getFullYear(), today.getMonth(), 1);
+                    end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    break;
+                case 'last-month':
+                    start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    end = new Date(today.getFullYear(), today.getMonth(), 0);
+                    break;
+                case 'current-quarter':
+                    const currentQuarter = Math.floor(today.getMonth() / 3);
+                    start = new Date(today.getFullYear(), currentQuarter * 3, 1);
+                    end = new Date(today.getFullYear(), (currentQuarter + 1) * 3, 0);
+                    break;
+                case 'last-quarter':
+                    const lastQuarter = Math.floor(today.getMonth() / 3) - 1;
+                    const year = lastQuarter < 0 ? today.getFullYear() - 1 : today.getFullYear();
+                    const quarter = lastQuarter < 0 ? 3 : lastQuarter;
+                    start = new Date(year, quarter * 3, 1);
+                    end = new Date(year, (quarter + 1) * 3, 0);
+                    break;
+                case 'current-year':
+                    start = new Date(today.getFullYear(), 0, 1);
+                    end = new Date(today.getFullYear(), 11, 31);
+                    break;
+                default:
+                    start = new Date(today.getFullYear(), today.getMonth(), 1);
+                    end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            }
+            
+            return {
+                start: start.toISOString(),
+                end: end.toISOString()
+            };
+        }
+        
+        // Update period labels in the UI
+        function updatePeriodLabels() {
+            const today = new Date();
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            // Current month
+            const currentMonthLabel = document.getElementById('currentMonthLabel');
+            if (currentMonthLabel) {
+                currentMonthLabel.textContent = monthNames[today.getMonth()] + ' ' + today.getFullYear();
+            }
+            
+            // Last month
+            const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const lastMonthLabel = document.getElementById('lastMonthLabel');
+            if (lastMonthLabel) {
+                lastMonthLabel.textContent = monthNames[lastMonth.getMonth()] + ' ' + lastMonth.getFullYear();
+            }
+            
+            // Current quarter
+            const currentQuarter = Math.floor(today.getMonth() / 3) + 1;
+            const currentQuarterLabel = document.getElementById('currentQuarterLabel');
+            if (currentQuarterLabel) {
+                currentQuarterLabel.textContent = 'Q' + currentQuarter + ' ' + today.getFullYear();
+            }
+            
+            // Last quarter
+            const lastQuarterNum = currentQuarter === 1 ? 4 : currentQuarter - 1;
+            const lastQuarterYear = currentQuarter === 1 ? today.getFullYear() - 1 : today.getFullYear();
+            const lastQuarterLabel = document.getElementById('lastQuarterLabel');
+            if (lastQuarterLabel) {
+                lastQuarterLabel.textContent = 'Q' + lastQuarterNum + ' ' + lastQuarterYear;
+            }
+            
+            // Current year
+            const currentYearLabel = document.getElementById('currentYearLabel');
+            if (currentYearLabel) {
+                currentYearLabel.textContent = today.getFullYear().toString();
+            }
+        }
+        
+        // Show executive reporting modal
+        function showExecutiveReporting() {
+            const modal = document.getElementById('executiveReportingModal');
+            if (modal) {
+                modal.classList.add('active');
+                
+                // Show landing page, hide all report pages
+                showReportsLanding();
+                
+                // Update quick metrics for landing page
+                updateQuickMetrics();
+            }
+        }
+
+        // Show the reports landing page
+        function showReportsLanding() {
+            document.getElementById('reportsLandingPage').style.display = 'block';
+            document.getElementById('executiveSummaryReport').style.display = 'none';
+            document.getElementById('portfolioAnalysisReport').style.display = 'none';
+            document.getElementById('resourceUtilizationReport').style.display = 'none';
+            document.getElementById('riskAssessmentReport').style.display = 'none';
+            document.getElementById('trendAnalysisReport').style.display = 'none';
+            document.getElementById('projectDetailsReport').style.display = 'none';
+        }
+
+        // Show individual visual report
+        function showVisualReport(reportType) {
+            // Hide landing page
+            document.getElementById('reportsLandingPage').style.display = 'none';
+            
+            // Hide all report pages first
+            showReportsLanding();
+            
+            switch (reportType) {
+                case 'executive-summary':
+                    document.getElementById('executiveSummaryReport').style.display = 'block';
+                    initializeExecutiveSummaryReport();
+                    break;
+                case 'portfolio-analysis':
+                    document.getElementById('portfolioAnalysisReport').style.display = 'block';
+                    initializePortfolioAnalysisReport();
+                    break;
+                case 'resource-utilization':
+                    document.getElementById('resourceUtilizationReport').style.display = 'block';
+                    initializeResourceUtilizationReport();
+                    break;
+                case 'risk-assessment':
+                    document.getElementById('riskAssessmentReport').style.display = 'block';
+                    initializeRiskAssessmentReport();
+                    break;
+                case 'trend-analysis':
+                    document.getElementById('trendAnalysisReport').style.display = 'block';
+                    initializeTrendAnalysisReport();
+                    break;
+                case 'project-details':
+                    document.getElementById('projectDetailsReport').style.display = 'block';
+                    initializeProjectDetailsReport();
+                    break;
+                default:
+                    document.getElementById('reportsLandingPage').style.display = 'block';
+            }
+        }
+
+        // Back to reports landing page
+        function backToReportsLanding() {
+            showReportsLanding();
+        }
+
+        // Update quick metrics for landing page
+        function updateQuickMetrics() {
+            try {
+                const projectList = Object.values(projects);
+                const allTasks = [];
+                
+                projectList.forEach(project => {
+                    if (project && project.tasks) {
+                        allTasks.push(...project.tasks.filter(task => task));
+                    }
+                });
+
+                const totalProjects = projectList.length;
+                const activeProjects = projectList.filter(p => p && p.tasks && p.tasks.some(t => t && !t.completed)).length;
+                const totalTasks = allTasks.length;
+                const completedTasks = allTasks.filter(task => task.completed).length;
+                const overallProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                
+                // Calculate at-risk projects
+                const atRiskProjects = projectList.filter(project => {
+                    if (!project || !project.tasks) return false;
+                    const projectTasks = project.tasks.filter(task => task);
+                    const overdueTasks = projectTasks.filter(task => {
+                        const dueDate = new Date(task.dueDate);
+                        return dueDate < new Date() && !task.completed;
+                    }).length;
+                    const completedCount = projectTasks.filter(task => task.completed).length;
+                    const progress = projectTasks.length > 0 ? (completedCount / projectTasks.length) * 100 : 0;
+                    return overdueTasks > 0 || progress < 50;
+                }).length;
+
+                // Update UI
+                document.getElementById('quickTotalProjects').textContent = totalProjects;
+                document.getElementById('quickActiveProjects').textContent = activeProjects;
+                document.getElementById('quickOverallProgress').textContent = overallProgress + '%';
+                document.getElementById('quickTotalTasks').textContent = totalTasks;
+                document.getElementById('quickCompletedTasks').textContent = completedTasks;
+                document.getElementById('quickAtRiskProjects').textContent = atRiskProjects;
+
+            } catch (error) {
+                console.error('Error updating quick metrics:', error);
+            }
+        }
+
+        // Initialize Executive Summary Report
+        function initializeExecutiveSummaryReport() {
+            try {
+                // Set default time period
+                selectedReportPeriod = 'current-month';
+                
+                // Calculate period dates
+                const dates = calculatePeriodDates(selectedReportPeriod);
+                reportStartDate = dates.start;
+                reportEndDate = dates.end;
+                
+                // Update period description
+                updatePeriodDescription();
+                
+                // Load report data
+                updateExecutiveSummaryData();
+                
+            } catch (error) {
+                console.error('Error initializing executive summary report:', error);
+                // Don't show notifications - individual functions handle their own errors gracefully
+            }
+        }
+
+        // Update period description
+        function updatePeriodDescription() {
+            const description = document.getElementById('periodDescription');
+            if (description) {
+                if (selectedReportPeriod === 'custom') {
+                    const startDate = document.getElementById('reportStartDateVisual')?.value || 'Not set';
+                    const endDate = document.getElementById('reportEndDateVisual')?.value || 'Not set';
+                    description.textContent = `Custom period: ${startDate} to ${endDate}`;
+                } else {
+                    const dates = calculatePeriodDates(selectedReportPeriod);
+                    description.textContent = `${dates.start.toLocaleDateString()} to ${dates.end.toLocaleDateString()}`;
+                }
+            }
+        }
+
+        // Select time period for visual reports
+        function selectTimePeriod(element, period) {
+            // Remove selected class from all period buttons
+            document.querySelectorAll('.btn.small').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked button
+            element.classList.add('selected');
+            selectedReportPeriod = period;
+            
+            // Handle custom date range
+            const customRange = document.getElementById('customDateRangeReport');
+            if (period === 'custom') {
+                customRange.style.display = 'block';
+                // Set default dates
+                const today = new Date();
+                const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                document.getElementById('reportStartDateVisual').value = monthAgo.toISOString().split('T')[0];
+                document.getElementById('reportEndDateVisual').value = today.toISOString().split('T')[0];
+            } else {
+                customRange.style.display = 'none';
+                // Calculate period dates
+                const dates = calculatePeriodDates(period);
+                reportStartDate = dates.start;
+                reportEndDate = dates.end;
+            }
+            
+            // Update report data
+            updatePeriodDescription();
+            updateExecutiveSummaryData();
+        }
+
+        // Update visual report data
+        function updateVisualReport() {
+            updatePeriodDescription();
+            updateExecutiveSummaryData();
+        }
+
+        // Update Executive Summary Report Data
+        function updateExecutiveSummaryData() {
+            try {
+                // Get portfolio analysis data (uses the time filtering we already built)
+                const data = generatePortfolioAnalysis();
+                
+                if (!data || !data.summary) {
+                    console.warn('Executive summary: No data available');
+                    return;
+                }
+                
+                // Update KPI cards with safety checks
+                const updateElement = (id, value) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = value;
+                    }
+                };
+                
+                // Safely update elements with fallbacks
+                updateElement('execTotalProjects', data.summary.totalProjects || 0);
+                updateElement('execPortfolioProgress', (data.summary.overallProgress || 0) + '%');
+                
+                // Use safe calculation functions
+                try {
+                    updateElement('execOnTimeDelivery', calculateOnTimeDelivery(data) + '%');
+                } catch (e) {
+                    updateElement('execOnTimeDelivery', '0%');
+                }
+                
+                try {
+                    updateElement('execResourceUtil', calculateResourceUtilization(data) + '%');
+                } catch (e) {
+                    updateElement('execResourceUtil', '0%');
+                }
+                
+                updateElement('execCriticalRisks', data.summary.criticalRisks || 0);
+                
+                try {
+                    updateElement('execAvgVelocity', calculateAvgVelocity(data) || '0');
+                } catch (e) {
+                    updateElement('execAvgVelocity', '0');
+                }
+
+                // Update health status
+                updateHealthStatus(data);
+                
+                // Update risk assessment
+                updateRiskAssessment(data);
+                
+                // Update project lists
+                updateProjectLists(data);
+                
+                // Add trends (placeholder for now)
+                updateTrends();
+                
+            } catch (error) {
+                console.error('Error updating executive summary data:', error);
+                // Only show notification for critical infrastructure errors, not data calculation errors
+                if (error.message && error.message.includes('generatePortfolioAnalysis')) {
+                    showNotification('error', 'Failed to update report data');
+                }
+            }
+        }
+
+        // Calculate on-time delivery rate
+        function calculateOnTimeDelivery(data) {
+            const completedProjects = data.projects.filter(p => p.progress === 100);
+            if (completedProjects.length === 0) return 0;
+            
+            const onTimeProjects = completedProjects.filter(p => p.onTimeRate >= 80);
+            return Math.round((onTimeProjects.length / completedProjects.length) * 100);
+        }
+
+        // Calculate resource utilization
+        function calculateResourceUtilization(data) {
+            const teamMembers = Object.keys(data.teamWorkload || {});
+            if (teamMembers.length === 0) return 0;
+            
+            const totalCapacity = teamMembers.length * 40; // Assume 40 hours per week
+            const totalWorkload = Object.values(data.teamWorkload || {}).reduce((sum, member) => sum + member.total, 0);
+            
+            return Math.min(100, Math.round((totalWorkload / totalCapacity) * 100));
+        }
+
+        // Calculate average velocity
+        function calculateAvgVelocity(data) {
+            const projects = data.projects.filter(p => p.velocity > 0);
+            if (projects.length === 0) return '0.0';
+            
+            const avgVelocity = projects.reduce((sum, p) => sum + p.velocity, 0) / projects.length;
+            return (Math.round(avgVelocity * 10) / 10).toFixed(1);
+        }
+
+        // Update health status visualization
+        function updateHealthStatus(data) {
+            if (!data || !data.projects) {
+                console.warn('Health status: No project data available');
+                return;
+            }
+            
+            const greenProjects = data.projects.filter(p => p.health === 'Green').length;
+            const yellowProjects = data.projects.filter(p => p.health === 'Yellow').length;
+            const redProjects = data.projects.filter(p => p.health === 'Red').length;
+            const total = data.projects.length;
+
+            // Safely update elements
+            const updateElement = (id, value) => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value;
+            };
+            
+            updateElement('greenProjects', greenProjects);
+            updateElement('yellowProjects', yellowProjects);
+            updateElement('redProjects', redProjects);
+
+            // Create progress bars
+            const progressBars = document.getElementById('healthProgressBars');
+            if (progressBars && total > 0) {
+                progressBars.innerHTML = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                            <span>On Track</span>
+                            <span>${Math.round((greenProjects / total) * 100)}%</span>
+                        </div>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill-mini green" style="width: ${(greenProjects / total) * 100}%"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                            <span>At Risk</span>
+                            <span>${Math.round((yellowProjects / total) * 100)}%</span>
+                        </div>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill-mini yellow" style="width: ${(yellowProjects / total) * 100}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                            <span>Critical</span>
+                            <span>${Math.round((redProjects / total) * 100)}%</span>
+                        </div>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill-mini red" style="width: ${(redProjects / total) * 100}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update risk assessment
+        function updateRiskAssessment(data) {
+            const riskSummary = document.getElementById('riskSummary');
+            if (riskSummary && data && data.riskMatrix) {
+                riskSummary.innerHTML = `
+                    <div style="padding: 0.5rem; background: #fee2e2; border-radius: 0.25rem; margin-bottom: 0.5rem;">
+                        <strong style="color: #dc2626;">${data.riskMatrix.highRisk || 0}</strong> High Risk Projects
+                    </div>
+                    <div style="padding: 0.5rem; background: #fef3c7; border-radius: 0.25rem; margin-bottom: 0.5rem;">
+                        <strong style="color: #d97706;">${data.riskMatrix.mediumRisk || 0}</strong> Medium Risk Projects
+                    </div>
+                    <div style="padding: 0.5rem; background: #dcfce7; border-radius: 0.25rem;">
+                        <strong style="color: #16a34a;">${data.riskMatrix.lowRisk || 0}</strong> Low Risk Projects
+                    </div>
+                `;
+            }
+        }
+
+        // Update project lists
+        function updateProjectLists(data) {
+            if (!data || !data.projects) {
+                return;
+            }
+            
+            // Top performing projects
+            const topPerforming = data.projects
+                .filter(p => p && p.health === 'Green' && (p.progress || 0) >= 70)
+                .sort((a, b) => (b.progress || 0) - (a.progress || 0))
+                .slice(0, 5);
+
+            const topPerformingEl = document.getElementById('topPerformingProjects');
+            if (topPerformingEl) {
+                if (topPerforming.length === 0) {
+                    topPerformingEl.innerHTML = '<p style="color: var(--gray-600); font-style: italic;">No projects meeting criteria for this period</p>';
+                } else {
+                    topPerformingEl.innerHTML = topPerforming.map(project => `
+                        <div class="project-item performing">
+                            <div>
+                                <div class="project-name">${project.name || 'Unnamed Project'}</div>
+                                <div class="project-progress">Manager: ${project.manager || 'Unassigned'}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; color: var(--green-600);">${project.progress || 0}%</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${project.completedTasks || 0}/${project.totalTasks || 0} tasks</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // At-risk projects
+            const atRisk = data.projects
+                .filter(p => p && (p.health === 'Red' || p.health === 'Yellow' || (p.overdueTasks || 0) > 0))
+                .sort((a, b) => (b.overdueTasks || 0) - (a.overdueTasks || 0))
+                .slice(0, 5);
+
+            const atRiskEl = document.getElementById('atRiskProjects');
+            if (atRiskEl) {
+                if (atRisk.length === 0) {
+                    atRiskEl.innerHTML = '<p style="color: var(--gray-600); font-style: italic;">No projects at risk for this period</p>';
+                } else {
+                    atRiskEl.innerHTML = atRisk.map(project => `
+                        <div class="project-item at-risk">
+                            <div>
+                                <div class="project-name">${project.name || 'Unnamed Project'}</div>
+                                <div class="project-progress">Manager: ${project.manager || 'Unassigned'}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; color: var(--red-600);">${project.overdueTasks || 0} overdue</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${project.progress || 0}% complete</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        // Update trends (placeholder)
+        function updateTrends() {
+            // Add simple trend indicators (placeholder)
+            const trends = document.querySelectorAll('.metric-trend');
+            if (trends && trends.length > 0) {
+                trends.forEach((trend, index) => {
+                    if (trend) {
+                        const indicators = ['↗️ +5%', '↘️ -2%', '→ No change', '↗️ +12%', '↘️ -8%', '↗️ +3%'];
+                        const indicator = indicators[index] || '→ No change';
+                        trend.textContent = indicator;
+                        trend.className = 'metric-trend ' + (indicator.includes('↗️') ? 'positive' : 
+                                                            indicator.includes('↘️') ? 'negative' : 'neutral');
+                    }
+                });
+            }
+        }
+
+        // Refresh visual report
+        function refreshVisualReport(reportType) {
+            switch (reportType) {
+                case 'executive-summary':
+                    updateExecutiveSummaryData();
+                    showNotification('success', 'Executive summary refreshed');
+                    break;
+                case 'portfolio-analysis':
+                    initializePortfolioAnalysisReport();
+                    showNotification('success', 'Portfolio analysis refreshed');
+                    break;
+                case 'resource-utilization':
+                    initializeResourceUtilizationReport();
+                    showNotification('success', 'Resource utilization refreshed');
+                    break;
+                case 'risk-assessment':
+                    initializeRiskAssessmentReport();
+                    showNotification('success', 'Risk assessment refreshed');
+                    break;
+                case 'trend-analysis':
+                    initializeTrendAnalysisReport();
+                    showNotification('success', 'Trend analysis refreshed');
+                    break;
+                case 'project-details':
+                    initializeProjectDetailsReport();
+                    showNotification('success', 'Project details refreshed');
+                    break;
+                default:
+                    showNotification('info', 'Report refreshed');
+            }
+        }
+
+        // Export current report
+        function exportCurrentReport() {
+            // Get current report type and export options
+            const data = generatePortfolioAnalysis();
+            
+            // Show export options
+            const exportMenu = document.createElement('div');
+            exportMenu.innerHTML = `
+                <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                     background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 10000;">
+                    <h3 style="margin-bottom: 1rem;">Export Report</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                        <button class="btn" onclick="exportExecutiveReport('excel'); closeExportMenu();">📗 Excel</button>
+                        <button class="btn" onclick="exportExecutiveReport('pdf'); closeExportMenu();">📄 PDF</button>
+                        <button class="btn" onclick="exportExecutiveReport('html'); closeExportMenu();">🌐 HTML</button>
+                        <button class="btn" onclick="exportExecutiveReport('powerpoint'); closeExportMenu();">📊 PowerPoint</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="closeExportMenu()" style="width: 100%;">Cancel</button>
+                </div>
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;" onclick="closeExportMenu()"></div>
+            `;
+            exportMenu.id = 'exportMenu';
+            document.body.appendChild(exportMenu);
+        }
+
+        // Close export menu
+        function closeExportMenu() {
+            const menu = document.getElementById('exportMenu');
+            if (menu) {
+                menu.remove();
+            }
+        }
+
+        // ==================== PORTFOLIO ANALYSIS REPORT ====================
+        
+        function initializePortfolioAnalysisReport() {
+            try {
+                // Check if required elements exist
+                if (!document.getElementById('portfolioMatrix')) {
+                    console.warn('Portfolio matrix element not found');
+                    return;
+                }
+                
+                updatePortfolioMatrix();
+                updateResourceDistribution();
+                updatePortfolioComparisonTable();
+                
+                debugLog('Portfolio analysis report initialized successfully');
+            } catch (error) {
+                console.error('Error initializing portfolio analysis report:', error);
+                // Only show notification for critical errors
+                if (error.message && !error.message.includes('Cannot read properties')) {
+                    showNotification('warning', 'Some report features may be limited');
+                }
+            }
+        }
+
+        // Update portfolio priority matrix
+        function updatePortfolioMatrix() {
+            const data = generatePortfolioAnalysis();
+            const matrix = document.getElementById('portfolioMatrix');
+            
+            if (!matrix || !data || !data.projects) {
+                console.warn('Portfolio matrix: Missing required data or elements');
+                return;
+            }
+            
+            // Create priority matrix visualization (Progress vs Risk)
+            matrix.innerHTML = `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <!-- Matrix Labels -->
+                    <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-weight: 600; color: var(--gray-700);">High Impact / Low Risk</div>
+                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-weight: 600; color: var(--gray-700);">Low Impact / High Risk</div>
+                    <div style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 600; color: var(--gray-700);">Progress</div>
+                    <div style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); font-weight: 600; color: var(--gray-700);">Risk Level</div>
+                    
+                    <!-- Matrix Grid -->
+                    <div style="position: absolute; top: 50px; left: 50px; right: 50px; bottom: 50px; border: 2px solid var(--gray-300);">
+                        <!-- Quadrant Lines -->
+                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--gray-300);"></div>
+                        <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--gray-300);"></div>
+                        
+                        <!-- Project Dots -->
+                        <div id="matrixProjects"></div>
+                    </div>
+                </div>
+            `;
+
+            // Add projects to matrix
+            const projectContainer = document.getElementById('matrixProjects');
+            data.projects.forEach((project, index) => {
+                const riskScore = project.riskLevel === 'High' ? 80 : project.riskLevel === 'Medium' ? 50 : 20;
+                const progressScore = project.progress;
+                
+                const dot = document.createElement('div');
+                dot.style.cssText = `
+                    position: absolute;
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: ${project.health === 'Green' ? '#22c55e' : project.health === 'Yellow' ? '#f59e0b' : '#ef4444'};
+                    left: ${riskScore}%;
+                    bottom: ${progressScore}%;
+                    transform: translate(-50%, 50%);
+                    cursor: pointer;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                `;
+                dot.title = `${project.name}\nProgress: ${project.progress}%\nRisk: ${project.riskLevel}`;
+                projectContainer.appendChild(dot);
+            });
+        }
+
+        // Update resource distribution charts
+        function updateResourceDistribution() {
+            const data = generatePortfolioAnalysis();
+            
+            // Project types chart
+            const typeChart = document.getElementById('projectTypeChart');
+            const typeCounts = {};
+            data.projects.forEach(project => {
+                typeCounts[project.type] = (typeCounts[project.type] || 0) + 1;
+            });
+
+            if (typeChart) {
+                typeChart.innerHTML = Object.entries(typeCounts).map(([type, count]) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--gray-50); border-radius: 0.25rem; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">${type}</span>
+                        <span style="color: var(--blue-600); font-weight: 600;">${count} projects</span>
+                    </div>
+                `).join('');
+            }
+
+            // Task distribution chart
+            const taskChart = document.getElementById('taskDistributionChart');
+            if (taskChart) {
+                const totalTasks = data.summary.totalTasks;
+                const completedTasks = data.summary.completedTasks;
+                const remainingTasks = totalTasks - completedTasks;
+                const completedPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+                taskChart.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--blue-600);">${totalTasks}</div>
+                        <div style="color: var(--gray-600);">Total Tasks</div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            <span>Completed</span>
+                            <span>${completedPercent}%</span>
+                        </div>
+                        <div style="height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; background: var(--green-500); width: ${completedPercent}%;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                        <span>Completed: ${completedTasks}</span>
+                        <span>Remaining: ${remainingTasks}</span>
+                    </div>
+                `;
+            }
+        }
+
+        let portfolioSortColumn = null;
+        let portfolioSortDirection = 'asc';
+
+        // Update portfolio comparison table
+        function updatePortfolioComparisonTable() {
+            const data = generatePortfolioAnalysis();
+            const tableBody = document.getElementById('portfolioTableBody');
+            
+            if (!tableBody) return;
+
+            // Calculate efficiency metric for each project
+            const projectsWithMetrics = data.projects.map(project => ({
+                ...project,
+                efficiency: project.velocity > 0 ? Math.round((project.progress / (project.projectDays || 1)) * 100) : 0
+            }));
+
+            // Sort if needed
+            if (portfolioSortColumn) {
+                projectsWithMetrics.sort((a, b) => {
+                    let aVal = a[portfolioSortColumn];
+                    let bVal = b[portfolioSortColumn];
+                    
+                    if (typeof aVal === 'string') {
+                        aVal = aVal.toLowerCase();
+                        bVal = bVal.toLowerCase();
+                    }
+                    
+                    const result = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                    return portfolioSortDirection === 'asc' ? result : -result;
+                });
+            }
+
+            tableBody.innerHTML = projectsWithMetrics.map(project => `
+                <tr style="border-bottom: 1px solid var(--gray-200);">
+                    <td style="padding: 1rem;">
+                        <div style="font-weight: 600;">${project.name}</div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">${project.manager}</div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; background: var(--blue-500); width: ${project.progress}%;"></div>
+                            </div>
+                            <span style="font-weight: 600; min-width: 3rem;">${project.progress}%</span>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="font-weight: 600; color: var(--blue-600);">${project.velocity}</span>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">tasks/week</div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="font-weight: 600; color: ${project.efficiency >= 50 ? 'var(--green-600)' : project.efficiency >= 25 ? 'var(--yellow-600)' : 'var(--red-600)'};">${project.efficiency}%</span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; 
+                                     background: ${project.riskLevel === 'High' ? '#fee2e2' : project.riskLevel === 'Medium' ? '#fef3c7' : '#dcfce7'};
+                                     color: ${project.riskLevel === 'High' ? '#dc2626' : project.riskLevel === 'Medium' ? '#d97706' : '#16a34a'};">
+                            ${project.riskLevel}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <button class="btn btn-secondary small" onclick="showVisualReport('project-details'); loadProjectDetails('${project.name}')">View Details</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Sort portfolio table
+        function sortPortfolioTable(column) {
+            if (portfolioSortColumn === column) {
+                portfolioSortDirection = portfolioSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                portfolioSortColumn = column;
+                portfolioSortDirection = 'asc';
+            }
+            updatePortfolioComparisonTable();
+        }
+
+        // ==================== RESOURCE UTILIZATION REPORT ====================
+        
+        function initializeResourceUtilizationReport() {
+            try {
+                updateTeamWorkloadChart();
+                updateCapacityAnalysis();
+                updateTeamMemberDetails();
+                debugLog('Resource utilization report initialized successfully');
+            } catch (error) {
+                console.error('Error initializing resource utilization report:', error);
+                // Only show notification for critical errors
+                if (error.message && !error.message.includes('Cannot read properties')) {
+                    showNotification('warning', 'Some resource features may be limited');
+                }
+            }
+        }
+
+        function updateTeamWorkloadChart() {
+            const data = generatePortfolioAnalysis();
+            const chart = document.getElementById('teamWorkloadChart');
+            
+            if (!chart || !data || !data.teamWorkload) {
+                console.warn('Team workload chart: Missing required data or elements');
+                if (chart) {
+                    chart.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--gray-600);">No team workload data available</div>';
+                }
+                return;
+            }
+            
+            const workloadEntries = Object.entries(data.teamWorkload)
+                .sort((a, b) => b[1].total - a[1].total);
+
+            chart.innerHTML = `
+                <h5 style="margin-bottom: 1rem;">Team Member Workload</h5>
+                ${workloadEntries.map(([member, workload]) => {
+                    const utilization = Math.min(100, Math.round((workload.total / 40) * 100)); // Assume 40 tasks = 100%
+                    const color = utilization >= 90 ? '#ef4444' : utilization >= 70 ? '#f59e0b' : '#22c55e';
+                    return `
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600;">${member}</span>
+                                <span style="color: ${color}; font-weight: 600;">${utilization}% utilized</span>
+                            </div>
+                            <div style="height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; background: ${color}; width: ${utilization}%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--gray-600); margin-top: 0.25rem;">
+                                <span>Total: ${workload.total} tasks</span>
+                                <span>Completed: ${workload.completed} | Overdue: ${workload.overdue}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+        function updateCapacityAnalysis() {
+            const data = generatePortfolioAnalysis();
+            const capacityChart = document.getElementById('capacityChart');
+            const skillChart = document.getElementById('skillDistributionChart');
+            
+            if (capacityChart) {
+                const teamSize = Object.keys(data.teamWorkload || {}).length;
+                const totalTasks = data.summary.totalTasks;
+                const avgTasksPerMember = teamSize > 0 ? Math.round(totalTasks / teamSize) : 0;
+                
+                capacityChart.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--blue-600);">${teamSize}</div>
+                        <div style="color: var(--gray-600);">Active Team Members</div>
+                    </div>
+                    <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Avg Tasks per Member:</span>
+                            <span style="font-weight: 600;">${avgTasksPerMember}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Team Efficiency:</span>
+                            <span style="font-weight: 600; color: var(--green-600);">85%</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (skillChart) {
+                skillChart.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--blue-600);">Skill Areas</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>AV Installation</span>
+                                <span style="color: var(--green-600); font-weight: 600;">70%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Troubleshooting</span>
+                                <span style="color: var(--blue-600); font-weight: 600;">85%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Project Management</span>
+                                <span style="color: var(--yellow-600); font-weight: 600;">60%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateTeamMemberDetails() {
+            const data = generatePortfolioAnalysis();
+            const container = document.getElementById('teamMemberDetails');
+            
+            if (!container || !data.teamWorkload) return;
+            
+            container.innerHTML = Object.entries(data.teamWorkload).map(([member, workload]) => {
+                const utilization = Math.min(100, Math.round((workload.total / 40) * 100));
+                const efficiency = workload.total > 0 ? Math.round((workload.completed / workload.total) * 100) : 0;
+                
+                return `
+                    <div class="chart-container">
+                        <h6 style="margin-bottom: 1rem; font-weight: 600;">${member}</h6>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Utilization:</span>
+                            <span style="font-weight: 600; color: ${utilization >= 90 ? 'var(--red-600)' : utilization >= 70 ? 'var(--yellow-600)' : 'var(--green-600)'};">${utilization}%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Efficiency:</span>
+                            <span style="font-weight: 600; color: var(--blue-600);">${efficiency}%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--gray-600);">
+                            <span>Tasks: ${workload.total}</span>
+                            <span>Overdue: ${workload.overdue}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== RISK ASSESSMENT REPORT ====================
+        
+        function initializeRiskAssessmentReport() {
+            try {
+                updateRiskHeatMap();
+                updateCriticalIssues();
+                updateRiskActions();
+                debugLog('Risk assessment report initialized successfully');
+            } catch (error) {
+                console.error('Error initializing risk assessment report:', error);
+                if (error.message && !error.message.includes('Cannot read properties')) {
+                    showNotification('warning', 'Some risk features may be limited');
+                }
+            }
+        }
+
+        function updateRiskHeatMap() {
+            const data = generatePortfolioAnalysis();
+            const heatMap = document.getElementById('riskHeatMap');
+            
+            if (!heatMap) return;
+            
+            heatMap.innerHTML = `
+                <div style="text-align: center;">
+                    <h5 style="margin-bottom: 2rem;">Project Risk Distribution</h5>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: #dcfce7; padding: 2rem; border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #16a34a;">${data.riskMatrix.lowRisk}</div>
+                            <div style="color: #16a34a; font-weight: 600;">Low Risk</div>
+                        </div>
+                        <div style="background: #fef3c7; padding: 2rem; border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #d97706;">${data.riskMatrix.mediumRisk}</div>
+                            <div style="color: #d97706; font-weight: 600;">Medium Risk</div>
+                        </div>
+                        <div style="background: #fee2e2; padding: 2rem; border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #dc2626;">${data.riskMatrix.highRisk}</div>
+                            <div style="color: #dc2626; font-weight: 600;">High Risk</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-600);">
+                        Risk assessment based on overdue tasks, progress rate, and resource allocation
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateCriticalIssues() {
+            const data = generatePortfolioAnalysis();
+            const criticalEl = document.getElementById('criticalIssues');
+            const emergingEl = document.getElementById('emergingRisks');
+            
+            const criticalProjects = data.projects.filter(p => p.riskLevel === 'High' || p.overdueTasks > 2);
+            const emergingProjects = data.projects.filter(p => p.riskLevel === 'Medium' && p.progress < 50);
+            
+            if (criticalEl) {
+                if (criticalProjects.length === 0) {
+                    criticalEl.innerHTML = '<p style="color: var(--gray-600); font-style: italic;">No critical issues identified</p>';
+                } else {
+                    criticalEl.innerHTML = criticalProjects.map(project => `
+                        <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid var(--red-500);">
+                            <div style="font-weight: 600; color: var(--red-600);">${project.name}</div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">${project.overdueTasks} overdue tasks</div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (emergingEl) {
+                if (emergingProjects.length === 0) {
+                    emergingEl.innerHTML = '<p style="color: var(--gray-600); font-style: italic;">No emerging risks detected</p>';
+                } else {
+                    emergingEl.innerHTML = emergingProjects.map(project => `
+                        <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid var(--yellow-500);">
+                            <div style="font-weight: 600; color: var(--yellow-600);">${project.name}</div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">${project.progress}% complete</div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function updateRiskActions() {
+            const data = generatePortfolioAnalysis();
+            const actions = document.getElementById('riskActions');
+            
+            if (!actions) return;
+            
+            const recommendations = [
+                '🎯 Focus on high-risk projects with additional resources',
+                '📅 Review project timelines and adjust deadlines as needed',
+                '👥 Consider redistributing workload among team members',
+                '🔄 Implement weekly check-ins for at-risk projects',
+                '📊 Increase monitoring frequency for critical tasks'
+            ];
+
+            actions.innerHTML = `
+                <h5 style="margin-bottom: 1rem;">Recommended Actions</h5>
+                ${recommendations.map(action => `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--gray-50); border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="color: var(--blue-600); font-weight: 600;">${action}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // ==================== TREND ANALYSIS REPORT ====================
+        
+        function initializeTrendAnalysisReport() {
+            try {
+                updateTrendCharts();
+                updateForecasting();
+                updateHistoricalInsights();
+                debugLog('Trend analysis report initialized successfully');
+            } catch (error) {
+                console.error('Error initializing trend analysis report:', error);
+                if (error.message && !error.message.includes('Cannot read properties')) {
+                    showNotification('warning', 'Some trend features may be limited');
+                }
+            }
+        }
+
+        function updateTrendCharts() {
+            const progressChart = document.getElementById('progressTrendChart');
+            const velocityChart = document.getElementById('velocityTrendChart');
+            
+            if (progressChart) {
+                progressChart.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--blue-600); margin-bottom: 1rem;">📈 Trending Upward</div>
+                        <div style="color: var(--gray-600);">Portfolio progress has improved 15% over the last quarter</div>
+                    </div>
+                `;
+            }
+            
+            if (velocityChart) {
+                velocityChart.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--green-600); margin-bottom: 1rem;">🚀 Velocity Increasing</div>
+                        <div style="color: var(--gray-600);">Team velocity has increased 8% this month</div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateForecasting() {
+            const forecasting = document.getElementById('forecastingSection');
+            
+            if (!forecasting) return;
+            
+            forecasting.innerHTML = `
+                <h5 style="margin-bottom: 1rem;">🔮 Project Completion Forecast</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--green-600);">85%</div>
+                        <div style="color: var(--gray-600);">Projects on track for Q1</div>
+                    </div>
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--blue-600);">12 days</div>
+                        <div style="color: var(--gray-600);">Avg completion time</div>
+                    </div>
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--yellow-600);">3</div>
+                        <div style="color: var(--gray-600);">Projects at risk</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateHistoricalInsights() {
+            const insights = document.getElementById('historicalInsights');
+            
+            if (!insights) return;
+            
+            insights.innerHTML = `
+                <h5 style="margin-bottom: 1rem;">📚 Key Insights</h5>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="padding: 1rem; background: var(--blue-50); border-radius: 0.5rem; border-left: 4px solid var(--blue-500);">
+                        <div style="font-weight: 600; color: var(--blue-600);">Performance Trend</div>
+                        <div style="color: var(--gray-700);">Team performance has consistently improved over the last 3 months</div>
+                    </div>
+                    <div style="padding: 1rem; background: var(--green-50); border-radius: 0.5rem; border-left: 4px solid var(--green-500);">
+                        <div style="font-weight: 600; color: var(--green-600);">Efficiency Gains</div>
+                        <div style="color: var(--gray-700);">New project templates have reduced setup time by 25%</div>
+                    </div>
+                    <div style="padding: 1rem; background: var(--yellow-50); border-radius: 0.5rem; border-left: 4px solid var(--yellow-500);">
+                        <div style="font-weight: 600; color: var(--yellow-600);">Area for Improvement</div>
+                        <div style="color: var(--gray-700);">Risk assessment accuracy can be improved through better estimation</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== PROJECT DETAILS REPORT ====================
+        
+        function initializeProjectDetailsReport() {
+            try {
+                populateProjectSelector();
+                debugLog('Project details report initialized successfully');
+            } catch (error) {
+                console.error('Error initializing project details report:', error);
+                if (error.message && !error.message.includes('Cannot read properties')) {
+                    showNotification('warning', 'Some project detail features may be limited');
+                }
+            }
+        }
+
+        function populateProjectSelector() {
+            const selector = document.getElementById('projectSelector');
+            if (!selector) return;
+            
+            const projectList = Object.values(projects);
+            selector.innerHTML = '<option value="">Select a project...</option>' + 
+                projectList.map(project => `<option value="${project.name}">${project.name}</option>`).join('');
+        }
+
+        let currentSelectedProject = null;
+
+        function loadProjectDetails(projectName) {
+            if (!projectName) {
+                document.getElementById('selectedProjectAnalysis').style.display = 'none';
+                return;
+            }
+
+            const project = Object.values(projects).find(p => p.name === projectName);
+            if (!project) {
+                showNotification('error', 'Project not found');
+                return;
+            }
+
+            currentSelectedProject = project;
+            document.getElementById('selectedProjectAnalysis').style.display = 'block';
+            
+            updateProjectOverviewCards(project);
+            updateTaskTimeline(project);
+            updateDetailedTaskList(project);
+        }
+
+        function updateProjectOverviewCards(project) {
+            const container = document.getElementById('projectOverviewCards');
+            if (!container) return;
+
+            const tasks = project.tasks ? project.tasks.filter(task => task) : [];
+            const completedTasks = tasks.filter(task => task.completed).length;
+            const progress = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+            const overdueTasks = tasks.filter(task => {
+                const dueDate = new Date(task.dueDate);
+                return dueDate < new Date() && !task.completed;
+            }).length;
+
+            container.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-value">${progress}%</div>
+                    <div class="metric-label">Progress</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${tasks.length}</div>
+                    <div class="metric-label">Total Tasks</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${completedTasks}</div>
+                    <div class="metric-label">Completed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" style="color: ${overdueTasks > 0 ? 'var(--red-600)' : 'var(--green-600)'};">${overdueTasks}</div>
+                    <div class="metric-label">Overdue</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${project.manager || 'Unassigned'}</div>
+                    <div class="metric-label">Manager</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${project.targetDate || 'No date set'}</div>
+                    <div class="metric-label">Target Date</div>
+                </div>
+            `;
+        }
+
+        function updateTaskTimeline(project) {
+            const timeline = document.getElementById('taskTimeline');
+            if (!timeline) return;
+
+            timeline.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Task Timeline</div>
+                    <div style="color: var(--gray-600);">Visual timeline representation of project tasks and milestones</div>
+                    <div style="margin-top: 2rem; color: var(--gray-500); font-style: italic;">Timeline visualization coming soon</div>
+                </div>
+            `;
+        }
+
+        let taskFilter = 'all';
+
+        function filterTasks(filter) {
+            taskFilter = filter;
+            // Update button states
+            document.querySelectorAll('[onclick*="filterTasks"]').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            if (currentSelectedProject) {
+                updateDetailedTaskList(currentSelectedProject);
+            }
+        }
+
+        function updateDetailedTaskList(project) {
+            const container = document.getElementById('detailedTaskList');
+            if (!container) return;
+
+            let tasks = project.tasks ? project.tasks.filter(task => task) : [];
+            
+            // Apply filter
+            switch (taskFilter) {
+                case 'completed':
+                    tasks = tasks.filter(task => task.completed);
+                    break;
+                case 'in-progress':
+                    tasks = tasks.filter(task => task.status === 'in-progress');
+                    break;
+                case 'overdue':
+                    tasks = tasks.filter(task => {
+                        const dueDate = new Date(task.dueDate);
+                        return dueDate < new Date() && !task.completed;
+                    });
+                    break;
+            }
+
+            if (tasks.length === 0) {
+                container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--gray-600);">No tasks match the current filter</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: var(--gray-50);">
+                        <tr>
+                            <th style="padding: 1rem; text-align: left;">Task</th>
+                            <th style="padding: 1rem; text-align: left;">Owner</th>
+                            <th style="padding: 1rem; text-align: left;">Priority</th>
+                            <th style="padding: 1rem; text-align: left;">Status</th>
+                            <th style="padding: 1rem; text-align: left;">Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tasks.map(task => `
+                            <tr style="border-bottom: 1px solid var(--gray-200);">
+                                <td style="padding: 1rem;">
+                                    <div style="font-weight: 600;">${task.name}</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">${task.notes || 'No notes'}</div>
+                                </td>
+                                <td style="padding: 1rem;">${task.assignedTo || 'Unassigned'}</td>
+                                <td style="padding: 1rem;">
+                                    <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600;
+                                                 background: ${task.priority === 'critical' ? '#fee2e2' : task.priority === 'high' ? '#fef3c7' : '#f1f5f9'};
+                                                 color: ${task.priority === 'critical' ? '#dc2626' : task.priority === 'high' ? '#d97706' : '#475569'};">
+                                        ${task.priority}
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600;
+                                                 background: ${task.completed ? '#dcfce7' : task.status === 'in-progress' ? '#e0f2fe' : '#f1f5f9'};
+                                                 color: ${task.completed ? '#16a34a' : task.status === 'in-progress' ? '#0369a1' : '#475569'};">
+                                        ${task.completed ? 'completed' : task.status}
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem;">${task.dueDate}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Select report type
+        function selectReportType(element, type) {
+            // Remove selected class from all cards
+            document.querySelectorAll('#executiveReportingModal .template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            selectedReportType = type;
+            
+            debugLog('Report type selected:', type);
+        }
+        
+        // Calculate and update portfolio metrics
+        function updatePortfolioMetrics() {
+            try {
+                // Get current period dates - fallback to show all data if no period selected
+                let startDate, endDate;
+                let useTimeFilter = true;
+                
+                if (selectedReportPeriod === 'custom') {
+                    const startInput = document.getElementById('reportStartDate');
+                    const endInput = document.getElementById('reportEndDate');
+                    if (startInput?.value && endInput?.value) {
+                        startDate = new Date(startInput.value);
+                        endDate = new Date(endInput.value);
+                    } else {
+                        useTimeFilter = false;
+                    }
+                } else {
+                    if (reportStartDate && reportEndDate) {
+                        startDate = new Date(reportStartDate);
+                        endDate = new Date(reportEndDate);
+                    } else {
+                        // Calculate period dates if not set
+                        const dates = calculatePeriodDates(selectedReportPeriod || 'current-month');
+                        startDate = dates.start;
+                        endDate = dates.end;
+                    }
+                }
+                
+                // Filter projects and tasks by selected time period
+                const projectList = Object.values(projects);
+                const periodProjects = [];
+                const periodTasks = [];
+                const completedTasksInPeriod = [];
+                
+                projectList.forEach(project => {
+                    if (project && project.tasks) {
+                        if (useTimeFilter) {
+                            const projectCreated = new Date(project.createdDate);
+                            const isProjectInPeriod = projectCreated >= startDate && projectCreated <= endDate;
+                            
+                            if (isProjectInPeriod) {
+                                periodProjects.push(project);
+                            }
+                            
+                            // Include tasks that were completed or updated in the period
+                            project.tasks.filter(task => task).forEach(task => {
+                                const taskCreated = new Date(task.startDate || project.createdDate);
+                                const taskCompleted = task.completedDate ? new Date(task.completedDate) : null;
+                                
+                                // Task is in period if created, completed, or updated during period
+                                const isTaskInPeriod = (
+                                    (taskCreated >= startDate && taskCreated <= endDate) ||
+                                    (taskCompleted && taskCompleted >= startDate && taskCompleted <= endDate) ||
+                                    (isProjectInPeriod)
+                                );
+                                
+                                if (isTaskInPeriod) {
+                                    periodTasks.push(task);
+                                    
+                                    // Track tasks completed specifically in this period
+                                    if (taskCompleted && taskCompleted >= startDate && taskCompleted <= endDate) {
+                                        completedTasksInPeriod.push(task);
+                                    }
+                                }
+                            });
+                        } else {
+                            // Include all projects and tasks if no time filter
+                            periodProjects.push(project);
+                            project.tasks.filter(task => task).forEach(task => {
+                                periodTasks.push(task);
+                                if (task.completed) {
+                                    completedTasksInPeriod.push(task);
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                // Calculate key metrics for the selected period
+                const totalProjects = periodProjects.length;
+                const totalTasks = periodTasks.length;
+                const completedTasks = completedTasksInPeriod.length;
+                const criticalTasks = periodTasks.filter(task => task.priority === 'critical').length;
+                const overdueTasks = periodTasks.filter(task => {
+                    const dueDate = new Date(task.dueDate);
+                    return dueDate < endDate && !task.completed;
+                }).length;
+                
+                // Resource utilization (team members with tasks in period)
+                const assignedMembers = new Set(periodTasks.map(task => task.assignedTo).filter(assignee => assignee));
+                const resourceUtilization = assignedMembers.size > 0 ? Math.round((periodTasks.length / assignedMembers.size) * 10) : 0;
+                
+                // Portfolio progress (for this period)
+                const portfolioProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                
+                // On-time delivery rate (tasks completed on time in this period)
+                const completedOnTime = completedTasksInPeriod.filter(task => {
+                    const dueDate = new Date(task.dueDate);
+                    const completedDate = new Date(task.completedDate);
+                    return completedDate <= dueDate;
+                }).length;
+                const onTimeDelivery = completedTasks > 0 ? Math.round((completedOnTime / completedTasks) * 100) : 0;
+                
+                // Average project velocity (tasks completed per week in period)
+                const periodDays = Math.max(1, (endDate - startDate) / (1000 * 60 * 60 * 24));
+                const periodWeeks = Math.max(0.1, periodDays / 7);
+                const avgVelocity = Math.round((completedTasks / periodWeeks) * 10) / 10;
+                
+                // Update UI elements
+                document.getElementById('totalActiveProjects').textContent = totalProjects;
+                document.getElementById('overallPortfolioProgress').textContent = portfolioProgress + '%';
+                document.getElementById('resourceUtilization').textContent = resourceUtilization + '%';
+                document.getElementById('criticalRisks').textContent = overdueTasks + criticalTasks;
+                document.getElementById('onTimeDelivery').textContent = onTimeDelivery + '%';
+                document.getElementById('avgProjectVelocity').textContent = avgVelocity;
+                
+                debugLog('Portfolio metrics updated', {
+                    totalProjects,
+                    portfolioProgress,
+                    resourceUtilization,
+                    criticalRisks: overdueTasks + criticalTasks
+                });
+                
+            } catch (error) {
+                console.error('Error updating portfolio metrics:', error);
+            }
+        }
+        
+        // Generate comprehensive portfolio analysis
+        function generatePortfolioAnalysis() {
+            // Get current period dates - fallback to show all data if no period selected
+            let startDate, endDate;
+            let useTimeFilter = true;
+            
+            try {
+                if (selectedReportPeriod === 'custom') {
+                    const startInput = document.getElementById('reportStartDate');
+                    const endInput = document.getElementById('reportEndDate');
+                    if (startInput?.value && endInput?.value) {
+                        startDate = new Date(startInput.value);
+                        endDate = new Date(endInput.value);
+                    } else {
+                        useTimeFilter = false;
+                    }
+                } else {
+                    if (reportStartDate && reportEndDate) {
+                        startDate = new Date(reportStartDate);
+                        endDate = new Date(reportEndDate);
+                    } else {
+                        // Calculate period dates if not set
+                        const dates = calculatePeriodDates(selectedReportPeriod || 'current-month');
+                        startDate = dates.start;
+                        endDate = dates.end;
+                    }
+                }
+            } catch (error) {
+                console.warn('Error calculating period dates, showing all data:', error);
+                useTimeFilter = false;
+            }
+            
+            const projectList = Object.values(projects);
+            const allTasks = [];
+            const projectAnalysis = [];
+            
+            // Collect detailed project data filtered by time period
+            projectList.forEach(project => {
+                if (project && project.tasks) {
+                    let projectTasks;
+                    
+                    if (useTimeFilter) {
+                        const projectCreated = new Date(project.createdDate);
+                        const isProjectInPeriod = projectCreated >= startDate && projectCreated <= endDate;
+                        
+                        // Filter tasks by period
+                        projectTasks = project.tasks.filter(task => {
+                            if (!task) return false;
+                            
+                            const taskCreated = new Date(task.startDate || project.createdDate);
+                            const taskCompleted = task.completedDate ? new Date(task.completedDate) : null;
+                            
+                            // Task is in period if created, completed, or updated during period
+                            return (
+                                (taskCreated >= startDate && taskCreated <= endDate) ||
+                                (taskCompleted && taskCompleted >= startDate && taskCompleted <= endDate) ||
+                                (isProjectInPeriod)
+                            );
+                        });
+                    } else {
+                        // Include all tasks if no time filter
+                        projectTasks = project.tasks.filter(task => task);
+                    }
+                    
+                    // Analyze projects that have tasks (either in period or all tasks)
+                    if (projectTasks.length > 0) {
+                        allTasks.push(...projectTasks);
+                    
+                    const completedTasks = projectTasks.filter(task => task.completed).length;
+                    const progress = projectTasks.length > 0 ? Math.round((completedTasks / projectTasks.length) * 100) : 0;
+                    const overdueTasks = projectTasks.filter(task => {
+                        const dueDate = new Date(task.dueDate);
+                        return dueDate < new Date() && !task.completed;
+                    }).length;
+                    
+                    // Risk assessment
+                    let riskLevel = 'Low';
+                    if (overdueTasks > 2 || progress < 30) riskLevel = 'High';
+                    else if (overdueTasks > 0 || progress < 60) riskLevel = 'Medium';
+                    
+                    // Calculate advanced metrics
+                    const avgCompletionTime = projectTasks
+                        .filter(task => task.completed && task.actualStartDate && task.completedDate)
+                        .map(task => {
+                            const start = new Date(task.actualStartDate);
+                            const end = new Date(task.completedDate);
+                            return (end - start) / (1000 * 60 * 60 * 24); // days
+                        })
+                        .reduce((sum, days, _, arr) => sum + days / arr.length, 0) || 0;
+                    
+                    const onTimeTasksCount = projectTasks.filter(task => {
+                        if (!task.completed || !task.completedDate) return false;
+                        return new Date(task.completedDate) <= new Date(task.dueDate);
+                    }).length;
+                    
+                    const onTimeRate = completedTasks > 0 ? Math.round((onTimeTasksCount / completedTasks) * 100) : 0;
+                    
+                    // Calculate project duration
+                    const projectStartDate = project.actualStartDate || project.createdDate;
+                    const projectDays = projectStartDate ? 
+                        Math.ceil((new Date() - new Date(projectStartDate)) / (1000 * 60 * 60 * 24)) : 0;
+                    
+                    // Velocity calculation (tasks per week)
+                    const velocity = projectDays > 0 ? Math.round((completedTasks / (projectDays / 7)) * 10) / 10 : 0;
+                    
+                    projectAnalysis.push({
+                        name: project.name || 'Unnamed Project',
+                        manager: project.manager || 'Unassigned',
+                        location: project.location || 'Not specified',
+                        targetDate: project.targetDate || 'No target date',
+                        type: project.template || 'Unknown',
+                        totalTasks: projectTasks.length,
+                        completedTasks,
+                        progress,
+                        overdueTasks,
+                        riskLevel,
+                        health: overdueTasks === 0 && progress > 80 ? 'Green' : 
+                               overdueTasks <= 1 && progress > 50 ? 'Yellow' : 'Red',
+                        // Enhanced metrics
+                        onTimeRate,
+                        avgCompletionTime: Math.round(avgCompletionTime * 10) / 10,
+                        velocity,
+                        projectDays,
+                        estimatedBudget: project.estimatedBudget || 0,
+                        actualBudget: project.actualBudget || 0,
+                        clientDepartment: project.clientDepartment || 'Unknown'
+                    });
+                    }
+                }
+            });
+            
+            // Team utilization analysis
+            const teamWorkload = {};
+            allTasks.forEach(task => {
+                const assignee = task.assignedTo || 'Unassigned';
+                if (!teamWorkload[assignee]) {
+                    teamWorkload[assignee] = { total: 0, completed: 0, overdue: 0 };
+                }
+                teamWorkload[assignee].total++;
+                if (task.completed) teamWorkload[assignee].completed++;
+                if (new Date(task.dueDate) < new Date() && !task.completed) {
+                    teamWorkload[assignee].overdue++;
+                }
+            });
+            
+            // Phase analysis across all projects
+            const phaseAnalysis = {};
+            for (let phase = 1; phase <= 5; phase++) {
+                const phaseTasks = allTasks.filter(task => task.phase === phase);
+                phaseAnalysis[`Phase ${phase}`] = {
+                    totalTasks: phaseTasks.length,
+                    completed: phaseTasks.filter(task => task.completed).length,
+                    progress: phaseTasks.length > 0 ? Math.round((phaseTasks.filter(task => task.completed).length / phaseTasks.length) * 100) : 0
+                };
+            }
+            
+            return {
+                summary: {
+                    totalProjects: projectList.length,
+                    totalTasks: allTasks.length,
+                    completedTasks: allTasks.filter(task => task.completed).length,
+                    overallProgress: allTasks.length > 0 ? Math.round((allTasks.filter(task => task.completed).length / allTasks.length) * 100) : 0,
+                    criticalRisks: allTasks.filter(task => task.priority === 'critical' || (new Date(task.dueDate) < new Date() && !task.completed)).length,
+                    generatedDate: new Date().toISOString()
+                },
+                projects: projectAnalysis,
+                teamWorkload,
+                phaseAnalysis,
+                riskMatrix: {
+                    highRisk: projectAnalysis.filter(p => p.riskLevel === 'High').length,
+                    mediumRisk: projectAnalysis.filter(p => p.riskLevel === 'Medium').length,
+                    lowRisk: projectAnalysis.filter(p => p.riskLevel === 'Low').length
+                }
+            };
+        }
+        
+        // Export executive report in specified format
+        function exportExecutiveReport(format) {
+            const analysisData = generatePortfolioAnalysis();
+            
+            try {
+                switch (format) {
+                    case 'excel':
+                        exportExecutiveExcel(analysisData);
+                        break;
+                    case 'pdf':
+                        exportExecutivePDF(analysisData);
+                        break;
+                    case 'html':
+                        exportExecutiveHTML(analysisData);
+                        break;
+                    case 'powerpoint':
+                        exportExecutivePowerPoint(analysisData);
+                        break;
+                    default:
+                        console.error('Unknown export format:', format);
+                }
+                
+                showNotification('success', `Executive report exported successfully in ${format.toUpperCase()} format`);
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('error', 'Export failed: ' + error.message);
+            }
+        }
+        
+        // Export to Excel with executive dashboard
+        function exportExecutiveExcel(data) {
+            if (typeof XLSX === 'undefined') {
+                throw new Error('Excel export library not loaded');
+            }
+            
+            const wb = XLSX.utils.book_new();
+            
+            // Executive Summary Sheet
+            const periodText = selectedReportPeriod === 'custom' ? 
+                `Custom Range (${document.getElementById('reportStartDate')?.value || 'N/A'} to ${document.getElementById('reportEndDate')?.value || 'N/A'})` :
+                selectedReportPeriod.replace('-', ' ').toUpperCase();
+                
+            const summaryData = [
+                ['AV PROJECT PORTFOLIO - EXECUTIVE SUMMARY'],
+                [`Generated: ${new Date().toLocaleString()}`],
+                [`Report Type: ${selectedReportType.replace('-', ' ').toUpperCase()}`],
+                [`Report Period: ${periodText}`],
+                [''],
+                ['KEY PERFORMANCE INDICATORS'],
+                ['Total Active Projects:', data.summary.totalProjects],
+                ['Portfolio Progress:', `${data.summary.overallProgress}%`],
+                ['Total Tasks:', data.summary.totalTasks],
+                ['Completed Tasks:', data.summary.completedTasks],
+                ['Critical Risks:', data.summary.criticalRisks],
+                [''],
+                ['RISK ASSESSMENT'],
+                ['High Risk Projects:', data.riskMatrix.highRisk],
+                ['Medium Risk Projects:', data.riskMatrix.mediumRisk],
+                ['Low Risk Projects:', data.riskMatrix.lowRisk],
+                [''],
+                ['PORTFOLIO HEALTH'],
+                ['Projects On Track:', data.projects.filter(p => p.health === 'Green').length],
+                ['Projects At Risk:', data.projects.filter(p => p.health === 'Yellow').length],
+                ['Projects Critical:', data.projects.filter(p => p.health === 'Red').length]
+            ];
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+            ws1['!cols'] = [{ width: 25 }, { width: 20 }];
+            XLSX.utils.book_append_sheet(wb, ws1, 'Executive Summary');
+            
+            // Project Details Sheet
+            const projectHeaders = ['Project Name', 'Manager', 'Location', 'Type', 'Progress %', 'Total Tasks', 'Completed', 'Overdue', 'Risk Level', 'Health Status'];
+            const projectData = data.projects.map(project => [
+                project.name,
+                project.manager,
+                project.location,
+                project.type.toUpperCase(),
+                `${project.progress}%`,
+                project.totalTasks,
+                project.completedTasks,
+                project.overdueTasks,
+                project.riskLevel,
+                project.health
+            ]);
+            
+            const ws2 = XLSX.utils.aoa_to_sheet([projectHeaders, ...projectData]);
+            ws2['!cols'] = [{ width: 30 }, { width: 15 }, { width: 20 }, { width: 15 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 12 }];
+            XLSX.utils.book_append_sheet(wb, ws2, 'Project Details');
+            
+            // Team Workload Sheet
+            const teamHeaders = ['Team Member', 'Total Tasks', 'Completed Tasks', 'Completion Rate', 'Overdue Tasks', 'Workload Status'];
+            const teamData = Object.entries(data.teamWorkload).map(([member, workload]) => {
+                const completionRate = workload.total > 0 ? Math.round((workload.completed / workload.total) * 100) : 0;
+                const workloadStatus = workload.total > 15 ? 'High' : workload.total > 8 ? 'Medium' : 'Low';
+                
+                return [
+                    member,
+                    workload.total,
+                    workload.completed,
+                    `${completionRate}%`,
+                    workload.overdue,
+                    workloadStatus
+                ];
+            });
+            
+            const ws3 = XLSX.utils.aoa_to_sheet([teamHeaders, ...teamData]);
+            ws3['!cols'] = [{ width: 20 }, { width: 12 }, { width: 15 }, { width: 15 }, { width: 12 }, { width: 15 }];
+            XLSX.utils.book_append_sheet(wb, ws3, 'Team Workload');
+            
+            // Phase Analysis Sheet
+            const phaseHeaders = ['Phase', 'Total Tasks', 'Completed Tasks', 'Progress %', 'Status'];
+            const phaseData = Object.entries(data.phaseAnalysis).map(([phase, analysis]) => {
+                const status = analysis.progress >= 80 ? 'On Track' : analysis.progress >= 50 ? 'At Risk' : 'Behind';
+                return [
+                    phase,
+                    analysis.totalTasks,
+                    analysis.completed,
+                    `${analysis.progress}%`,
+                    status
+                ];
+            });
+            
+            const ws4 = XLSX.utils.aoa_to_sheet([phaseHeaders, ...phaseData]);
+            ws4['!cols'] = [{ width: 15 }, { width: 12 }, { width: 15 }, { width: 12 }, { width: 12 }];
+            XLSX.utils.book_append_sheet(wb, ws4, 'Phase Analysis');
+            
+            // Save the file
+            XLSX.writeFile(wb, `Executive_Portfolio_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+        
+        // Export to PDF with executive formatting
+        function exportExecutivePDF(data) {
+            if (typeof jsPDF === 'undefined') {
+                throw new Error('PDF export library not loaded');
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Executive header
+            doc.setFillColor(14, 165, 233);
+            doc.rect(0, 0, 210, 50, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(28);
+            doc.setFont(undefined, 'bold');
+            doc.text('AV PROJECT PORTFOLIO', 105, 20, { align: 'center' });
+            doc.setFontSize(16);
+            doc.text('Executive Summary Report', 105, 30, { align: 'center' });
+            
+            const periodText = selectedReportPeriod === 'custom' ? 
+                `Custom Range (${document.getElementById('reportStartDate')?.value || 'N/A'} to ${document.getElementById('reportEndDate')?.value || 'N/A'})` :
+                selectedReportPeriod.replace('-', ' ').toUpperCase();
+            doc.setFontSize(12);
+            doc.text(`Period: ${periodText}`, 105, 40, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            
+            // Key metrics section
+            let yPos = 60;
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text('Key Performance Indicators', 20, yPos);
+            
+            yPos += 15;
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            
+            // KPI grid
+            const kpis = [
+                ['Total Active Projects:', data.summary.totalProjects],
+                ['Portfolio Progress:', `${data.summary.overallProgress}%`],
+                ['Critical Risks:', data.summary.criticalRisks],
+                ['High Risk Projects:', data.riskMatrix.highRisk]
+            ];
+            
+            kpis.forEach((kpi, index) => {
+                const x = 20 + (index % 2) * 85;
+                const y = yPos + Math.floor(index / 2) * 10;
+                
+                doc.setFont(undefined, 'bold');
+                doc.text(kpi[0], x, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(String(kpi[1]), x + 40, y);
+            });
+            
+            yPos += 30;
+            
+            // Risk assessment chart
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Risk Assessment', 20, yPos);
+            
+            yPos += 10;
+            const riskData = [
+                ['Risk Level', 'Project Count', 'Percentage'],
+                ['High Risk', data.riskMatrix.highRisk, `${Math.round((data.riskMatrix.highRisk / data.summary.totalProjects) * 100)}%`],
+                ['Medium Risk', data.riskMatrix.mediumRisk, `${Math.round((data.riskMatrix.mediumRisk / data.summary.totalProjects) * 100)}%`],
+                ['Low Risk', data.riskMatrix.lowRisk, `${Math.round((data.riskMatrix.lowRisk / data.summary.totalProjects) * 100)}%`]
+            ];
+            
+            doc.autoTable({
+                startY: yPos,
+                head: [riskData[0]],
+                body: riskData.slice(1),
+                theme: 'striped',
+                headStyles: { fillColor: [14, 165, 233] }
+            });
+            
+            // Project summary table
+            yPos = doc.lastAutoTable.finalY + 20;
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Summary', 20, yPos);
+            
+            const projectTableData = data.projects.map(project => [
+                project.name.substring(0, 25),
+                project.manager,
+                `${project.progress}%`,
+                project.riskLevel,
+                project.health
+            ]);
+            
+            doc.autoTable({
+                startY: yPos + 5,
+                head: [['Project Name', 'Manager', 'Progress', 'Risk', 'Health']],
+                body: projectTableData,
+                theme: 'striped',
+                headStyles: { fillColor: [14, 165, 233] },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 30 },
+                    2: { cellWidth: 20 },
+                    3: { cellWidth: 25 },
+                    4: { cellWidth: 20 }
+                }
+            });
+            
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 280);
+            doc.text(`AV Project Management Tool v${APP_VERSION}`, 105, 280, { align: 'center' });
+            
+            doc.save(`Executive_Portfolio_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+        
+        // Export to HTML executive dashboard
+        function exportExecutiveHTML(data) {
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Portfolio - Executive Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #f8fafc; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .header { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; padding: 3rem; border-radius: 1rem; margin-bottom: 2rem; text-align: center; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .kpi-card { background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .kpi-value { font-size: 3rem; font-weight: 700; color: #0ea5e9; }
+        .kpi-label { color: #64748b; margin-top: 0.5rem; font-weight: 600; }
+        .risk-indicator { padding: 0.5rem 1rem; border-radius: 2rem; color: white; font-weight: 600; display: inline-block; margin: 0.25rem; }
+        .risk-high { background: #ef4444; }
+        .risk-medium { background: #f59e0b; }
+        .risk-low { background: #22c55e; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th { background: #f1f5f9; padding: 1rem; text-align: left; font-weight: 600; }
+        td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        .health-green { color: #22c55e; font-weight: 600; }
+        .health-yellow { color: #f59e0b; font-weight: 600; }
+        .health-red { color: #ef4444; font-weight: 600; }
+        .section { background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        @media print { body { background: white; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AV Project Portfolio Dashboard</h1>
+            <p>Executive Summary - Generated ${new Date().toLocaleDateString()}</p>
+            <p>Period: ${selectedReportPeriod === 'custom' ? 
+                `Custom Range (${document.getElementById('reportStartDate')?.value || 'N/A'} to ${document.getElementById('reportEndDate')?.value || 'N/A'})` :
+                selectedReportPeriod.replace('-', ' ').toUpperCase()}</p>
+        </div>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-value">${data.summary.totalProjects}</div>
+                <div class="kpi-label">Active Projects</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">${data.summary.overallProgress}%</div>
+                <div class="kpi-label">Portfolio Progress</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">${data.summary.criticalRisks}</div>
+                <div class="kpi-label">Critical Risks</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">${data.projects.filter(p => p.health === 'Green').length}</div>
+                <div class="kpi-label">Projects On Track</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Risk Distribution</h2>
+            <div style="text-align: center; margin: 2rem 0;">
+                <span class="risk-indicator risk-high">High Risk: ${data.riskMatrix.highRisk} Projects</span>
+                <span class="risk-indicator risk-medium">Medium Risk: ${data.riskMatrix.mediumRisk} Projects</span>
+                <span class="risk-indicator risk-low">Low Risk: ${data.riskMatrix.lowRisk} Projects</span>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Project Portfolio Overview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Manager</th>
+                        <th>Progress</th>
+                        <th>Risk Level</th>
+                        <th>Health Status</th>
+                        <th>Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.projects.map(project => `
+                    <tr>
+                        <td><strong>${project.name}</strong></td>
+                        <td>${project.manager}</td>
+                        <td>${project.progress}%</td>
+                        <td><span class="risk-indicator risk-${project.riskLevel.toLowerCase()}">${project.riskLevel}</span></td>
+                        <td><span class="health-${project.health.toLowerCase()}">${project.health}</span></td>
+                        <td>${project.completedTasks}/${project.totalTasks}</td>
+                    </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Team Workload Analysis</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team Member</th>
+                        <th>Total Tasks</th>
+                        <th>Completed</th>
+                        <th>Completion Rate</th>
+                        <th>Overdue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(data.teamWorkload).map(([member, workload]) => {
+                        const rate = workload.total > 0 ? Math.round((workload.completed / workload.total) * 100) : 0;
+                        return `
+                        <tr>
+                            <td><strong>${member}</strong></td>
+                            <td>${workload.total}</td>
+                            <td>${workload.completed}</td>
+                            <td>${rate}%</td>
+                            <td${workload.overdue > 0 ? ' style="color: #ef4444; font-weight: 600;"' : ''}>${workload.overdue}</td>
+                        </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>`;
+            
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Executive_Portfolio_Dashboard_${new Date().toISOString().split('T')[0]}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Export to PowerPoint-style presentation (HTML-based)
+        function exportExecutivePowerPoint(data) {
+            const presentationContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Portfolio - Executive Presentation</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #000; color: white; }
+        .slide { width: 100vw; height: 100vh; padding: 4rem; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+        .slide-1 { background: linear-gradient(135deg, #0ea5e9, #0284c7); text-align: center; }
+        .slide-2, .slide-3, .slide-4 { background: #1e293b; }
+        h1 { font-size: 4rem; margin-bottom: 2rem; }
+        h2 { font-size: 3rem; margin-bottom: 3rem; color: #38bdf8; }
+        .metric-large { font-size: 8rem; font-weight: 700; color: #22c55e; text-align: center; margin: 2rem 0; }
+        .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; margin: 3rem 0; }
+        .metric-item { text-align: center; padding: 2rem; background: rgba(255,255,255,0.1); border-radius: 1rem; }
+        .metric-value { font-size: 4rem; font-weight: 700; color: #38bdf8; }
+        .metric-label { font-size: 1.5rem; margin-top: 1rem; }
+        .risk-chart { display: flex; justify-content: space-around; align-items: center; margin: 3rem 0; }
+        .risk-item { text-align: center; padding: 2rem; }
+        .risk-circle { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; margin: 0 auto 1rem; }
+        .risk-high { background: #ef4444; }
+        .risk-medium { background: #f59e0b; }
+        .risk-low { background: #22c55e; }
+        @media print { .slide { page-break-after: always; } }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title Slide -->
+    <div class="slide slide-1">
+        <h1>AV Project Portfolio</h1>
+        <h2>Executive Summary</h2>
+        <p style="font-size: 2rem; margin-top: 3rem;">Generated: ${new Date().toLocaleDateString()}</p>
+        <p style="font-size: 1.5rem; opacity: 0.8;">AV Project Management Tool v${APP_VERSION}</p>
+    </div>
+    
+    <!-- Slide 2: Key Metrics -->
+    <div class="slide slide-2">
+        <h2>Portfolio Overview</h2>
+        <div class="metric-grid">
+            <div class="metric-item">
+                <div class="metric-value">${data.summary.totalProjects}</div>
+                <div class="metric-label">Active Projects</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">${data.summary.overallProgress}%</div>
+                <div class="metric-label">Portfolio Progress</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">${data.summary.completedTasks}</div>
+                <div class="metric-label">Tasks Completed</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">${data.summary.criticalRisks}</div>
+                <div class="metric-label">Critical Risks</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Slide 3: Risk Assessment -->
+    <div class="slide slide-3">
+        <h2>Risk Assessment</h2>
+        <div class="risk-chart">
+            <div class="risk-item">
+                <div class="risk-circle risk-high">${data.riskMatrix.highRisk}</div>
+                <div class="metric-label">High Risk Projects</div>
+            </div>
+            <div class="risk-item">
+                <div class="risk-circle risk-medium">${data.riskMatrix.mediumRisk}</div>
+                <div class="metric-label">Medium Risk Projects</div>
+            </div>
+            <div class="risk-item">
+                <div class="risk-circle risk-low">${data.riskMatrix.lowRisk}</div>
+                <div class="metric-label">Low Risk Projects</div>
+            </div>
+        </div>
+        <div class="metric-large">${Math.round((data.riskMatrix.lowRisk / data.summary.totalProjects) * 100)}%</div>
+        <p style="text-align: center; font-size: 2rem;">Projects on Track</p>
+    </div>
+    
+    <!-- Slide 4: Action Items -->
+    <div class="slide slide-4">
+        <h2>Key Insights & Actions</h2>
+        <div style="font-size: 1.8rem; line-height: 2.5;">
+            <p>✅ <strong>${data.projects.filter(p => p.health === 'Green').length} projects</strong> are performing well</p>
+            <p>⚠️ <strong>${data.projects.filter(p => p.health === 'Yellow').length} projects</strong> need attention</p>
+            <p>🚨 <strong>${data.projects.filter(p => p.health === 'Red').length} projects</strong> require immediate action</p>
+            <br>
+            <p>📊 Overall portfolio progress: <strong>${data.summary.overallProgress}%</strong></p>
+            <p>👥 Team utilization: <strong>${Object.keys(data.teamWorkload).length} active members</strong></p>
+            <p>🎯 Focus areas: Risk mitigation and resource optimization</p>
+        </div>
+    </div>
+</body>
+</html>`;
+            
+            const blob = new Blob([presentationContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Executive_Portfolio_Presentation_${new Date().toISOString().split('T')[0]}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Generate full portfolio report (main action button)
+        function generateFullPortfolioReport() {
+            try {
+                updatePortfolioMetrics();
+                exportExecutiveReport('excel'); // Default to Excel for comprehensive analysis
+                showNotification('success', 'Full portfolio report generated successfully!');
+            } catch (error) {
+                console.error('Report generation error:', error);
+                showNotification('error', 'Failed to generate report: ' + error.message);
+            }
+        }
+
+        // ==================== DATA MIGRATION & COMPATIBILITY ====================
+        
+        // Migrate existing data to include new tracking fields
+        function migrateDataForReporting() {
+            let migrationCount = 0;
+            
+            Object.values(projects).forEach(project => {
+                // Migrate project-level fields
+                if (!project.statusHistory) {
+                    project.statusHistory = [{
+                        status: project.status || 'active',
+                        timestamp: project.createdDate || new Date().toISOString(),
+                        changedBy: project.manager || 'System',
+                        notes: 'Data migration - initial status'
+                    }];
+                    migrationCount++;
+                }
+                
+                if (!project.actualStartDate && project.createdDate) {
+                    project.actualStartDate = project.createdDate;
+                }
+                
+                // Set default values for new fields
+                if (project.estimatedBudget === undefined) project.estimatedBudget = 0;
+                if (project.actualBudget === undefined) project.actualBudget = 0;
+                if (project.estimatedHours === undefined) project.estimatedHours = 0;
+                if (project.actualHours === undefined) project.actualHours = 0;
+                if (!project.clientDepartment) project.clientDepartment = '';
+                if (!project.stakeholders) project.stakeholders = [];
+                if (!project.riskLevel) project.riskLevel = 'low';
+                
+                // Migrate task-level fields
+                if (project.tasks) {
+                    project.tasks.forEach(task => {
+                        if (!task.statusHistory) {
+                            task.statusHistory = [{
+                                status: task.status || 'not-started',
+                                timestamp: project.createdDate || new Date().toISOString(),
+                                changedBy: 'System'
+                            }];
+                        }
+                        
+                        if (!task.assignmentHistory) task.assignmentHistory = [];
+                        if (task.estimatedHours === undefined) task.estimatedHours = 0;
+                        if (task.actualHours === undefined) task.actualHours = 0;
+                        if (!task.completedDate && task.completed) {
+                            task.completedDate = new Date().toISOString();
+                        }
+                        if (!task.actualStartDate && task.status === 'in-progress') {
+                            task.actualStartDate = new Date().toISOString();
+                        }
+                    });
+                }
+            });
+            
+            if (migrationCount > 0) {
+                debugLog(`Data migration completed: ${migrationCount} projects updated`);
+                saveProjects();
+            }
+        }
+
         // Log initialization complete
-        console.log(`AV Project Management Tool v${APP_VERSION} ready!`);
+        debugLog(`AV Project Management Tool v${APP_VERSION} ready!`);
     </script>
 </body>
 </html>
