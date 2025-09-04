@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Auth Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { background: #e8f5e8; }
+        .error { background: #ffe8e8; }
+        button { padding: 10px 20px; margin: 5px; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>AV Project Frontend Authentication Test</h1>
+
+    <div class="test-section">
+        <h3>1. Connection Test</h3>
+        <button onclick="testConnection()">Test Backend Connection</button>
+        <div id="connectionResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Login Test</h3>
+        <input type="email" id="email" placeholder="Email" value="admin@avprojects.com">
+        <input type="password" id="password" placeholder="Password" value="Admin123!">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. User Info</h3>
+        <button onclick="getUserInfo()">Get Current User</button>
+        <div id="userResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Projects Test</h3>
+        <button onclick="getProjects()">Get Projects</button>
+        <button onclick="createTestProject()">Create Test Project</button>
+        <div id="projectsResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. Local Storage Migration</h3>
+        <button onclick="createLocalProjects()">Create Local Test Projects</button>
+        <button onclick="checkMigration()">Check Migration Status</button>
+        <div id="migrationResult"></div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('av_token');
+        const API_URL = 'http://localhost:3001/api';
+
+        async function testConnection() {
+            const result = document.getElementById('connectionResult');
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                result.className = 'success';
+                result.innerHTML = `✅ Backend connected: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `❌ Connection failed: ${error.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('loginResult');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+
+                const data = await response.json();
+                token = data.token;
+                localStorage.setItem('av_token', token);
+                localStorage.setItem('av_refresh_token', data.refreshToken);
+                localStorage.setItem('av_user', JSON.stringify(data.user));
+
+                result.className = 'success';
+                result.innerHTML = `✅ Login successful!<br>
+                    User: ${data.user.name}<br>
+                    Role: ${data.user.Role.displayName}<br>
+                    Token: ${token.substring(0, 20)}...`;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `❌ Login failed: ${error.message}`;
+            }
+        }
+
+        async function getUserInfo() {
+            const result = document.getElementById('userResult');
+            
+            if (!token) {
+                result.className = 'error';
+                result.innerHTML = '❌ No token available. Login first.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get user info');
+                }
+
+                const data = await response.json();
+                result.className = 'success';
+                result.innerHTML = `✅ User info: <pre>${JSON.stringify(data.user, null, 2)}</pre>`;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `❌ Failed: ${error.message}`;
+            }
+        }
+
+        async function getProjects() {
+            const result = document.getElementById('projectsResult');
+            
+            if (!token) {
+                result.className = 'error';
+                result.innerHTML = '❌ No token available. Login first.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/projects`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get projects');
+                }
+
+                const data = await response.json();
+                result.className = 'success';
+                result.innerHTML = `✅ Found ${data.projects.length} projects: <pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `❌ Failed: ${error.message}`;
+            }
+        }
+
+        async function createTestProject() {
+            const result = document.getElementById('projectsResult');
+            
+            if (!token) {
+                result.className = 'error';
+                result.innerHTML = '❌ No token available. Login first.';
+                return;
+            }
+
+            try {
+                const projectData = {
+                    name: 'Frontend Test Project',
+                    client: 'Test Client Corp',
+                    type: 'new-build',
+                    status: 'active',
+                    priority: 'medium',
+                    startDate: '2025-01-01',
+                    endDate: '2025-12-31',
+                    estimatedBudget: 25000,
+                    description: 'Project created from frontend test'
+                };
+
+                const response = await fetch(`${API_URL}/projects`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+
+                const data = await response.json();
+                result.className = 'success';
+                result.innerHTML = `✅ Project created: <pre>${JSON.stringify(data.project, null, 2)}</pre>`;
+            } catch (error) {
+                result.className = 'error';
+                result.innerHTML = `❌ Failed: ${error.message}`;
+            }
+        }
+
+        function createLocalProjects() {
+            const testProjects = {
+                'local-1': {
+                    id: 'local-1',
+                    name: 'Local Test Project 1',
+                    client: 'Local Client A',
+                    type: 'renovation',
+                    status: 'draft',
+                    priority: 'high',
+                    startDate: '2024-11-01',
+                    endDate: '2025-02-28',
+                    estimatedBudget: 15000,
+                    actualBudget: 0,
+                    progress: 25,
+                    tasks: [
+                        { id: 1, name: 'Site Survey', status: 'completed', assignee: 'John' },
+                        { id: 2, name: 'Design Phase', status: 'in-progress', assignee: 'Jane' }
+                    ],
+                    description: 'Legacy project from localStorage'
+                },
+                'local-2': {
+                    id: 'local-2',
+                    name: 'Local Test Project 2',
+                    client: 'Local Client B',
+                    type: 'maintenance',
+                    status: 'active',
+                    priority: 'low',
+                    startDate: '2024-12-01',
+                    endDate: '2025-01-15',
+                    estimatedBudget: 8000,
+                    actualBudget: 2000,
+                    progress: 60,
+                    tasks: [],
+                    description: 'Another legacy project'
+                }
+            };
+
+            localStorage.setItem('avProjects', JSON.stringify(testProjects));
+            
+            const result = document.getElementById('migrationResult');
+            result.className = 'success';
+            result.innerHTML = '✅ Created 2 test projects in localStorage';
+        }
+
+        async function checkMigration() {
+            const result = document.getElementById('migrationResult');
+            const localProjects = localStorage.getItem('avProjects');
+            
+            if (!localProjects) {
+                result.className = 'error';
+                result.innerHTML = '❌ No local projects found';
+                return;
+            }
+
+            const projects = JSON.parse(localProjects);
+            const count = Object.keys(projects).length;
+            
+            result.className = 'success';
+            result.innerHTML = `✅ Found ${count} local projects ready for migration:<br>
+                <pre>${JSON.stringify(projects, null, 2)}</pre>
+                <button onclick="migrateProjects()">Migrate to Backend</button>`;
+        }
+
+        async function migrateProjects() {
+            const result = document.getElementById('migrationResult');
+            
+            if (!token) {
+                result.className = 'error';
+                result.innerHTML = '❌ No token available. Login first.';
+                return;
+            }
+
+            const localProjects = localStorage.getItem('avProjects');
+            if (!localProjects) return;
+
+            const projects = JSON.parse(localProjects);
+            const migrated = [];
+            const failed = [];
+
+            for (const [id, project] of Object.entries(projects)) {
+                try {
+                    const projectData = {
+                        name: project.name,
+                        client: project.client,
+                        type: project.type,
+                        status: project.status,
+                        priority: project.priority,
+                        startDate: project.startDate,
+                        endDate: project.endDate,
+                        estimatedBudget: project.estimatedBudget || 0,
+                        actualBudget: project.actualBudget || 0,
+                        description: project.description || '',
+                        progress: project.progress || 0
+                    };
+
+                    const response = await fetch(`${API_URL}/projects`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(projectData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create project');
+                    }
+
+                    const data = await response.json();
+                    migrated.push(data.project);
+                } catch (error) {
+                    failed.push({ id, error: error.message });
+                }
+            }
+
+            result.className = migrated.length > 0 ? 'success' : 'error';
+            result.innerHTML = `
+                ✅ Migrated: ${migrated.length} projects<br>
+                ❌ Failed: ${failed.length} projects<br>
+                <pre>Migrated: ${JSON.stringify(migrated.map(p => p.name), null, 2)}</pre>
+                ${failed.length > 0 ? `<pre>Failed: ${JSON.stringify(failed, null, 2)}</pre>` : ''}
+            `;
+        }
+
+        // Auto-test connection on load
+        window.onload = () => {
+            testConnection();
+            
+            // Show stored token if available
+            if (token) {
+                document.getElementById('loginResult').innerHTML = `🔑 Stored token found: ${token.substring(0, 20)}...`;
+            }
+        };
+    </script>
+</body>
+</html>

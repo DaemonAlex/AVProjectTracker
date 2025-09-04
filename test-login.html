@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test APEX Login</title>
+</head>
+<body>
+    <h1>Testing APEX Platform Login</h1>
+    <div id="results"></div>
+    <script>
+        // Copy the exact AppState definition from APEX Platform.html
+        const AppState = {
+            isLoggedIn: false,
+            user: null,
+            currentView: 'login',
+            data: {
+                projects: [],
+                metrics: {},
+                charts: {}
+            },
+            config: {
+                apiUrl: 'http://localhost:3001/api',
+                refreshInterval: 30000
+            },
+            users: [
+                { id: 1, name: 'John Smith', email: 'admin@company.com', password: 'admin123', role: 'Admin', avatar: 'JS' },
+                { id: 2, name: 'Sarah Johnson', email: 'pm@company.com', password: 'pm123', role: 'Project-Manager', avatar: 'SJ' },
+                { id: 3, name: 'Mike Davis', email: 'lead@company.com', password: 'lead123', role: 'Team-Lead', avatar: 'MD' },
+                { id: 4, name: 'Lisa Chen', email: 'tech@company.com', password: 'tech123', role: 'Technician', avatar: 'LC' },
+                { id: 5, name: 'Tom Wilson', email: 'client@company.com', password: 'client123', role: 'Client', avatar: 'TW' }
+            ]
+        };
+
+        function quickLogin(email, password) {
+            console.log('Quick login attempt for:', email);
+            console.log('Available users:', AppState.users);
+            
+            const user = AppState.users.find(u => u.email === email && u.password === password);
+            if (user) {
+                console.log('User found:', user);
+                return { success: true, user: user };
+            } else {
+                console.log('User not found');
+                return { success: false, error: 'Demo account not found. Please check credentials.' };
+            }
+        }
+
+        // Test all demo accounts
+        const results = document.getElementById('results');
+        const testCredentials = [
+            ['admin@company.com', 'admin123'],
+            ['pm@company.com', 'pm123'],
+            ['tech@company.com', 'tech123'],
+            ['client@company.com', 'client123'],
+            ['lead@company.com', 'lead123']
+        ];
+
+        results.innerHTML = '<h2>Test Results:</h2>';
+        
+        testCredentials.forEach(([email, password]) => {
+            const result = quickLogin(email, password);
+            const status = result.success ? '✅ SUCCESS' : '❌ FAILED';
+            results.innerHTML += `<p>${status} - ${email} / ${password} - ${result.success ? result.user.name : result.error}</p>`;
+        });
+
+        results.innerHTML += `<h3>AppState.users count: ${AppState.users.length}</h3>`;
+        results.innerHTML += `<pre>${JSON.stringify(AppState.users, null, 2)}</pre>`;
+    </script>
+</body>
+</html>

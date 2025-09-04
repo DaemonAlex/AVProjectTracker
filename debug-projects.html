@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Project Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .project-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; cursor: pointer; }
+        .project-card:hover { background: #f5f5f5; }
+        .debug { background: #f0f8ff; padding: 10px; margin: 10px 0; border: 1px solid #0066cc; }
+    </style>
+</head>
+<body>
+    <h1>AV Project Debug Test</h1>
+    <div class="debug" id="debugOutput"></div>
+    <div id="projectsContainer"></div>
+    
+    <script>
+        // Simplified version of the AppState projects for testing
+        const testProjects = [
+            {
+                id: 'proj_2023_001',
+                name: 'Corporate Headquarters AV Upgrade',
+                status: 'completed',
+                progress: 100,
+                requestorInfo: 'David Thompson, CTO, TechCorp Solutions',
+                siteLocation: '1200 Technology Drive, Austin, TX 78759',
+                businessLine: 'corporate',
+                type: 'upgrade',
+                tasks: [
+                    { id: 'task_001', name: 'Site Survey', status: 'completed' },
+                    { id: 'task_002', name: 'Equipment Installation', status: 'completed' }
+                ]
+            },
+            {
+                id: 'proj_2023_002',
+                name: 'University Lecture Hall Digital Transformation',
+                status: 'completed',
+                progress: 100,
+                requestorInfo: 'Dr. Maria Rodriguez, Director of IT',
+                siteLocation: '3400 University Boulevard, San Diego, CA',
+                businessLine: 'education',
+                type: 'new-build',
+                tasks: [
+                    { id: 'task_003', name: 'Requirements Assessment', status: 'completed' },
+                    { id: 'task_004', name: 'Interactive Display Installation', status: 'completed' }
+                ]
+            }
+        ];
+
+        function debugLog(message) {
+            const debugDiv = document.getElementById('debugOutput');
+            debugDiv.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log('DEBUG:', message);
+        }
+
+        function renderProjects() {
+            debugLog('Starting to render ' + testProjects.length + ' projects');
+            
+            const container = document.getElementById('projectsContainer');
+            
+            container.innerHTML = testProjects.map(project => {
+                debugLog('Rendering project: ' + project.name);
+                return `
+                    <div class="project-card" onclick="viewProjectDebug('${project.id}')">
+                        <h3>${project.name}</h3>
+                        <p><strong>Status:</strong> ${project.status}</p>
+                        <p><strong>Progress:</strong> ${project.progress}%</p>
+                        <p><strong>Location:</strong> ${project.siteLocation}</p>
+                        <p><strong>Tasks:</strong> ${project.tasks.length}</p>
+                        <button onclick="event.stopPropagation(); showTasksDebug('${project.id}')">View Tasks</button>
+                    </div>
+                `;
+            }).join('');
+            
+            debugLog('Projects rendered successfully');
+        }
+
+        function viewProjectDebug(projectId) {
+            debugLog('viewProjectDebug called with ID: ' + projectId);
+            
+            const project = testProjects.find(p => p.id === projectId);
+            if (!project) {
+                debugLog('ERROR: Project not found with ID: ' + projectId);
+                alert('Project not found!');
+                return;
+            }
+            
+            debugLog('Found project: ' + project.name);
+            
+            // Create a simple modal
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;';
+            
+            modal.innerHTML = `
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; max-width:600px; max-height:80%; overflow-y:auto;">
+                    <h2>${project.name}</h2>
+                    <p><strong>Status:</strong> ${project.status}</p>
+                    <p><strong>Progress:</strong> ${project.progress}%</p>
+                    <p><strong>Requestor:</strong> ${project.requestorInfo}</p>
+                    <p><strong>Location:</strong> ${project.siteLocation}</p>
+                    
+                    <h3>Tasks (${project.tasks.length})</h3>
+                    ${project.tasks.map(task => `
+                        <div style="border:1px solid #ddd; padding:10px; margin:5px 0;">
+                            <strong>${task.name}</strong> - ${task.status}
+                        </div>
+                    `).join('')}
+                    
+                    <button onclick="this.closest('div').parentElement.remove()" style="margin-top:15px;">Close</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            debugLog('Modal created and displayed');
+        }
+
+        function showTasksDebug(projectId) {
+            debugLog('showTasksDebug called with ID: ' + projectId);
+            const project = testProjects.find(p => p.id === projectId);
+            if (project) {
+                alert('Tasks for ' + project.name + ':\\n\\n' + 
+                     project.tasks.map(task => '• ' + task.name + ' (' + task.status + ')').join('\\n'));
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Page loaded, initializing...');
+            renderProjects();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-btn { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; }
+        .project-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .project-modal {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+        .task-item { border: 1px solid #ddd; padding: 10px; margin: 5px 0; }
+        .btn { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        .btn-primary { background: #0066cc; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>Project Detail Modal Test</h1>
+    <p>This tests if the project detail modal with task management works correctly.</p>
+    
+    <button class="test-btn" onclick="testViewProject()">🎯 Test View Project</button>
+    <button class="test-btn" onclick="testAddTask()">➕ Test Add Task</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        // Sample project data like from your main app
+        const testProject = {
+            id: 'proj_2023_001',
+            name: 'Corporate Headquarters AV Upgrade',
+            status: 'completed',
+            progress: 100,
+            priority: 'high',
+            requestorInfo: 'David Thompson, CTO, TechCorp Solutions',
+            siteLocation: '1200 Technology Drive, Austin, TX 78759',
+            businessLine: 'corporate',
+            type: 'upgrade',
+            estimatedBudget: 485000,
+            actualBudget: 467500,
+            description: 'Complete audiovisual system upgrade for corporate boardrooms and training facilities.',
+            tasks: [
+                {
+                    id: 'task_2023_001_01',
+                    name: 'Site Survey and Requirements Analysis',
+                    description: 'Conduct comprehensive site survey, document existing infrastructure.',
+                    status: 'completed',
+                    priority: 'critical',
+                    assignee: 'Mike Davis',
+                    estimatedHours: 40
+                },
+                {
+                    id: 'task_2023_001_02',
+                    name: 'Equipment Procurement and Staging',
+                    description: 'Order all AV equipment, verify compatibility, and stage equipment.',
+                    status: 'completed',
+                    priority: 'high',
+                    assignee: 'Lisa Chen',
+                    estimatedHours: 32
+                }
+            ]
+        };
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            output.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+        
+        function testViewProject() {
+            log('🔍 Creating project detail modal...');
+            
+            const modal = document.createElement('div');
+            modal.className = 'project-modal-overlay';
+            modal.innerHTML = `
+                <div class="project-modal">
+                    <h2>${testProject.name}</h2>
+                    <button onclick="this.closest('.project-modal-overlay').remove()" style="float: right;">✕ Close</button>
+                    
+                    <div><strong>Status:</strong> ${testProject.status}</div>
+                    <div><strong>Progress:</strong> ${testProject.progress}%</div>
+                    <div><strong>Location:</strong> ${testProject.siteLocation}</div>
+                    
+                    <h3>Tasks (${testProject.tasks.length}) <button class="btn btn-primary" onclick="testAddTaskModal()">+ Add Task</button></h3>
+                    <div id="tasksList">
+                        ${testProject.tasks.map(task => `
+                            <div class="task-item">
+                                <strong>${task.name}</strong> (${task.status})
+                                <br><small>${task.description}</small>
+                                <br><em>Assigned: ${task.assignee}, Est: ${task.estimatedHours}h</em>
+                                <div style="margin-top: 5px;">
+                                    <button class="btn" onclick="editTaskTest('${task.id}')">✏️ Edit</button>
+                                    <button class="btn" onclick="toggleTaskStatus('${task.id}')">✅ Toggle Status</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            log('✅ Modal created and displayed');
+        }
+        
+        function testAddTaskModal() {
+            log('🔍 Opening add task modal...');
+            
+            const taskModal = document.createElement('div');
+            taskModal.className = 'project-modal-overlay';
+            taskModal.innerHTML = `
+                <div class="project-modal">
+                    <h3>Add New Task</h3>
+                    <button onclick="this.closest('.project-modal-overlay').remove()" style="float: right;">✕ Close</button>
+                    
+                    <form onsubmit="createTestTask(event)">
+                        <div style="margin: 10px 0;">
+                            <label>Task Name:</label><br>
+                            <input type="text" name="name" required style="width: 300px; padding: 5px;">
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Description:</label><br>
+                            <textarea name="description" style="width: 300px; height: 80px; padding: 5px;"></textarea>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Assignee:</label><br>
+                            <input type="text" name="assignee" style="width: 300px; padding: 5px;">
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Status:</label><br>
+                            <select name="status" style="padding: 5px;">
+                                <option value="not-started">Not Started</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                        <button type="button" class="btn" onclick="this.closest('.project-modal-overlay').remove()">Cancel</button>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(taskModal);
+            log('✅ Add task modal displayed');
+        }
+        
+        function createTestTask(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const newTask = {
+                id: 'task_test_' + Date.now(),
+                name: formData.get('name'),
+                description: formData.get('description'),
+                assignee: formData.get('assignee'),
+                status: formData.get('status')
+            };
+            
+            testProject.tasks.push(newTask);
+            log('✅ Task added: ' + newTask.name);
+            
+            // Close modal and refresh task list
+            event.target.closest('.project-modal-overlay').remove();
+            
+            // Update the task list in the main modal if it's still open
+            const tasksList = document.getElementById('tasksList');
+            if (tasksList) {
+                tasksList.innerHTML = testProject.tasks.map(task => `
+                    <div class="task-item">
+                        <strong>${task.name}</strong> (${task.status})
+                        <br><small>${task.description}</small>
+                        <br><em>Assigned: ${task.assignee || 'Unassigned'}</em>
+                        <div style="margin-top: 5px;">
+                            <button class="btn" onclick="editTaskTest('${task.id}')">✏️ Edit</button>
+                            <button class="btn" onclick="toggleTaskStatus('${task.id}')">✅ Toggle Status</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function editTaskTest(taskId) {
+            log('🔍 Edit task: ' + taskId);
+            alert('Edit task functionality would open here for task: ' + taskId);
+        }
+        
+        function toggleTaskStatus(taskId) {
+            const task = testProject.tasks.find(t => t.id === taskId);
+            if (task) {
+                const statuses = ['not-started', 'in-progress', 'completed'];
+                const currentIndex = statuses.indexOf(task.status);
+                const nextIndex = (currentIndex + 1) % statuses.length;
+                task.status = statuses[nextIndex];
+                
+                log('✅ Task status changed to: ' + task.status);
+                
+                // Refresh the display
+                const tasksList = document.getElementById('tasksList');
+                if (tasksList) {
+                    tasksList.innerHTML = testProject.tasks.map(task => `
+                        <div class="task-item">
+                            <strong>${task.name}</strong> (${task.status})
+                            <br><small>${task.description}</small>
+                            <br><em>Assigned: ${task.assignee || 'Unassigned'}</em>
+                            <div style="margin-top: 5px;">
+                                <button class="btn" onclick="editTaskTest('${task.id}')">✏️ Edit</button>
+                                <button class="btn" onclick="toggleTaskStatus('${task.id}')">✅ Toggle Status</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+        
+        function testAddTask() {
+            testAddTaskModal();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('✅ Test page loaded');
+        });
+    </script>
+</body>
+</html>

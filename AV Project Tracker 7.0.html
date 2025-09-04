@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Project Management Tool - Cloud Edition</title>
+    
+    <!-- Enhanced Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        /* ==================== SHARED STYLES ==================== */
+        :root {
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-400: #38bdf8;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-800: #075985;
+            --primary-900: #0c4a6e;
+            
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            --success-500: #22c55e;
+            --warning-500: #f59e0b;
+            --danger-500: #ef4444;
+            
+            --transition-speed: 200ms;
+            --animation-speed: 300ms;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --gray-50: #000000;
+            --gray-100: #111111;
+            --gray-200: #1a1a1a;
+            --gray-300: #2a2a2a;
+            --gray-800: #e0e0e0;
+            --gray-900: #e8e8e8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ==================== LOGIN PAGE STYLES ==================== */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        [data-theme="dark"] .login-box {
+            background: var(--gray-200);
+            border: 1px solid var(--gray-300);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all var(--transition-speed);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-error {
+            background: var(--danger-500);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .login-success {
+            background: var(--success-500);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .login-mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all var(--transition-speed);
+        }
+
+        .mode-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        .mode-btn.active {
+            background: var(--primary-50);
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        /* User Menu Styles */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: none;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: none;
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: background var(--transition-speed);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .dropdown-item:hover {
+            background: var(--gray-50);
+            color: var(--primary-600);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Connection Status */
+        .connection-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-500);
+            animation: pulse 2s infinite;
+        }
+
+        .connection-dot.offline {
+            background: var(--warning-500);
+        }
+
+        .connection-dot.error {
+            background: var(--danger-500);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Migration Banner */
+        .migration-banner {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .migration-banner.show {
+            display: block;
+        }
+
+        .migration-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .migration-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .migration-btn {
+            background: white;
+            color: var(--warning-600);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .migration-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            display: none;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary-500);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hide elements based on authentication */
+        body:not(.authenticated) .requires-auth {
+            display: none !important;
+        }
+
+        body.authenticated .requires-no-auth {
+            display: none !important;
+        }
+
+        /* Permission-based hiding */
+        .requires-permission {
+            display: none;
+        }
+
+        body.can-create-projects .requires-create-projects,
+        body.can-edit-projects .requires-edit-projects,
+        body.can-delete-projects .requires-delete-projects,
+        body.can-view-reports .requires-view-reports,
+        body.is-admin .requires-admin {
+            display: initial;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .user-info {
+                display: block;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div>Loading...</div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container requires-no-auth">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">AV</div>
+                <h1 class="login-title">AV Project Management</h1>
+                <p class="login-subtitle">Sign in to access your projects</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div id="loginMessage"></div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" required>
+                </div>
+
+                <div class="form-checkbox">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Keep me signed in</label>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+            </form>
+
+            <div class="login-footer">
+                <p>Choose your access mode:</p>
+                <div class="login-mode-toggle">
+                    <button class="mode-btn active" onclick="setMode('cloud')">☁️ Cloud Mode</button>
+                    <button class="mode-btn" onclick="setMode('offline')">💾 Offline Mode</button>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.75rem;">
+                    Cloud Mode: Full features with user accounts<br>
+                    Offline Mode: Local storage only (no login required)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Migration Banner -->
+    <div id="migrationBanner" class="migration-banner">
+        <div class="migration-content">
+            <div class="migration-text">
+                📦 You have local projects that can be migrated to the cloud
+            </div>
+            <button class="migration-btn" onclick="startMigration()">Migrate Now</button>
+            <button class="migration-btn" onclick="dismissMigration()">Later</button>
+        </div>
+    </div>
+
+    <!-- Main Application (Hidden until authenticated or offline mode) -->
+    <div id="mainApp" class="hidden">
+        <!-- Original application content will be inserted here -->
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            API_URL: 'http://localhost:3001/api',
+            APP_VERSION: '7.0.0',
+            STORAGE_KEYS: {
+                TOKEN: 'av_token',
+                REFRESH_TOKEN: 'av_refresh_token',
+                USER: 'av_user',
+                MODE: 'av_mode',
+                PROJECTS: 'avProjects',
+                MIGRATION_DISMISSED: 'av_migration_dismissed'
+            }
+        };
+
+        // ==================== STATE MANAGEMENT ====================
+        const AppState = {
+            mode: localStorage.getItem(CONFIG.STORAGE_KEYS.MODE) || 'cloud',
+            user: null,
+            token: null,
+            isOnline: false,
+            projects: {},
+            syncQueue: [],
+            permissions: []
+        };
+
+        // ==================== AUTH SERVICE ====================
+        const AuthService = {
+            async login(email, password) {
+                try {
+                    const response = await fetch(`${CONFIG.API_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Login failed');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Store credentials
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, data.token);
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken);
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(data.user));
+                    
+                    // Update app state
+                    AppState.token = data.token;
+                    AppState.user = data.user;
+                    AppState.permissions = data.user.Role?.permissions || [];
+                    
+                    return data;
+                } catch (error) {
+                    console.error('Login error:', error);
+                    throw error;
+                }
+            },
+
+            async logout() {
+                try {
+                    if (AppState.token) {
+                        await fetch(`${CONFIG.API_URL}/auth/logout`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${AppState.token}`
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+
+                // Clear stored credentials
+                localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+                localStorage.removeItem(CONFIG.STORAGE_KEYS.REFRESH_TOKEN);
+                localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
+                
+                // Reset app state
+                AppState.token = null;
+                AppState.user = null;
+                AppState.permissions = [];
+                
+                // Redirect to login
+                window.location.reload();
+            },
+
+            async refreshToken() {
+                const refreshToken = localStorage.getItem(CONFIG.STORAGE_KEYS.REFRESH_TOKEN);
+                if (!refreshToken) return false;
+
+                try {
+                    const response = await fetch(`${CONFIG.API_URL}/auth/refresh`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refreshToken })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Token refresh failed');
+                    }
+
+                    const data = await response.json();
+                    
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, data.token);
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken);
+                    AppState.token = data.token;
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Token refresh error:', error);
+                    return false;
+                }
+            },
+
+            async checkAuth() {
+                const token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+                if (!token) return false;
+
+                try {
+                    const response = await fetch(`${CONFIG.API_URL}/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        // Try to refresh token
+                        if (await this.refreshToken()) {
+                            return this.checkAuth();
+                        }
+                        return false;
+                    }
+
+                    const data = await response.json();
+                    AppState.user = data.user;
+                    AppState.token = token;
+                    AppState.permissions = data.user.Role?.permissions || [];
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Auth check error:', error);
+                    return false;
+                }
+            }
+        };
+
+        // ==================== DATA SERVICE ====================
+        const DataService = {
+            async fetchProjects() {
+                if (AppState.mode === 'offline') {
+                    // Load from localStorage
+                    const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.PROJECTS);
+                    return stored ? JSON.parse(stored) : {};
+                }
+
+                // Fetch from API
+                try {
+                    const response = await fetch(`${CONFIG.API_URL}/projects`, {
+                        headers: {
+                            'Authorization': `Bearer ${AppState.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch projects');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Convert array to object format for compatibility
+                    const projectsObj = {};
+                    data.projects.forEach(project => {
+                        projectsObj[project.id] = project;
+                    });
+                    
+                    return projectsObj;
+                } catch (error) {
+                    console.error('Fetch projects error:', error);
+                    // Fallback to localStorage if available
+                    const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.PROJECTS);
+                    return stored ? JSON.parse(stored) : {};
+                }
+            },
+
+            async saveProject(project) {
+                if (AppState.mode === 'offline') {
+                    // Save to localStorage
+                    const projects = await this.fetchProjects();
+                    projects[project.id] = project;
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+                    return project;
+                }
+
+                // Save to API
+                try {
+                    const method = project.id ? 'PUT' : 'POST';
+                    const url = project.id 
+                        ? `${CONFIG.API_URL}/projects/${project.id}`
+                        : `${CONFIG.API_URL}/projects`;
+
+                    const response = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${AppState.token}`
+                        },
+                        body: JSON.stringify(project)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save project');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Also save to localStorage for offline access
+                    const projects = await this.fetchProjects();
+                    projects[data.project.id] = data.project;
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+                    
+                    return data.project;
+                } catch (error) {
+                    console.error('Save project error:', error);
+                    
+                    // Queue for sync if offline
+                    if (!AppState.isOnline) {
+                        AppState.syncQueue.push({
+                            type: 'saveProject',
+                            data: project,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    throw error;
+                }
+            },
+
+            async migrateLocalProjects() {
+                const localProjects = localStorage.getItem(CONFIG.STORAGE_KEYS.PROJECTS);
+                if (!localProjects || AppState.mode !== 'cloud') return;
+
+                const projects = JSON.parse(localProjects);
+                const migrated = [];
+                const failed = [];
+
+                for (const [id, project] of Object.entries(projects)) {
+                    try {
+                        // Prepare project for API
+                        const projectData = {
+                            name: project.name || 'Untitled Project',
+                            client: project.client || 'Unknown Client',
+                            type: project.type || 'other',
+                            status: project.status || 'draft',
+                            priority: project.priority || 'medium',
+                            startDate: project.startDate || new Date().toISOString(),
+                            endDate: project.endDate || new Date().toISOString(),
+                            estimatedBudget: project.estimatedBudget || 0,
+                            actualBudget: project.actualBudget || 0,
+                            description: project.description || '',
+                            tasks: project.tasks || [],
+                            progress: project.progress || 0,
+                            notes: project.notes || ''
+                        };
+
+                        const saved = await this.saveProject(projectData);
+                        migrated.push(saved);
+                    } catch (error) {
+                        console.error(`Failed to migrate project ${id}:`, error);
+                        failed.push(project);
+                    }
+                }
+
+                return { migrated, failed };
+            }
+        };
+
+        // ==================== UI FUNCTIONS ====================
+        function setMode(mode) {
+            AppState.mode = mode;
+            localStorage.setItem(CONFIG.STORAGE_KEYS.MODE, mode);
+            
+            // Update UI
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (mode === 'offline') {
+                // Skip login for offline mode
+                enterOfflineMode();
+            } else {
+                // Show login form
+                document.getElementById('loginForm').style.display = 'flex';
+            }
+        }
+
+        function enterOfflineMode() {
+            document.body.classList.add('authenticated');
+            document.getElementById('loginPage').classList.add('hidden');
+            loadMainApplication();
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = type === 'error' ? 'login-error' : 'login-success';
+            element.textContent = message;
+            setTimeout(() => {
+                element.textContent = '';
+                element.className = '';
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('show', show);
+        }
+
+        function updatePermissionClasses() {
+            document.body.classList.remove(
+                'can-create-projects',
+                'can-edit-projects', 
+                'can-delete-projects',
+                'can-view-reports',
+                'is-admin'
+            );
+
+            if (AppState.permissions.includes('projects.create')) {
+                document.body.classList.add('can-create-projects');
+            }
+            if (AppState.permissions.includes('projects.update')) {
+                document.body.classList.add('can-edit-projects');
+            }
+            if (AppState.permissions.includes('projects.delete')) {
+                document.body.classList.add('can-delete-projects');
+            }
+            if (AppState.permissions.some(p => p.startsWith('reports.'))) {
+                document.body.classList.add('can-view-reports');
+            }
+            if (AppState.user?.Role?.name === 'admin') {
+                document.body.classList.add('is-admin');
+            }
+        }
+
+        async function checkForLocalProjects() {
+            const localProjects = localStorage.getItem(CONFIG.STORAGE_KEYS.PROJECTS);
+            const migrationDismissed = localStorage.getItem(CONFIG.STORAGE_KEYS.MIGRATION_DISMISSED);
+            
+            if (localProjects && !migrationDismissed && AppState.mode === 'cloud') {
+                const projects = JSON.parse(localProjects);
+                if (Object.keys(projects).length > 0) {
+                    document.getElementById('migrationBanner').classList.add('show');
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        async function startMigration() {
+            showLoading(true);
+            try {
+                const result = await DataService.migrateLocalProjects();
+                
+                if (result.migrated.length > 0) {
+                    alert(`Successfully migrated ${result.migrated.length} projects to the cloud!`);
+                    
+                    // Clear local storage after successful migration
+                    localStorage.removeItem(CONFIG.STORAGE_KEYS.PROJECTS);
+                }
+                
+                if (result.failed.length > 0) {
+                    alert(`Warning: ${result.failed.length} projects failed to migrate. They remain in local storage.`);
+                }
+                
+                document.getElementById('migrationBanner').classList.remove('show');
+                loadMainApplication();
+            } catch (error) {
+                alert('Migration failed. Your projects remain in local storage.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function dismissMigration() {
+            localStorage.setItem(CONFIG.STORAGE_KEYS.MIGRATION_DISMISSED, 'true');
+            document.getElementById('migrationBanner').classList.remove('show');
+        }
+
+        async function loadMainApplication() {
+            // This is where we'll inject the original application HTML
+            // For now, show a placeholder
+            document.getElementById('mainApp').innerHTML = `
+                <div style="padding: 2rem; text-align: center;">
+                    <h2>Welcome ${AppState.user ? AppState.user.name : 'Guest'}!</h2>
+                    <p>Mode: ${AppState.mode === 'cloud' ? '☁️ Cloud' : '💾 Offline'}</p>
+                    ${AppState.user ? `
+                        <p>Role: ${AppState.user.Role?.displayName}</p>
+                        <p>Email: ${AppState.user.email}</p>
+                    ` : ''}
+                    <button onclick="AuthService.logout()">Logout</button>
+                    <p style="margin-top: 2rem;">Full application UI will be loaded here...</p>
+                </div>
+            `;
+            
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Check for local projects that can be migrated
+            if (AppState.mode === 'cloud') {
+                await checkForLocalProjects();
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            showLoading(true);
+            document.getElementById('loginBtn').disabled = true;
+            
+            try {
+                await AuthService.login(email, password);
+                
+                // Update UI
+                document.body.classList.add('authenticated');
+                updatePermissionClasses();
+                
+                showMessage('loginMessage', 'Login successful!', 'success');
+                
+                // Load main application
+                setTimeout(() => {
+                    document.getElementById('loginPage').classList.add('hidden');
+                    loadMainApplication();
+                }, 1000);
+                
+            } catch (error) {
+                showMessage('loginMessage', error.message, 'error');
+            } finally {
+                showLoading(false);
+                document.getElementById('loginBtn').disabled = false;
+            }
+        });
+
+        // ==================== INITIALIZATION ====================
+        async function init() {
+            // Check if we're in offline mode
+            if (AppState.mode === 'offline') {
+                enterOfflineMode();
+                return;
+            }
+            
+            // Check for existing authentication
+            showLoading(true);
+            const isAuthenticated = await AuthService.checkAuth();
+            showLoading(false);
+            
+            if (isAuthenticated) {
+                document.body.classList.add('authenticated');
+                updatePermissionClasses();
+                document.getElementById('loginPage').classList.add('hidden');
+                loadMainApplication();
+            }
+            
+            // Check connection status
+            setInterval(async () => {
+                try {
+                    const response = await fetch(`${CONFIG.API_URL}/health`);
+                    AppState.isOnline = response.ok;
+                } catch {
+                    AppState.isOnline = false;
+                }
+            }, 30000);
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
