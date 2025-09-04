@@ -2720,6 +2720,76 @@
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
+        /* Phase Indicators */
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-right: 0.5rem;
+        }
+
+        .phase-1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .phase-2 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .phase-3 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .phase-4 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .phase-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-500);
+            background: var(--gray-50);
+            border-radius: 0.5rem;
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .phase-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .phase-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .phase-tasks-count {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+
         /* RAG status in tables */
         table .rag-green,
         table .rag-yellow,
@@ -3168,6 +3238,81 @@
 
     <script>
         // ==================== APPLICATION STATE ====================
+        // Phase Definitions for AV Projects
+        const projectPhases = [
+            {
+                id: 'phase_1',
+                name: 'Pre-installation - Logistics',
+                order: 1,
+                defaultTasks: [
+                    'Kick Off Call',
+                    'Create project folder in Egnyte',
+                    'Project information gathered',
+                    'Review Project Requirements and Submit Writeup to Stakeholder/s',
+                    'Create Business Case and submit to Stakeholder/s',
+                    'Contact AV Vendor for Quote',
+                    'Revise/Review Vendor Quote',
+                    'Create SNOW ticket request for PO',
+                    'Verify PO Receipt',
+                    'Verify Hardware Shipment',
+                    'Request Hardware Serials and MACs',
+                    'Verify Install Dates',
+                    'Verify Infrastructure Requirements Prior to Install',
+                    'Verify CRE Furniture Customization',
+                    'Verify Installations dates with Vendors, Stakeholders and Local On-site Contacts'
+                ]
+            },
+            {
+                id: 'phase_2',
+                name: 'Pre-Installation - AV Setup',
+                order: 2,
+                defaultTasks: [
+                    'Verify space names with Stakeholder/s',
+                    'SNOW Request to Create Room in AD/Entra with Calendar',
+                    'Verify Calendar Ownership with Stakeholder/s',
+                    'Verify Site has AV VLAN',
+                    'Create IP address request in SNOW',
+                    'Request to put MAC/s on VLAN',
+                    'Create SNOW Request to assign IP/s to Firewall Policy Group (ISE)',
+                    'If Teams Room, Create SNOW request to PAM for MTR Account and Correct OU'
+                ]
+            },
+            {
+                id: 'phase_3',
+                name: 'Post-Installation Commissioning',
+                order: 3,
+                defaultTasks: [
+                    'Vendor Delivery and Install',
+                    'Vendor Commissioning',
+                    'Testing and Verification',
+                    'Verify Vendor Labeling',
+                    'Remind Vendor to Leave Documentation',
+                    'Install Signoff',
+                    'Testing and Verification',
+                    'Install Monitoring tools',
+                    'Update NOC with New Devices to be Monitored',
+                    'AV Dept Sign Off',
+                    'Create Room Instructions',
+                    'Label Room Systems, Cabling and Furniture',
+                    'Schedule Training with Stakeholder/s',
+                    'Provide Training',
+                    'AV Dept Install Sign off'
+                ]
+            },
+            {
+                id: 'phase_4',
+                name: 'Post-Installation - Logistics',
+                order: 4,
+                defaultTasks: [
+                    'Review and Approve Invoices for Payment',
+                    'Enter Installed Equipment into Inventory',
+                    'Ensure all Documentation is saved in the AV Project Folder in Egnyte',
+                    'Update Conference Room Info on SharePoint',
+                    'Add Space to Health Website'
+                ]
+            }
+        ];
+
         const AppState = {
             isLoggedIn: false,
             user: null,
@@ -3215,6 +3360,7 @@
                             description: 'Conduct comprehensive site survey, document existing infrastructure, and finalize technical requirements with stakeholders.',
                             status: 'completed',
                             ragStatus: 'green',
+                            phase: 'phase_1',
                             priority: 'critical',
                             assignee: 'Mike Davis',
                             estimatedHours: 40,
@@ -5104,7 +5250,10 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <!-- Empty space for alignment -->
+                                <label for="includeDefaultTasks">
+                                    <input type="checkbox" id="includeDefaultTasks" name="includeDefaultTasks" checked>
+                                    Include default phase tasks (44 standard AV installation tasks)
+                                </label>
                             </div>
                         </div>
                         
@@ -5124,6 +5273,37 @@
             const form = event.target;
             const formData = new FormData(form);
             
+            // Generate default phase tasks if checkbox is checked
+            const generateDefaultTasks = () => {
+                const tasks = [];
+                let taskId = 1;
+                
+                projectPhases.forEach(phase => {
+                    phase.defaultTasks.forEach(taskName => {
+                        tasks.push({
+                            id: `task_${Date.now()}_${taskId++}`,
+                            name: taskName,
+                            description: '',
+                            status: 'not-started',
+                            ragStatus: 'green',  // Changed to green by default
+                            phase: phase.id,
+                            priority: 'medium',
+                            assignee: '',
+                            estimatedHours: null,
+                            startDate: null,
+                            endDate: null,
+                            notes: '',
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    });
+                });
+                
+                return tasks;
+            };
+            
+            const includeDefaultTasks = formData.get('includeDefaultTasks') === 'on';
+            
             const projectData = {
                 name: formData.get('name'),
                 requestorInfo: formData.get('requestorInfo'),
@@ -5140,7 +5320,7 @@
                 actualBudget: 0,
                 status: formData.get('status'),
                 progress: 0,
-                tasks: []
+                tasks: includeDefaultTasks ? generateDefaultTasks() : []
             };
 
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -5300,30 +5480,44 @@
                 `;
             }
             
-            return tasks.map(task => `
-                <div class="task-item" data-task-id="${task.id}">
-                    <div class="task-header">
-                        <div class="task-info">
-                            <h5 class="task-name">${task.name}</h5>
-                            <div class="task-meta">
-                                <span class="task-status ${task.status}">${formatStatus(task.status)}</span>
-                                ${task.priority ? `<span class="task-priority ${task.priority}">${formatStatus(task.priority)}</span>` : ''}
-                                ${task.assignee ? `<span class="task-assignee">👤 ${task.assignee}</span>` : ''}
+            // Helper function to get phase name and badge class
+            const getPhaseInfo = (phaseId) => {
+                const phase = projectPhases.find(p => p.id === phaseId);
+                const phaseClass = phaseId ? phaseId.replace('_', '-') : 'phase-1';
+                return {
+                    name: phase ? phase.name : 'Pre-installation - Logistics',
+                    class: phaseClass
+                };
+            };
+            
+            return tasks.map(task => {
+                const phaseInfo = getPhaseInfo(task.phase);
+                return `
+                    <div class="task-item" data-task-id="${task.id}">
+                        <div class="task-header">
+                            <div class="task-info">
+                                <h5 class="task-name">${task.name}</h5>
+                                <div class="task-meta">
+                                    <span class="phase-badge ${phaseInfo.class}">${phaseInfo.name}</span>
+                                    <span class="task-status ${task.status}">${formatStatus(task.status)}</span>
+                                    ${task.priority ? `<span class="task-priority ${task.priority}">${formatStatus(task.priority)}</span>` : ''}
+                                    ${task.assignee ? `<span class="task-assignee">👤 ${task.assignee}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn-icon" onclick="editTask('${projectId}', '${task.id}')" title="Edit Task">✏️</button>
+                                <button class="btn-icon" onclick="deleteTask('${projectId}', '${task.id}')" title="Delete Task">🗑️</button>
                             </div>
                         </div>
-                        <div class="task-actions">
-                            <button class="btn-icon" onclick="editTask('${projectId}', '${task.id}')" title="Edit Task">✏️</button>
-                            <button class="btn-icon" onclick="deleteTask('${projectId}', '${task.id}')" title="Delete Task">🗑️</button>
+                        ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
+                        <div class="task-details">
+                            ${task.startDate ? `<span class="task-detail">📅 ${formatDate(task.startDate)}</span>` : ''}
+                            ${task.endDate ? `<span class="task-detail">⏰ ${formatDate(task.endDate)}</span>` : ''}
+                            ${task.estimatedHours ? `<span class="task-detail">⏱️ ${task.estimatedHours}h</span>` : ''}
                         </div>
                     </div>
-                    ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
-                    <div class="task-details">
-                        ${task.startDate ? `<span class="task-detail">📅 ${formatDate(task.startDate)}</span>` : ''}
-                        ${task.endDate ? `<span class="task-detail">⏰ ${formatDate(task.endDate)}</span>` : ''}
-                        ${task.estimatedHours ? `<span class="task-detail">⏱️ ${task.estimatedHours}h</span>` : ''}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function addNewTask(projectId) {
@@ -5359,14 +5553,23 @@
                             <div class="form-group">
                                 <label for="taskRAGStatus">RAG Status</label>
                                 <select id="taskRAGStatus" name="ragStatus">
-                                    <option value="green">🟢 Green - On Track</option>
-                                    <option value="yellow" selected>🟡 Yellow - At Risk</option>
+                                    <option value="green" selected>🟢 Green - On Track</option>
+                                    <option value="yellow">🟡 Yellow - At Risk</option>
                                     <option value="red">🔴 Red - Critical Issues</option>
                                 </select>
                             </div>
                         </div>
                         
                         <div class="form-row">
+                            <div class="form-group">
+                                <label for="taskPhase">Phase</label>
+                                <select id="taskPhase" name="phase">
+                                    <option value="phase_1">Pre-installation - Logistics</option>
+                                    <option value="phase_2">Pre-Installation - AV Setup</option>
+                                    <option value="phase_3">Post-Installation Commissioning</option>
+                                    <option value="phase_4">Post-Installation - Logistics</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label for="taskPriority">Priority</label>
                                 <select id="taskPriority" name="priority">
@@ -5376,9 +5579,15 @@
                                     <option value="critical">Critical</option>
                                 </select>
                             </div>
+                        </div>
+                        
+                        <div class="form-row">
                             <div class="form-group">
                                 <label for="taskAssignee">Assignee</label>
                                 <input type="text" id="taskAssignee" name="assignee" placeholder="Assigned to">
+                            </div>
+                            <div class="form-group">
+                                <!-- Empty for layout -->
                             </div>
                         </div>
                         
@@ -5429,7 +5638,8 @@
                 name: formData.get('name'),
                 description: formData.get('description'),
                 status: formData.get('status'),
-                ragStatus: formData.get('ragStatus') || 'yellow',
+                ragStatus: formData.get('ragStatus') || 'green',  // Changed default to green
+                phase: formData.get('phase') || 'phase_1',
                 priority: formData.get('priority'),
                 assignee: formData.get('assignee'),
                 estimatedHours: parseFloat(formData.get('estimatedHours')) || null,
@@ -5540,6 +5750,15 @@
                         
                         <div class="form-row">
                             <div class="form-group">
+                                <label for="editTaskPhase">Phase</label>
+                                <select id="editTaskPhase" name="phase">
+                                    <option value="phase_1" ${(task.phase || 'phase_1') === 'phase_1' ? 'selected' : ''}>Pre-installation - Logistics</option>
+                                    <option value="phase_2" ${task.phase === 'phase_2' ? 'selected' : ''}>Pre-Installation - AV Setup</option>
+                                    <option value="phase_3" ${task.phase === 'phase_3' ? 'selected' : ''}>Post-Installation Commissioning</option>
+                                    <option value="phase_4" ${task.phase === 'phase_4' ? 'selected' : ''}>Post-Installation - Logistics</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="editTaskPriority">Priority</label>
                                 <select id="editTaskPriority" name="priority">
                                     <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
@@ -5548,9 +5767,15 @@
                                     <option value="critical" ${task.priority === 'critical' ? 'selected' : ''}>Critical</option>
                                 </select>
                             </div>
+                        </div>
+                        
+                        <div class="form-row">
                             <div class="form-group">
                                 <label for="editTaskAssignee">Assignee</label>
                                 <input type="text" id="editTaskAssignee" name="assignee" value="${task.assignee || ''}" placeholder="Assigned to">
+                            </div>
+                            <div class="form-group">
+                                <!-- Empty for layout -->
                             </div>
                         </div>
                         
@@ -5600,7 +5825,8 @@
                 name: formData.get('name'),
                 description: formData.get('description'),
                 status: formData.get('status'),
-                ragStatus: formData.get('ragStatus') || 'yellow',
+                ragStatus: formData.get('ragStatus') || 'green',  // Changed default to green
+                phase: formData.get('phase') || 'phase_1',
                 priority: formData.get('priority'),
                 assignee: formData.get('assignee'),
                 estimatedHours: parseFloat(formData.get('estimatedHours')) || null,
