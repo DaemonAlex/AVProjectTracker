@@ -1,0 +1,41 @@
+# Node modules
+backend/node_modules/
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sqlite
+*.db
+
+# Environment variables
+.env
+.env.local
+
+# Backup files
+*_BACKUP.html
+*_PRE-*.html
+
+# Test files
+test-*.html
+debug-*.html
+
+# Old versions
+AV Project Tracker*.html
+
+# Phase completion files
+PHASE*_COMPLETE.md
+NAVIGATION_AND_TASKS_COMPLETE.md
+
+# Local settings
+.claude/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
